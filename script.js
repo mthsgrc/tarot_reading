@@ -20,11 +20,11 @@ let pickedCards = [];
 btnCall.addEventListener('click', () => {
     let randomResult = 0;
     pullCard();
-    setTimeout(() => document.getElementById("card-1").innerHTML = "<img src='images/"+pickedCards[0]+".jpg' class='card-img-top' alt='card text'>", 0);
-    setTimeout(() => document.getElementById("card-2").innerHTML = "<img src='images/"+pickedCards[1]+".jpg' class='card-img-top' alt='card text'>", 0);
-    setTimeout(() => document.getElementById("card-3").innerHTML = "<img src='images/"+pickedCards[2]+".jpg' class='card-img-top' alt='card text'>", 0);
+    setTimeout(() => document.getElementById("card-1").innerHTML = "<img src='images/"+pickedCards[0]+".jpg' class='card-img-top' alt='card text'>", 2500);
+    setTimeout(() => document.getElementById("card-2").innerHTML = "<img src='images/"+pickedCards[1]+".jpg' class='card-img-top' alt='card text'>", 3000);
+    setTimeout(() => document.getElementById("card-3").innerHTML = "<img src='images/"+pickedCards[2]+".jpg' class='card-img-top' alt='card text'>", 3500);
 
-    setTimeout(() => document.getElementById("change-btn").innerHTML = "<button type=\"button\" onClick=\"window.location.reload();\" class=\"btn btn-info btn-lg btn-block\">New Reading</button>", 0);
+    setTimeout(() => document.getElementById("change-btn").innerHTML = "<button type=\"button\" onClick=\"window.location.reload();\" class=\"btn btn-info btn-lg btn-block\">New Reading</button>", 3500);
 });
 
 
