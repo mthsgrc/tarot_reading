@@ -44,27 +44,14 @@ function getRandomArbitrary(min, max) {
             pickedCards.push(result);
         }
     }
-    // return pickedCards;
 }
-
-
-// function getRandomArbitrary(min, max) {
-//     while (pickedCards.length < 3) {
-//         result = Math.floor(Math.random() * (max - min) + min);
-//         if (pickedCards.indexOf(result) == -1) {
-//             pickedCards.push(result);
-//         }
-//     }
-//     return pickedCards;
-// }
-
 
 
 
 // test
-function getRandomArbitrary2(min, max) {
-    for (var i = 0; i < 20; i++) {
-        result = Math.random() * (max - min) + min;
-        console.log(result.toFixed(0));
-    }
-}
+// function getRandomArbitrary2(min, max) {
+//     for (var i = 0; i < 20; i++) {
+//         result = Math.random() * (max - min) + min;
+//         console.log(result.toFixed(0));
+//     }
+// }
