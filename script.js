@@ -20,41 +20,43 @@ let pickedCards = [];
 btnCall.addEventListener('click', () => {
     let randomResult = 0;
     pullCard();
+    setTimeout(() => document.getElementById("card-1").innerHTML = "<img src='images/"+pickedCards[0]+".jpg' class='card-img-top' alt='card text'>", 0);
+    setTimeout(() => document.getElementById("card-2").innerHTML = "<img src='images/"+pickedCards[1]+".jpg' class='card-img-top' alt='card text'>", 0);
+    setTimeout(() => document.getElementById("card-3").innerHTML = "<img src='images/"+pickedCards[2]+".jpg' class='card-img-top' alt='card text'>", 0);
 
-    setTimeout(() => document.getElementById("card-1").innerHTML = "<img src='images/"+pickedCards[0]+".jpg' class='card-img-top' alt='card text'>", 3000);
-    setTimeout(() => document.getElementById("card-2").innerHTML = "<img src='images/"+pickedCards[1]+".jpg' class='card-img-top' alt='card text'>", 4000);
-    setTimeout(() => document.getElementById("card-3").innerHTML = "<img src='images/"+pickedCards[2]+".jpg' class='card-img-top' alt='card text'>", 5000);
-
-    // document.getElementById("card-2").innerHTML = "<img src='images/"+pickedCards[1]+".jpg' class='card-img-top' alt='card text'>";
-    // document.getElementById("card-3").innerHTML = "<img src='images/"+pickedCards[2]+".jpg' class='card-img-top' alt='card text'>";
-
-    setTimeout(() => document.getElementById("change-btn").innerHTML = "<button type=\"button\" onClick=\"window.location.reload();\" class=\"btn btn-info btn-lg btn-block\">New Reading</button>", 5000);
-
-
-
+    setTimeout(() => document.getElementById("change-btn").innerHTML = "<button type=\"button\" onClick=\"window.location.reload();\" class=\"btn btn-info btn-lg btn-block\">New Reading</button>", 0);
 });
 
 
 function pullCard() {
     let cardNumber = getRandomArbitrary(0, 156);
-    // return parseInt(cardNumber);
 }
 
 function getRandomArbitrary(min, max) {
 
     while (pickedCards.length < 3) {
         result = Math.floor(Math.random() * (max - min) + min);
-        if (pickedCards.indexOf(result) == -1) {
+
+        if ((pickedCards.indexOf(result) == -1) && 
+            (pickedCards.includes(result + 78) != true) &&
+            (pickedCards.includes(result - 78) != true)) {
+        
             pickedCards.push(result);
         }
     }
-    return pickedCards;
+    // return pickedCards;
 }
 
 
-
-
-
+// function getRandomArbitrary(min, max) {
+//     while (pickedCards.length < 3) {
+//         result = Math.floor(Math.random() * (max - min) + min);
+//         if (pickedCards.indexOf(result) == -1) {
+//             pickedCards.push(result);
+//         }
+//     }
+//     return pickedCards;
+// }
 
 
 
