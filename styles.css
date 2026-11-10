@@ -1,3 +1,189 @@
+:root {
+  color-scheme: dark;
+  --ink: #eef1ff;
+  --muted: #a9b3d0;
+  --line: rgba(196, 208, 255, 0.18);
+  --accent: #8f7cff;
+  --surface: rgba(18, 24, 46, 0.72);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(91, 78, 166, 0.32), transparent 42rem),
+    radial-gradient(circle at 10% 80%, rgba(43, 95, 120, 0.18), transparent 34rem),
+    linear-gradient(160deg, #11172b 0%, #090d18 55%, #05070d 100%);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
 .title {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  font-weight: 600;
+  letter-spacing: 0.015em;
   text-align: center;
+  text-shadow: 0 2px 24px rgba(143, 124, 255, 0.28);
+}
+
+.subtitle {
+  max-width: 34rem;
+  margin: 0.85rem auto 0;
+  color: var(--muted);
+  font-size: 0.98rem;
+  text-align: center;
+}
+
+#deal-btn {
+  --bs-btn-color: #ffffff;
+  --bs-btn-bg: #6d5bd0;
+  --bs-btn-border-color: #6d5bd0;
+  --bs-btn-hover-color: #ffffff;
+  --bs-btn-hover-bg: #7f6de5;
+  --bs-btn-hover-border-color: #7f6de5;
+  --bs-btn-active-color: #ffffff;
+  --bs-btn-active-bg: #5b49b8;
+  --bs-btn-active-border-color: #5b49b8;
+  --bs-btn-disabled-color: #d9d4ef;
+  --bs-btn-disabled-bg: #474064;
+  --bs-btn-disabled-border-color: #474064;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  box-shadow: 0 12px 34px rgba(80, 60, 180, 0.28);
+}
+
+#deal-btn:disabled {
+  cursor: wait;
+}
+
+#deal-btn:focus-visible {
+  outline: 3px solid #b7abff;
+  outline-offset: 3px;
+}
+
+.spread-slot {
+  height: 100%;
+}
+
+.position-label {
+  margin: 0 0 0.8rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.card-slot {
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
+}
+
+.tarot-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 278 / 408;
+  perspective: 1200px;
+}
+
+.tarot-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.2, 0.75, 0.25, 1);
+  will-change: transform;
+}
+
+.tarot-card.is-flipped .tarot-card-inner {
+  transform: rotateY(180deg);
+}
+
+.tarot-card-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 0.9rem;
+  backface-visibility: hidden;
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.4);
+}
+
+.tarot-card-back {
+  border: 1px solid rgba(196, 208, 255, 0.3);
+  background: #0a0f20 url("images/back_cover.png") center / cover no-repeat;
+}
+
+.tarot-card-front {
+  transform: rotateY(180deg);
+  background: #06080e;
+  border: 1px solid rgba(196, 208, 255, 0.2);
+}
+
+.tarot-card-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-info {
+  min-height: 10rem;
+  padding: 1rem 0.35rem 0;
+  text-align: center;
+}
+
+.card-name {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.card-subtitle {
+  margin: 0.3rem 0 0;
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.card-keywords {
+  margin: 0.7rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.025em;
+}
+
+.card-meaning {
+  margin: 0.55rem 0 0;
+  color: #d8ddef;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 767.98px) {
+  .card-slot {
+    max-width: 230px;
+  }
+
+  .card-info {
+    min-height: 8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarot-card-inner {
+    transition: none;
+  }
 }
