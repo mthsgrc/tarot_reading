@@ -1,0 +1,325 @@
+@import "@fontsource/cinzel/500.css";
+@import "@fontsource/cinzel/600.css";
+@import "@fontsource-variable/inter";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--color-parchment);
+  background:
+    radial-gradient(ellipse at 50% -20%, rgba(201, 162, 39, 0.16), transparent 55%),
+    radial-gradient(ellipse at 100% 110%, rgba(45, 111, 100, 0.14), transparent 50%),
+    radial-gradient(ellipse at 0% 80%, rgba(141, 36, 52, 0.1), transparent 45%),
+    linear-gradient(180deg, #080b12 0%, #0a0d15 42%, #06080d 100%);
+  background-attachment: fixed;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  content: "";
+  background-image:
+    radial-gradient(
+      circle at 18% 22%,
+      rgba(241, 232, 212, 0.34) 0 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle at 73% 12%,
+      rgba(241, 232, 212, 0.24) 0 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(circle at 88% 48%, rgba(241, 232, 212, 0.2) 0 1px, transparent 1.5px),
+    radial-gradient(
+      circle at 32% 72%,
+      rgba(241, 232, 212, 0.18) 0 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle at 63% 88%,
+      rgba(241, 232, 212, 0.16) 0 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(circle at 8% 58%, rgba(241, 232, 212, 0.18) 0 1px, transparent 1.5px);
+  opacity: 0.5;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.12;
+}
+
+p {
+  margin: 0;
+}
+
+img,
+picture,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: var(--color-gold-bright);
+  text-decoration-color: rgba(232, 199, 102, 0.4);
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+::selection {
+  color: var(--color-void);
+  background: var(--color-gold-bright);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold-bright);
+  outline-offset: 3px;
+}
+
+.container {
+  width: min(100% - 2rem, var(--container));
+  margin-inline: auto;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  color: var(--color-void);
+  background: var(--color-gold-bright);
+  border-radius: var(--radius-sm);
+  transform: translateY(-150%);
+  transition: transform 160ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.eyebrow {
+  color: var(--color-gold);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.display-title {
+  font-size: clamp(2.4rem, 6vw, 4.8rem);
+  letter-spacing: 0.025em;
+}
+
+.section-title {
+  font-size: clamp(1.6rem, 3.2vw, 2.5rem);
+}
+
+.lede {
+  max-width: 62ch;
+  color: var(--color-parchment-soft);
+  font-size: clamp(1rem, 1.4vw, 1.12rem);
+  line-height: 1.75;
+}
+
+.muted {
+  color: var(--color-muted);
+}
+
+.gold {
+  color: var(--color-gold-bright);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.panel {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.035), transparent 45%),
+    var(--color-surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(14px);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 2.75rem;
+  padding: 0.72rem 1.35rem;
+  color: var(--color-parchment);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.button:hover:not(:disabled) {
+  background: rgba(201, 162, 39, 0.12);
+  border-color: var(--color-gold);
+  transform: translateY(-1px);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.button--primary {
+  color: #151006;
+  background: linear-gradient(135deg, var(--color-gold-bright), var(--color-gold));
+  border-color: transparent;
+  box-shadow: 0 12px 32px rgba(201, 162, 39, 0.2);
+}
+
+.button--primary:hover:not(:disabled) {
+  color: #0c0902;
+  background: linear-gradient(135deg, #f2d98a, var(--color-gold-bright));
+  border-color: transparent;
+}
+
+.button--ghost {
+  background: transparent;
+}
+
+.button--small {
+  min-height: 2.2rem;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.85rem;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--color-parchment-soft);
+  font-size: 0.82rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.text-input,
+.text-area {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  color: var(--color-parchment);
+  background: rgba(4, 6, 11, 0.55);
+  border: 1px solid var(--line-cool);
+  border-radius: var(--radius-md);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.text-input::placeholder,
+.text-area::placeholder {
+  color: #6e6b67;
+}
+
+.text-input:focus,
+.text-area:focus {
+  border-color: var(--color-gold);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.14);
+}
+
+.text-area {
+  min-height: 6.5rem;
+  resize: vertical;
+}
+
+.checkbox {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.25rem;
+  accent-color: var(--color-gold);
+}
+
+.checkbox span {
+  display: block;
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}

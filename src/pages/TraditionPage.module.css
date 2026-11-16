@@ -1,0 +1,463 @@
+.page {
+  padding-top: clamp(2rem, 5vw, 4rem);
+}
+
+.hero {
+  max-width: 900px;
+  padding-bottom: var(--space-5);
+}
+
+.title {
+  margin-top: 0.8rem;
+}
+
+.lede {
+  margin-top: 1.2rem;
+}
+
+.section {
+  padding: var(--space-6) 0;
+  border-top: 1px solid var(--line);
+}
+
+.sectionHead {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: var(--space-4);
+}
+
+.sectionNumber {
+  flex: none;
+  color: var(--color-gold-dim);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+
+.prose p {
+  color: var(--color-parchment-soft);
+  font-size: 0.94rem;
+  line-height: 1.8;
+}
+
+.prose p + p {
+  margin-top: 0.85rem;
+}
+
+.prose strong {
+  color: var(--color-gold-bright);
+  font-weight: 600;
+}
+
+.triad {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.triadCard {
+  padding: 1rem 1.15rem;
+  background:
+    linear-gradient(90deg, rgba(201, 162, 39, 0.06), transparent 60%),
+    rgba(255, 255, 255, 0.018);
+  border-left: 2px solid var(--color-gold);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.triadName {
+  color: var(--color-parchment);
+  font-size: 1.1rem;
+}
+
+.triadTitle {
+  margin-top: 0.05rem;
+  color: var(--color-gold);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.triadText {
+  margin-top: 0.35rem;
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
+.tableCard {
+  padding: 1.15rem;
+  background: rgba(255, 255, 255, 0.018);
+  border: 1px solid var(--line-cool);
+  border-radius: var(--radius-md);
+}
+
+.tableTitle {
+  margin-bottom: 0.75rem;
+  color: var(--color-gold);
+  font-family: var(--font-body);
+  font-size: 0.64rem;
+  font-weight: 750;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.table {
+  width: 100%;
+  font-size: 0.76rem;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 0.48rem 0.55rem;
+  text-align: left;
+  border-bottom: 1px solid var(--line-cool);
+}
+
+.table thead th {
+  color: var(--color-gold);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-bottom-color: var(--line-strong);
+}
+
+.table tbody th {
+  color: var(--color-parchment-soft);
+  font-weight: 550;
+}
+
+.table td {
+  color: var(--color-muted);
+}
+
+.table tbody tr:last-child th,
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.corrected {
+  color: var(--color-gold-bright) !important;
+  font-weight: 650;
+}
+
+.tableNote {
+  margin-top: 0.7rem;
+  color: var(--color-muted);
+  font-size: 0.68rem;
+  line-height: 1.6;
+}
+
+.treeLayout {
+  display: grid;
+  grid-template-columns: minmax(230px, 320px) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+
+.diagramCard {
+  padding: 1.25rem;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(201, 162, 39, 0.08), transparent 60%),
+    rgba(255, 255, 255, 0.018);
+  border: 1px solid var(--line-cool);
+  border-radius: var(--radius-md);
+}
+
+.diagram {
+  max-width: 270px;
+  margin-inline: auto;
+}
+
+.diagramCaption {
+  margin-top: 0.65rem;
+  color: var(--color-muted);
+  font-size: 0.68rem;
+  line-height: 1.6;
+}
+
+.treeIntro {
+  margin-bottom: var(--space-3);
+}
+
+.sephiraList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem 1.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.sephiraList li {
+  display: grid;
+  grid-template-columns: 1.4rem minmax(0, 1fr);
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line-cool);
+}
+
+.sephiraNumber {
+  color: var(--color-gold-dim);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.sephiraList strong {
+  color: var(--color-parchment);
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.sephiraList strong span {
+  color: var(--color-gold);
+  font-weight: 500;
+}
+
+.sephiraList p {
+  margin-top: 0.1rem;
+  color: var(--color-muted);
+  font-size: 0.7rem;
+  line-height: 1.55;
+}
+
+.correctionGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+
+.nuance {
+  padding-left: 0.85rem;
+  margin-top: 1rem !important;
+  color: var(--color-muted) !important;
+  font-size: 0.82rem !important;
+  border-left: 1px solid var(--line-strong);
+}
+
+.elementGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.elementCard {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.018);
+  border: 1px solid var(--line-cool);
+  border-top: 3px solid var(--color-gold);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.elementHead {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.elementGlyph {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.elementHead h3 {
+  font-size: 1.05rem;
+}
+
+.elementHead p {
+  color: var(--color-gold);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.elementTheme {
+  margin-top: 0.65rem;
+  color: var(--color-parchment-soft);
+  font-size: 0.76rem;
+  line-height: 1.6;
+}
+
+.elementQuestion {
+  margin-top: 0.5rem;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.callout {
+  padding: clamp(1.15rem, 3vw, 1.75rem);
+  margin-top: var(--space-4);
+}
+
+.callout h3 {
+  color: var(--color-gold-bright);
+  font-size: 1.1rem;
+}
+
+.callout p {
+  max-width: 78ch;
+  margin-top: 0.45rem;
+  color: var(--color-parchment-soft);
+  font-size: 0.86rem;
+  line-height: 1.7;
+}
+
+.practiceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.practiceCard {
+  padding: 1.15rem;
+  background: rgba(255, 255, 255, 0.018);
+  border: 1px solid var(--line-cool);
+  border-radius: var(--radius-md);
+}
+
+.practiceNumber {
+  color: var(--color-gold-dim);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+}
+
+.practiceCard h3 {
+  margin-top: 0.25rem;
+  color: var(--color-parchment);
+  font-size: 1.02rem;
+}
+
+.practiceCard p {
+  margin-top: 0.35rem;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  line-height: 1.65;
+}
+
+.numberTable {
+  padding: 1.25rem;
+  margin-top: var(--space-4);
+  background: rgba(255, 255, 255, 0.018);
+  border: 1px solid var(--line-cool);
+  border-radius: var(--radius-md);
+}
+
+.numberTable dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem 1.75rem;
+  margin: 0;
+}
+
+.numberTable dl > div {
+  display: grid;
+  grid-template-columns: 3.4rem minmax(0, 1fr);
+  gap: 0.5rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--line-cool);
+}
+
+.numberTable dt {
+  color: var(--color-gold);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.numberTable dd {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+.sources {
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: var(--space-3);
+}
+
+.sourcesTitle {
+  margin-top: 0.35rem;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.sourcesText {
+  max-width: 74ch;
+  margin-top: 0.65rem;
+  color: var(--color-muted);
+  font-size: 0.84rem;
+  line-height: 1.7;
+}
+
+.sourceLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.5rem;
+  padding: 0;
+  margin: var(--space-3) 0 0;
+  list-style: none;
+}
+
+.sourceLinks a {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.disclaimer {
+  padding-top: var(--space-3);
+  margin-top: var(--space-3);
+  color: var(--color-muted);
+  font-size: 0.66rem;
+  line-height: 1.6;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 960px) {
+  .twoCol,
+  .correctionGrid,
+  .treeLayout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .diagramCard {
+    max-width: 360px;
+    margin-inline: auto;
+  }
+
+  .elementGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .sephiraList,
+  .practiceGrid,
+  .numberTable dl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .elementGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sectionHead {
+    gap: 0.65rem;
+  }
+}

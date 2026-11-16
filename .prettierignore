@@ -1,0 +1,11 @@
+# Maintained outside this project's formatting rules.
+AGENTS.md
+
+# Binary artwork and generated image sets.
+images/
+public/images/
+
+# Generated output and dependencies.
+dist/
+node_modules/
+package-lock.json

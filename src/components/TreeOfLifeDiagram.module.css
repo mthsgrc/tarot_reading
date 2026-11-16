@@ -1,0 +1,66 @@
+.diagram {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  overflow: visible;
+}
+
+.paths line {
+  stroke-linecap: round;
+}
+
+.path {
+  stroke: rgba(201, 162, 39, 0.2);
+  stroke-width: 1.2;
+}
+
+.pathHighlighted {
+  stroke: var(--color-gold-bright);
+  stroke-width: 3;
+  filter: drop-shadow(0 0 5px rgba(232, 199, 102, 0.55));
+}
+
+.node circle {
+  fill: #111725;
+  stroke: rgba(201, 162, 39, 0.55);
+  stroke-width: 1.3;
+  transition:
+    fill 220ms ease,
+    stroke 220ms ease;
+}
+
+.nodeHighlighted circle {
+  fill: var(--color-gold);
+  stroke: var(--color-gold-bright);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 7px rgba(232, 199, 102, 0.5));
+}
+
+.node text,
+.nodeHighlighted text {
+  fill: var(--color-parchment-soft);
+  font-family: var(--font-body);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-anchor: middle;
+}
+
+.nodeHighlighted text {
+  fill: var(--color-gold-bright);
+}
+
+.daath circle {
+  fill: transparent;
+  stroke: rgba(148, 173, 204, 0.35);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.daath text {
+  fill: rgba(148, 173, 204, 0.65);
+  font-family: var(--font-body);
+  font-size: 7px;
+  font-style: italic;
+  text-anchor: middle;
+}

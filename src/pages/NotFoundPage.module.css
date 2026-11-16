@@ -1,0 +1,33 @@
+.page {
+  display: grid;
+  min-height: 60vh;
+  padding-top: clamp(2rem, 6vw, 5rem);
+  place-items: center;
+}
+
+.panel {
+  width: min(100%, 680px);
+  padding: clamp(1.75rem, 5vw, 3.5rem);
+  text-align: center;
+}
+
+.title {
+  margin-top: 0.65rem;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+}
+
+.text {
+  max-width: 48ch;
+  margin: 1rem auto 0;
+  color: var(--color-muted);
+  font-size: 0.94rem;
+  line-height: 1.75;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: var(--space-4);
+}

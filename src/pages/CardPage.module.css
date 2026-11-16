@@ -1,0 +1,108 @@
+.page {
+  padding-top: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.topBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: var(--space-3);
+}
+
+.backLink {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+
+.deckPosition {
+  color: var(--color-muted);
+  font-size: 0.65rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.panel {
+  padding: clamp(1.25rem, 3.5vw, 2.75rem);
+}
+
+.pager {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: var(--space-4);
+}
+
+.pagerLink {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 1rem 1.25rem;
+  color: var(--color-parchment);
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line-cool);
+  border-radius: var(--radius-md);
+  transition:
+    background 160ms ease,
+    border-color 160ms ease;
+}
+
+.pagerLink:hover {
+  background: rgba(201, 162, 39, 0.05);
+  border-color: var(--line-strong);
+}
+
+.pagerNext {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.pagerLabel {
+  color: var(--color-gold);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.pagerLink strong {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.missing {
+  display: flex;
+  max-width: 640px;
+  flex-direction: column;
+  gap: 0.85rem;
+  align-items: flex-start;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  margin: var(--space-5) auto;
+}
+
+.missingTitle {
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+}
+
+.missingText {
+  color: var(--color-muted);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+@media (max-width: 520px) {
+  .pager {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pagerNext {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
