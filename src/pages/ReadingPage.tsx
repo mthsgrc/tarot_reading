@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { useSearchParams } from "react-router-dom";
 import { CardDetailDialog } from "../components/CardDetailDialog";
@@ -26,7 +26,10 @@ type CopyStatus = "idle" | "reading" | "link" | "error";
 export function ReadingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [shared] = useState(() => readSharedReading(searchParams));
-  const [invalidShare] = useState(() => !shared && hasShareParams(searchParams));
+  const [shareError, setShareError] = useState(
+    () => !shared && hasShareParams(searchParams),
+  );
+  const [appliedShare, setAppliedShare] = useState(() => searchParams.toString());
   const [isShared, setIsShared] = useState(Boolean(shared));
   const [spreadId, setSpreadId] = useState<string>(
     shared?.spread.id ?? DEFAULT_SPREAD.id,
@@ -68,6 +71,35 @@ export function ReadingPage() {
     [interpretation, spread, question],
   );
 
+  // A different hash can arrive without a reload, so apply new share links too.
+  useEffect(() => {
+    const key = searchParams.toString();
+    if (key === appliedShare) {
+      return;
+    }
+
+    // The URL is an external store, so applying a new link needs state updates.
+    // oxlint-disable-next-line react/set-state-in-effect
+    setAppliedShare(key);
+
+    const next = readSharedReading(searchParams);
+    if (!next) {
+      if (hasShareParams(searchParams)) {
+        setShareError(true);
+      }
+      return;
+    }
+
+    setSpreadId(next.spread.id);
+    setQuestion(next.question);
+    setShadowEnabled(next.shadow);
+    setDrawn(next.drawn);
+    setOpenIndex(null);
+    setIsShared(true);
+    setShareError(false);
+    setCopyStatus("idle");
+  }, [searchParams, appliedShare]);
+
   function clearShareLink() {
     setSearchParams({}, { replace: true });
   }
@@ -77,6 +109,7 @@ export function ReadingPage() {
     setDrawn(drawCards(spread, { shadow: shadowEnabled }));
     setOpenIndex(null);
     setIsShared(false);
+    setShareError(false);
     setCopyStatus("idle");
     clearShareLink();
   }
@@ -99,6 +132,7 @@ export function ReadingPage() {
     setDrawn([]);
     setOpenIndex(null);
     setIsShared(false);
+    setShareError(false);
     setCopyStatus("idle");
     clearShareLink();
   }
@@ -348,7 +382,7 @@ export function ReadingPage() {
         </ul>
       </header>
 
-      {invalidShare && (
+      {shareError && (
         <p className={styles.shareError} role="status">
           That shared link could not be read. Check that the whole link was copied, or
           draw a new reading below.

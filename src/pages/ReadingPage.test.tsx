@@ -1,12 +1,21 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter, useLocation } from "react-router-dom";
+import { MemoryRouter, useLocation, useNavigate } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 import { ReadingPage } from "./ReadingPage";
 
 function LocationProbe() {
   const location = useLocation();
   return <span data-testid="location">{location.search}</span>;
+}
+
+function ShareLinkButton({ to }: { to: string }) {
+  const navigate = useNavigate();
+  return (
+    <button type="button" onClick={() => navigate(to)}>
+      open shared link
+    </button>
+  );
 }
 
 function renderReadingPage(initialEntry = "/reading") {
@@ -136,6 +145,32 @@ describe("ReadingPage", () => {
     expect(screen.getByRole("button", { name: /reveal all/i })).toBeDisabled();
     expect(screen.getAllByText("Two of Cups").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Shadow").length).toBeGreaterThan(0);
+  });
+
+  it("opens a share link that arrives without a reload", async () => {
+    const user = userEvent.setup();
+    const params = new URLSearchParams({
+      v: "1",
+      spread: "thelema-triad",
+      cards: "major-00-fool.u,cups-two.u,major-17-star.u",
+      q: "What should I notice?",
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/reading"]}>
+        <ReadingPage />
+        <ShareLinkButton to={`/reading?${params.toString()}`} />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole("heading", { name: /set the question/i }),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /open shared link/i }));
+
+    expect(screen.getByText("Shared reading")).toBeInTheDocument();
+    expect(screen.getByText("3 of 3 cards revealed.")).toBeInTheDocument();
   });
 
   it("copies a shareable link for the current draw", async () => {
