@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import { CardImage } from "../components/CardImage";
 import { ALL_CARDS } from "../data/cards";
 import { cardTypeLabel } from "../domain/cardLabels";
+import { ELEMENTS } from "../domain/reading/positions";
 import type { Element, Suit } from "../domain/types";
 import styles from "./LibraryPage.module.css";
 
 type ArcanaFilter = "all" | "major" | "minor" | "court";
 
 const SUITS: readonly Suit[] = ["Wands", "Cups", "Swords", "Disks"];
-const ELEMENTS: readonly Element[] = ["Fire", "Water", "Air", "Earth"];
 
 function searchableText(card: (typeof ALL_CARDS)[number]): string {
   const fields: string[] = [
@@ -49,6 +49,16 @@ function searchableText(card: (typeof ALL_CARDS)[number]): string {
   return fields.join(" ").toLowerCase();
 }
 
+function searchWords(card: (typeof ALL_CARDS)[number]): readonly string[] {
+  return searchableText(card)
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+}
+
+const CARD_SEARCH_WORDS: ReadonlyMap<string, readonly string[]> = new Map(
+  ALL_CARDS.map((card) => [card.id, searchWords(card)]),
+);
+
 export function LibraryPage() {
   const [query, setQuery] = useState("");
   const [arcana, setArcana] = useState<ArcanaFilter>("all");
@@ -72,9 +82,7 @@ export function LibraryPage() {
       }
 
       if (tokens.length > 0) {
-        const words = searchableText(card)
-          .split(/[^a-z0-9]+/)
-          .filter(Boolean);
+        const words = CARD_SEARCH_WORDS.get(card.id) ?? [];
 
         return tokens.every((token) =>
           words.some((word) => word === token || word.startsWith(token)),

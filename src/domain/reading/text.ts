@@ -1,4 +1,4 @@
-import type { DrawnCard, Orientation } from "../types";
+import type { DrawnCard } from "../types";
 
 export function lowerFirst(text: string): string {
   return text.charAt(0).toLowerCase() + text.slice(1);
@@ -16,10 +16,6 @@ export function joinWithAnd(items: readonly string[]): string {
   if (items.length === 1) return items[0] ?? "";
   if (items.length === 2) return `${items[0]} and ${items[1]}`;
   return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1]}`;
-}
-
-export function orientationSuffix(orientation: Orientation): string {
-  return orientation === "shadow" ? " in shadow" : "";
 }
 
 export function describeCard(drawn: DrawnCard, includeUpright = false): string {
@@ -57,12 +53,4 @@ export function pickVariant<T>(items: readonly T[], seed: string, salt: string):
   }
 
   return items[hashString(`${seed}|${salt}`) % items.length] as T;
-}
-
-export function pluralize(
-  count: number,
-  singular: string,
-  plural = `${singular}s`,
-): string {
-  return count === 1 ? singular : plural;
 }

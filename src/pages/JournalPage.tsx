@@ -1,8 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { DEPTH_LABELS, LENS_LABELS } from "../domain/reading/language";
 import { readSharedReading } from "../domain/reading/share";
-import { clearJournal, deleteJournalEntry, loadJournal } from "../lib/journalStorage";
+import {
+  JOURNAL_STORAGE_KEY,
+  clearJournal,
+  deleteJournalEntry,
+  loadJournal,
+} from "../lib/journalStorage";
 import styles from "./JournalPage.module.css";
 
 const DATE_FORMAT = new Intl.DateTimeFormat(undefined, {
@@ -14,6 +19,19 @@ export function JournalPage() {
   const [entries, setEntries] = useState(loadJournal);
   const [confirmClear, setConfirmClear] = useState(false);
   const [storageError, setStorageError] = useState(false);
+
+  useEffect(() => {
+    function handleStorage(event: StorageEvent) {
+      if (event.key !== null && event.key !== JOURNAL_STORAGE_KEY) {
+        return;
+      }
+
+      setEntries(loadJournal());
+    }
+
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   function handleDelete(id: string) {
     const remaining = deleteJournalEntry(id);

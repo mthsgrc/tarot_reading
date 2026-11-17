@@ -8,11 +8,15 @@ import type {
   Suit,
 } from "../types";
 
-export type ReadingLens = "general" | "work" | "love" | "inner";
+export const READING_LENSES = ["general", "work", "love", "inner"] as const;
+
+export type ReadingLens = (typeof READING_LENSES)[number];
 
 export type LensSource = "explicit" | "inferred" | "default";
 
-export type ReadingDepth = "brief" | "standard" | "deep";
+export const READING_DEPTHS = ["brief", "standard", "deep"] as const;
+
+export type ReadingDepth = (typeof READING_DEPTHS)[number];
 
 export interface ReadingInput {
   spread: Spread;

@@ -183,12 +183,21 @@ npm run verify
 
 `npm run test:a11y` runs axe-core over every main page and the card dialog under the WCAG 2.0/2.1 A and AA tags. jsdom has no layout or paint, so color contrast is disabled in that pass and should be checked in a real browser.
 
+### Manual real-browser checks
+
+Run `npm run build && npm run preview` before a release, then verify:
+
+- Text and focus indicators meet WCAG AA contrast.
+- The reading board, library grid, and print preview do not overflow at 320 px, 768 px, and 1280 px.
+- Keyboard navigation, the card dialog, and reduced-motion preferences behave correctly.
+- The journal persists after a reload and stays in sync when a second tab changes it.
+
 ## Roadmap
 
 - Export the journal as a JSON backup
 - Export a reading as a shareable image
 - Add a study mode that quizzes correspondences
-- Add automated accessibility checks with axe
+- Add real-browser contrast and layout checks beyond the jsdom axe pass
 - Add a visual regression pass once the layout stabilizes
 
 ## Sources

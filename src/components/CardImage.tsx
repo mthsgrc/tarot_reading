@@ -18,11 +18,11 @@ export function CardImage({
   loading = "lazy",
   decorative = false,
 }: CardImageProps) {
-  const [failed, setFailed] = useState(false);
+  const [failedCardId, setFailedCardId] = useState<string | null>(null);
   const base = cardImageBase(card);
   const alt = decorative ? "" : `${card.name} from the Thoth Tarot`;
 
-  if (failed) {
+  if (failedCardId === card.id) {
     return (
       <div
         className={`${styles.frame} ${styles.placeholder} ${className ?? ""}`}
@@ -48,7 +48,7 @@ export function CardImage({
         loading={loading}
         decoding="async"
         data-file={fileName}
-        onError={() => setFailed(true)}
+        onError={() => setFailedCardId(card.id)}
       />
     </picture>
   );

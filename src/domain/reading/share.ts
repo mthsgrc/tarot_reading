@@ -1,13 +1,18 @@
 import { CARD_BY_ID } from "../../data/cards";
 import { SPREAD_BY_ID } from "../../data/spreads";
 import type { DrawnCard, Orientation, Spread } from "../types";
-import type { ReadingDepth, ReadingLens } from "./types";
+import {
+  READING_DEPTHS,
+  READING_LENSES,
+  type ReadingDepth,
+  type ReadingLens,
+} from "./types";
 
 /** Bump when the encoded shape changes in a way that cannot be read backwards. */
 const SHARE_VERSION = "1";
 export const MAX_QUESTION_LENGTH = 500;
-const SHARE_LENSES = new Set<string>(["general", "work", "love", "inner"]);
-const SHARE_DEPTHS = new Set<string>(["brief", "standard", "deep"]);
+const SHARE_LENSES = new Set<string>(READING_LENSES);
+const SHARE_DEPTHS = new Set<string>(READING_DEPTHS);
 
 /** Keeps the builder and the reader on the same question limit. */
 export function normalizeQuestion(question: string): string {

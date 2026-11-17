@@ -11,20 +11,22 @@ import { drawCards } from "../domain/deck";
 import { formatReading } from "../domain/reading/format";
 import { interpretReading } from "../domain/reading/interpret";
 import { DEPTH_LABELS, LENS_LABELS } from "../domain/reading/language";
+import { ELEMENTS } from "../domain/reading/positions";
 import {
   buildShareParams,
   buildShareUrl,
   hasShareParams,
   readSharedReading,
 } from "../domain/reading/share";
+import {
+  READING_LENSES,
+  type ReadingDepth,
+  type ReadingLens,
+} from "../domain/reading/types";
 import { ELEMENT_COLORS, ELEMENT_GLYPHS } from "../domain/tree";
-import type { ReadingDepth, ReadingLens } from "../domain/reading/types";
 import type { DrawnCard, Element } from "../domain/types";
 import { saveJournalEntry, type JournalSaveStatus } from "../lib/journalStorage";
 import styles from "./ReadingPage.module.css";
-
-const ELEMENTS: readonly Element[] = ["Fire", "Water", "Air", "Earth"];
-const LENSES: readonly ReadingLens[] = ["general", "work", "love", "inner"];
 
 type LensSelection = "auto" | ReadingLens;
 type CopyStatus = "idle" | "reading" | "link" | "linkWithoutQuestion" | "error";
@@ -548,7 +550,7 @@ export function ReadingPage() {
                   }
                 >
                   <option value="auto">Automatic — infer from the question</option>
-                  {LENSES.map((lens) => (
+                  {READING_LENSES.map((lens) => (
                     <option key={lens} value={lens}>
                       {LENS_LABELS[lens]}
                     </option>

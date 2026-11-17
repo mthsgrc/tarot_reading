@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -6,7 +6,11 @@ import { ALL_CARDS } from "../data/cards";
 import { SPREADS } from "../data/spreads";
 import { drawCards, seededRandom } from "../domain/deck";
 import { buildShareParams, readSharedReading } from "../domain/reading/share";
-import { loadJournal, saveJournalEntry } from "../lib/journalStorage";
+import {
+  JOURNAL_STORAGE_KEY,
+  loadJournal,
+  saveJournalEntry,
+} from "../lib/journalStorage";
 import { JournalPage } from "./JournalPage";
 
 function triadSpread() {
@@ -77,6 +81,18 @@ describe("JournalPage", () => {
     const open = screen.getByRole("link", { name: /open reading/i });
     expect(open.getAttribute("href")).toContain("v=1");
     expect(open.getAttribute("href")).toContain("j=1");
+  });
+
+  it("refreshes when another tab changes the journal", async () => {
+    saveJournalEntry(paramsFor("First"));
+    renderJournalPage();
+
+    expect(screen.getByText("1 saved reading")).toBeInTheDocument();
+
+    saveJournalEntry(paramsFor("Second"));
+    fireEvent(window, new StorageEvent("storage", { key: JOURNAL_STORAGE_KEY }));
+
+    expect(await screen.findByText("2 saved readings")).toBeInTheDocument();
   });
 
   it("deletes one saved reading", async () => {
