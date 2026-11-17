@@ -101,6 +101,10 @@ React state in `ReadingPage` owns the current draw. Cards start face down, revea
 
 The same draw always produces the same reading, including phrase variants. No backend, no LLM, and no `Math.random()` at render time. Copying the reading exports the full interpretation as plain text, with the reflection disclaimer.
 
+### Sharing
+
+**Copy reading** exports the interpretation as plain text. **Copy link** encodes the spread, cards, orientations, question, and shadow flag in the URL, so the recipient sees the reading exactly as it was drawn. Nothing is uploaded; the link is self-contained. Decoding rejects unknown spreads, duplicate or missing cards, malformed orientations, and overlong questions, and shows a notice instead of failing.
+
 ## Card artwork
 
 The original scans are in `images/` and were optimized with ImageMagick into native `278×408` AVIF and WebP files:
@@ -138,7 +142,8 @@ The suite covers:
 - Shuffle determinism, non-mutation, duplicate-free draws, and shadow orientation
 - Reading facts, lens inference, shared Sephira, Tree and planetary resonances
 - Deterministic interpretation, all-spread smoke tests, every card in both orientations, and text export
-- The complete reading flow, interpretation section, copy behavior, larger spread selection, library search/filters, card detail pages, and tradition page
+- Share-link round trips for every spread, special characters in questions, and rejection of malformed links
+- The complete reading flow, shared-link loading, interpretation section, copy behavior, larger spread selection, library search/filters, card detail pages, and tradition page
 
 Run:
 

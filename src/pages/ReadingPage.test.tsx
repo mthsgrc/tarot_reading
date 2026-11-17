@@ -1,13 +1,19 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, useLocation } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 import { ReadingPage } from "./ReadingPage";
 
-function renderReadingPage() {
+function LocationProbe() {
+  const location = useLocation();
+  return <span data-testid="location">{location.search}</span>;
+}
+
+function renderReadingPage(initialEntry = "/reading") {
   return render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[initialEntry]}>
       <ReadingPage />
+      <LocationProbe />
     </MemoryRouter>,
   );
 }
@@ -110,6 +116,85 @@ describe("ReadingPage", () => {
       expect.stringContaining("A reading for reflection, not prediction."),
     );
     expect(screen.getByText(/reading copied to the clipboard/i)).toBeInTheDocument();
+  });
+
+  it("opens a shared reading from the URL without drawing", () => {
+    const params = new URLSearchParams({
+      v: "1",
+      spread: "thelema-triad",
+      cards: "major-00-fool.u,cups-two.s,major-17-star.u",
+      q: "What should I notice?",
+    });
+
+    renderReadingPage(`/reading?${params.toString()}`);
+
+    expect(screen.getByText("Shared reading")).toBeInTheDocument();
+    expect(screen.getByText("3 of 3 cards revealed.")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "The pattern" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "The reading" })).toBeInTheDocument();
+    expect(screen.getByText(/what should i notice\?/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /reveal all/i })).toBeDisabled();
+    expect(screen.getAllByText("Two of Cups").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Shadow").length).toBeGreaterThan(0);
+  });
+
+  it("copies a shareable link for the current draw", async () => {
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText },
+    });
+    renderReadingPage();
+
+    await user.type(screen.getByRole("textbox", { name: /question/i }), "What now?");
+    await user.click(screen.getByRole("button", { name: /draw the cards/i }));
+    await user.click(screen.getByRole("button", { name: /reveal all/i }));
+    await user.click(screen.getByRole("button", { name: /copy link/i }));
+
+    expect(writeText).toHaveBeenCalledTimes(1);
+
+    const copied = writeText.mock.calls[0]?.[0] as string;
+    expect(copied).toContain("#/reading?");
+
+    const shared = new URLSearchParams(copied.slice(copied.indexOf("?") + 1));
+    expect(shared.get("v")).toBe("1");
+    expect(shared.get("spread")).toBe("thelema-triad");
+    expect(shared.get("q")).toBe("What now?");
+    expect(shared.get("cards")).toMatch(/^[a-z0-9-]+\.(u|s)(,[a-z0-9-]+\.(u|s)){2}$/);
+
+    expect(
+      screen.getByText(/link copied to the clipboard.*includes your question/i),
+    ).toBeInTheDocument();
+  });
+
+  it("clears the share parameters when a new reading starts", async () => {
+    const user = userEvent.setup();
+    const params = new URLSearchParams({
+      v: "1",
+      spread: "thelema-triad",
+      cards: "major-00-fool.u,cups-two.u,major-17-star.u",
+      q: "What should I notice?",
+    });
+
+    renderReadingPage(`/reading?${params.toString()}`);
+    expect(screen.getByTestId("location").textContent).not.toBe("");
+
+    await user.click(screen.getByRole("button", { name: /new reading/i }));
+
+    expect(screen.getByTestId("location").textContent).toBe("");
+    expect(screen.getByRole("textbox", { name: /question/i })).toHaveValue(
+      "What should I notice?",
+    );
+  });
+
+  it("explains an unreadable shared link", () => {
+    renderReadingPage("/reading?v=1&spread=unknown&cards=major-00-fool.u");
+
+    expect(screen.getByText(/could not be read/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /set the question/i }),
+    ).toBeInTheDocument();
   });
 
   it("draws the selected larger spread", async () => {

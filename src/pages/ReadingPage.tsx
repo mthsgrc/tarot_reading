@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
+import { useSearchParams } from "react-router-dom";
 import { CardDetailDialog } from "../components/CardDetailDialog";
 import { Hexagram } from "../components/Hexagram";
 import { ReadingInterpretation } from "../components/ReadingInterpretation";
@@ -9,19 +10,30 @@ import { DEFAULT_SPREAD, SPREADS, SPREAD_BY_ID } from "../data/spreads";
 import { drawCards } from "../domain/deck";
 import { formatReading } from "../domain/reading/format";
 import { interpretReading } from "../domain/reading/interpret";
+import {
+  buildShareUrl,
+  hasShareParams,
+  readSharedReading,
+} from "../domain/reading/share";
 import { ELEMENT_COLORS, ELEMENT_GLYPHS } from "../domain/tree";
 import type { DrawnCard, Element } from "../domain/types";
 import styles from "./ReadingPage.module.css";
 
 const ELEMENTS: readonly Element[] = ["Fire", "Water", "Air", "Earth"];
 
-type CopyStatus = "idle" | "copied" | "error";
+type CopyStatus = "idle" | "reading" | "link" | "error";
 
 export function ReadingPage() {
-  const [spreadId, setSpreadId] = useState<string>(DEFAULT_SPREAD.id);
-  const [question, setQuestion] = useState("");
-  const [shadowEnabled, setShadowEnabled] = useState(false);
-  const [drawn, setDrawn] = useState<DrawnCard[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [shared] = useState(() => readSharedReading(searchParams));
+  const [invalidShare] = useState(() => !shared && hasShareParams(searchParams));
+  const [isShared, setIsShared] = useState(Boolean(shared));
+  const [spreadId, setSpreadId] = useState<string>(
+    shared?.spread.id ?? DEFAULT_SPREAD.id,
+  );
+  const [question, setQuestion] = useState(shared?.question ?? "");
+  const [shadowEnabled, setShadowEnabled] = useState(shared?.shadow ?? false);
+  const [drawn, setDrawn] = useState<DrawnCard[]>(shared?.drawn ?? []);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
 
@@ -56,11 +68,17 @@ export function ReadingPage() {
     [interpretation, spread, question],
   );
 
+  function clearShareLink() {
+    setSearchParams({}, { replace: true });
+  }
+
   function handleStart(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setDrawn(drawCards(spread, { shadow: shadowEnabled }));
     setOpenIndex(null);
+    setIsShared(false);
     setCopyStatus("idle");
+    clearShareLink();
   }
 
   function handleReveal(index: number) {
@@ -80,7 +98,9 @@ export function ReadingPage() {
   function handleNewReading() {
     setDrawn([]);
     setOpenIndex(null);
+    setIsShared(false);
     setCopyStatus("idle");
+    clearShareLink();
   }
 
   async function handleCopy() {
@@ -90,7 +110,27 @@ export function ReadingPage() {
       }
 
       await navigator.clipboard.writeText(summaryText);
-      setCopyStatus("copied");
+      setCopyStatus("reading");
+    } catch {
+      setCopyStatus("error");
+    }
+  }
+
+  async function handleCopyLink() {
+    try {
+      if (!navigator.clipboard?.writeText) {
+        throw new Error("Clipboard API unavailable");
+      }
+
+      const url = buildShareUrl(window.location.href, {
+        spread,
+        drawn,
+        question,
+        shadow: shadowEnabled,
+      });
+
+      await navigator.clipboard.writeText(url);
+      setCopyStatus("link");
     } catch {
       setCopyStatus("error");
     }
@@ -102,7 +142,7 @@ export function ReadingPage() {
         <section className={styles.reading} aria-labelledby="reading-title">
           <div className={styles.readingHead}>
             <div>
-              <p className="eyebrow">Your reading</p>
+              <p className="eyebrow">{isShared ? "Shared reading" : "Your reading"}</p>
               <h1 id="reading-title" className={`section-title ${styles.readingTitle}`}>
                 {spread.name}
               </h1>
@@ -167,13 +207,22 @@ export function ReadingPage() {
                       The pattern
                     </h2>
                   </div>
-                  <button
-                    type="button"
-                    className="button button--small"
-                    onClick={handleCopy}
-                  >
-                    {copyStatus === "copied" ? "Copied" : "Copy reading"}
-                  </button>
+                  <div className={styles.copyActions}>
+                    <button
+                      type="button"
+                      className="button button--small"
+                      onClick={handleCopy}
+                    >
+                      {copyStatus === "reading" ? "Copied" : "Copy reading"}
+                    </button>
+                    <button
+                      type="button"
+                      className="button button--ghost button--small"
+                      onClick={handleCopyLink}
+                    >
+                      {copyStatus === "link" ? "Link copied" : "Copy link"}
+                    </button>
+                  </div>
                 </div>
 
                 <ol className={styles.summaryList}>
@@ -244,7 +293,9 @@ export function ReadingPage() {
                 </div>
 
                 <p className={styles.copyStatus} role="status" aria-live="polite">
-                  {copyStatus === "copied" && "Reading copied to the clipboard."}
+                  {copyStatus === "reading" && "Reading copied to the clipboard."}
+                  {copyStatus === "link" &&
+                    "Link copied to the clipboard. It includes your question."}
                   {copyStatus === "error" &&
                     "The clipboard is unavailable in this browser. Copying is disabled."}
                 </p>
@@ -296,6 +347,13 @@ export function ReadingPage() {
           </li>
         </ul>
       </header>
+
+      {invalidShare && (
+        <p className={styles.shareError} role="status">
+          That shared link could not be read. Check that the whole link was copied, or
+          draw a new reading below.
+        </p>
+      )}
 
       <div className={styles.setupGrid}>
         <section className={`panel ${styles.setupPanel}`} aria-labelledby="setup-title">

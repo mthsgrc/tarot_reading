@@ -63,6 +63,18 @@
   text-transform: uppercase;
 }
 
+.shareError {
+  max-width: 70ch;
+  padding: 0.9rem 1rem;
+  margin-top: var(--space-5);
+  color: var(--color-crimson-bright);
+  font-size: 0.82rem;
+  line-height: 1.65;
+  background: rgba(194, 76, 94, 0.08);
+  border: 1px solid rgba(194, 76, 94, 0.35);
+  border-radius: var(--radius-sm);
+}
+
 .setupGrid {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(270px, 0.6fr);
@@ -219,6 +231,12 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
+}
+
+.copyActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .question {
@@ -468,6 +486,14 @@
   }
 
   .actions :global(.button) {
+    flex: 1;
+  }
+
+  .copyActions {
+    width: 100%;
+  }
+
+  .copyActions :global(.button) {
     flex: 1;
   }
 
