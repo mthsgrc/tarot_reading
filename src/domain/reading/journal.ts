@@ -7,7 +7,7 @@ import { readSharedReading } from "./share";
  */
 export const JOURNAL_FILE_VERSION = 1;
 export const JOURNAL_MAX_ENTRIES = 50;
-const MAX_PARAMS_LENGTH = 4096;
+export const JOURNAL_MAX_PARAMS_LENGTH = 4096;
 
 interface JournalFile {
   version: number;
@@ -37,7 +37,7 @@ function isJournalEntry(value: unknown): value is JournalEntry {
     return false;
   }
 
-  if (id !== params || params.length > MAX_PARAMS_LENGTH) {
+  if (id !== params || params.length > JOURNAL_MAX_PARAMS_LENGTH) {
     return false;
   }
 
@@ -102,12 +102,13 @@ export function upsertJournalEntry(
   entries: readonly JournalEntry[],
   params: URLSearchParams,
   savedAt: string,
-): JournalEntry[] {
-  if (!readSharedReading(params)) {
-    return [...entries];
+): JournalEntry[] | null {
+  const id = params.toString();
+
+  if (!readSharedReading(params) || id.length > JOURNAL_MAX_PARAMS_LENGTH) {
+    return null;
   }
 
-  const id = params.toString();
   const entry: JournalEntry = { id, savedAt, params: id };
 
   return [entry, ...entries.filter((item) => item.id !== id)].slice(

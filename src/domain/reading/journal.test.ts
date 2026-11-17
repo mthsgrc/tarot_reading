@@ -5,6 +5,7 @@ import { drawCards, seededRandom } from "../deck";
 import {
   JOURNAL_FILE_VERSION,
   JOURNAL_MAX_ENTRIES,
+  JOURNAL_MAX_PARAMS_LENGTH,
   parseJournal,
   removeJournalEntry,
   serializeJournal,
@@ -93,11 +94,14 @@ describe("reading journal data", () => {
     let entries: JournalEntry[] = [];
 
     for (let index = 0; index < JOURNAL_MAX_ENTRIES + 5; index += 1) {
-      entries = upsertJournalEntry(
+      const next = upsertJournalEntry(
         entries,
         paramsFor(`Question ${index}`),
         new Date(Date.UTC(2026, 10, 17, 12, 0, index)).toISOString(),
       );
+
+      if (!next) throw new Error("Expected a valid journal entry.");
+      entries = next;
     }
 
     const parsed = parseJournal(serializeJournal(entries));
@@ -113,8 +117,11 @@ describe("reading journal data", () => {
     const second = paramsFor("Second question");
 
     let entries = upsertJournalEntry([], first, "2026-11-17T10:00:00.000Z");
+    if (!entries) throw new Error("Expected a valid journal entry.");
     entries = upsertJournalEntry(entries, second, "2026-11-17T11:00:00.000Z");
+    if (!entries) throw new Error("Expected a valid journal entry.");
     entries = upsertJournalEntry(entries, first, "2026-11-17T12:00:00.000Z");
+    if (!entries) throw new Error("Expected a valid journal entry.");
 
     expect(entries.map((entry) => entry.params)).toEqual([
       first.toString(),
@@ -127,9 +134,14 @@ describe("reading journal data", () => {
     const invalid = new URLSearchParams("v=1&spread=unknown&cards=nope.u");
     const entries = [entryFor(paramsFor())];
 
-    expect(upsertJournalEntry(entries, invalid, "2026-11-17T12:00:00.000Z")).toEqual(
-      entries,
-    );
+    expect(upsertJournalEntry(entries, invalid, "2026-11-17T12:00:00.000Z")).toBeNull();
+  });
+
+  it("refuses to save an oversized encoded reading", () => {
+    const params = paramsFor();
+    params.set("padding", "x".repeat(JOURNAL_MAX_PARAMS_LENGTH));
+
+    expect(upsertJournalEntry([], params, "2026-11-17T12:00:00.000Z")).toBeNull();
   });
 
   it("removes one entry without touching the rest", () => {

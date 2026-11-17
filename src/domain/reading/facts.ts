@@ -25,6 +25,7 @@ const SEPHIRA_IDS = new Set<Sephira>(SEPHIROTH.map((sephira) => sephira.id));
 const LENS_KEYWORDS: ReadonlyArray<{
   lens: ReadingLens;
   words: readonly string[];
+  phrases?: readonly string[];
 }> = [
   {
     lens: "work",
@@ -69,9 +70,10 @@ const LENS_KEYWORDS: ReadonlyArray<{
   },
   {
     lens: "inner",
+    // "will" is deliberately absent: it is usually an auxiliary verb ("Will they…?").
+    // Phrases carry the stronger signal and outrank single-word matches.
     words: [
       "purpose",
-      "will",
       "path",
       "direction",
       "healing",
@@ -85,18 +87,38 @@ const LENS_KEYWORDS: ReadonlyArray<{
       "spiritual",
       "truth",
     ],
+    phrases: ["true will", "inner work", "inner life", "great work"],
   },
 ];
 
+const PHRASE_WEIGHT = 2;
+
+function countPhrase(tokens: readonly string[], phrase: string): number {
+  const phraseWords = phrase.split(" ");
+
+  for (let index = 0; index <= tokens.length - phraseWords.length; index += 1) {
+    if (phraseWords.every((word, offset) => tokens[index + offset] === word)) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
 export function inferLens(question = ""): ReadingLens {
-  const words: readonly string[] = question.toLowerCase().match(/[a-z']+/g) ?? [];
+  const tokens: readonly string[] = question.toLowerCase().match(/[a-z']+/g) ?? [];
   let best: { lens: ReadingLens; score: number } = { lens: "general", score: 0 };
 
-  for (const { lens, words: keywords } of LENS_KEYWORDS) {
-    const score = keywords.reduce(
-      (total, keyword) => total + (words.includes(keyword) ? 1 : 0),
+  for (const { lens, words: keywords, phrases = [] } of LENS_KEYWORDS) {
+    const wordScore = keywords.reduce(
+      (total, keyword) => total + (tokens.includes(keyword) ? 1 : 0),
       0,
     );
+    const phraseScore = phrases.reduce(
+      (total, phrase) => total + countPhrase(tokens, phrase) * PHRASE_WEIGHT,
+      0,
+    );
+    const score = wordScore + phraseScore;
 
     if (score > best.score) {
       best = { lens, score };

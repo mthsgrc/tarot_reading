@@ -8,6 +8,8 @@ import {
 
 export const JOURNAL_STORAGE_KEY = "thoth-tarot:journal:v1";
 
+export type JournalSaveStatus = "saved" | "invalid" | "error";
+
 export function loadJournal(): JournalEntry[] {
   try {
     return parseJournal(window.localStorage.getItem(JOURNAL_STORAGE_KEY));
@@ -16,13 +18,17 @@ export function loadJournal(): JournalEntry[] {
   }
 }
 
-export function saveJournalEntry(params: URLSearchParams): boolean {
+export function saveJournalEntry(params: URLSearchParams): JournalSaveStatus {
   try {
     const entries = upsertJournalEntry(loadJournal(), params, new Date().toISOString());
+    if (!entries) {
+      return "invalid";
+    }
+
     window.localStorage.setItem(JOURNAL_STORAGE_KEY, serializeJournal(entries));
-    return true;
+    return "saved";
   } catch {
-    return false;
+    return "error";
   }
 }
 

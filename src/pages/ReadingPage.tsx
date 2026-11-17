@@ -20,7 +20,7 @@ import {
 import { ELEMENT_COLORS, ELEMENT_GLYPHS } from "../domain/tree";
 import type { ReadingDepth, ReadingLens } from "../domain/reading/types";
 import type { DrawnCard, Element } from "../domain/types";
-import { saveJournalEntry } from "../lib/journalStorage";
+import { saveJournalEntry, type JournalSaveStatus } from "../lib/journalStorage";
 import styles from "./ReadingPage.module.css";
 
 const ELEMENTS: readonly Element[] = ["Fire", "Water", "Air", "Earth"];
@@ -28,7 +28,7 @@ const LENSES: readonly ReadingLens[] = ["general", "work", "love", "inner"];
 
 type LensSelection = "auto" | ReadingLens;
 type CopyStatus = "idle" | "reading" | "link" | "error";
-type JournalStatus = "idle" | "saved" | "error";
+type JournalStatus = "idle" | JournalSaveStatus;
 
 export function ReadingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -93,6 +93,14 @@ export function ReadingPage() {
     [interpretation, spread, question],
   );
 
+  function clearReadingState() {
+    setDrawn([]);
+    setOpenIndex(null);
+    setIsShared(false);
+    setCopyStatus("idle");
+    setJournalStatus("idle");
+  }
+
   // A different hash can arrive without a reload, so apply new share links too.
   useEffect(() => {
     const key = searchParams.toString();
@@ -106,9 +114,15 @@ export function ReadingPage() {
 
     const next = readSharedReading(searchParams);
     if (!next) {
-      if (hasShareParams(searchParams)) {
-        setShareError(true);
+      const attemptedShare = hasShareParams(searchParams);
+
+      if (isShared || attemptedShare) {
+        // Leaving a shared reading (or arriving with a bad link) returns to setup.
+        // oxlint-disable-next-line react/set-state-in-effect
+        clearReadingState();
       }
+
+      setShareError(attemptedShare);
       return;
     }
 
@@ -123,7 +137,7 @@ export function ReadingPage() {
     setShareError(false);
     setCopyStatus("idle");
     setJournalStatus("idle");
-  }, [searchParams, appliedShare]);
+  }, [searchParams, appliedShare, isShared]);
 
   function clearShareLink() {
     setSearchParams({}, { replace: true });
@@ -155,12 +169,8 @@ export function ReadingPage() {
   }
 
   function handleNewReading() {
-    setDrawn([]);
-    setOpenIndex(null);
-    setIsShared(false);
+    clearReadingState();
     setShareError(false);
-    setCopyStatus("idle");
-    setJournalStatus("idle");
     clearShareLink();
   }
 
@@ -195,7 +205,7 @@ export function ReadingPage() {
   function handleSaveToJournal() {
     const params = buildShareParams(currentShareInput());
 
-    setJournalStatus(saveJournalEntry(params) ? "saved" : "error");
+    setJournalStatus(saveJournalEntry(params));
   }
 
   async function handleCopyLink() {
@@ -401,6 +411,8 @@ export function ReadingPage() {
                   {copyStatus === "error" &&
                     "The clipboard is unavailable in this browser. Copying is disabled."}
                   {journalStatus === "saved" && "Reading saved to your journal."}
+                  {journalStatus === "invalid" &&
+                    "This reading could not be saved because its encoded link is malformed or too long."}
                   {journalStatus === "error" &&
                     "The journal is unavailable in this browser. Browser storage may be disabled or full."}
                 </p>

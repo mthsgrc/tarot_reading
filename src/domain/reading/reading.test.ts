@@ -105,6 +105,16 @@ describe("reading facts", () => {
     ).toBe("inner");
   });
 
+  it("does not mistake the auxiliary verb will for the inner lens", () => {
+    const { drawn } = drawFor("thelema-triad", THELEMA_EXAMPLE);
+
+    expect(buildFacts({ drawn, question: "Will they come back?" }).lens).toBe("general");
+    expect(buildFacts({ drawn, question: "What is my True Will?" }).lens).toBe("inner");
+    expect(buildFacts({ drawn, question: "How do I approach my inner work?" }).lens).toBe(
+      "inner",
+    );
+  });
+
   it("detects a minor sitting in its own Sephira and a major touching its path", () => {
     const { drawn } = drawFor("tree-of-life", [
       "major-00-fool",

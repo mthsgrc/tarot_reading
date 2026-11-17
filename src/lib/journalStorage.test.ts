@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ALL_CARDS } from "../data/cards";
 import { SPREADS } from "../data/spreads";
 import { drawCards, seededRandom } from "../domain/deck";
+import { JOURNAL_MAX_PARAMS_LENGTH } from "../domain/reading/journal";
 import { buildShareParams } from "../domain/reading/share";
 import {
   JOURNAL_STORAGE_KEY,
@@ -44,11 +45,22 @@ describe("journal storage", () => {
   it("saves and reloads a reading", () => {
     const params = paramsFor();
 
-    expect(saveJournalEntry(params)).toBe(true);
+    expect(saveJournalEntry(params)).toBe("saved");
 
     const entries = loadJournal();
     expect(entries).toHaveLength(1);
     expect(entries[0]?.params).toBe(params.toString());
+  });
+
+  it("reports unreadable or oversized readings as invalid", () => {
+    const oversized = paramsFor();
+    oversized.set("padding", "x".repeat(JOURNAL_MAX_PARAMS_LENGTH));
+
+    expect(saveJournalEntry(new URLSearchParams("v=1&spread=unknown&cards=nope.u"))).toBe(
+      "invalid",
+    );
+    expect(saveJournalEntry(oversized)).toBe("invalid");
+    expect(loadJournal()).toEqual([]);
   });
 
   it("replaces a repeat save instead of duplicating it", () => {
@@ -83,7 +95,7 @@ describe("journal storage", () => {
       throw new Error("Quota exceeded");
     });
 
-    expect(saveJournalEntry(paramsFor())).toBe(false);
+    expect(saveJournalEntry(paramsFor())).toBe("error");
     expect(deleteJournalEntry("anything")).toBeNull();
     expect(clearJournal()).toBe(false);
   });

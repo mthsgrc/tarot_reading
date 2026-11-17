@@ -1,6 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter, useLocation, useNavigate } from "react-router-dom";
+import { Link, MemoryRouter, useLocation, useNavigate } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { loadJournal } from "../lib/journalStorage";
 import { ReadingPage } from "./ReadingPage";
@@ -176,6 +176,34 @@ describe("ReadingPage", () => {
 
     expect(screen.getByText("Shared reading")).toBeInTheDocument();
     expect(screen.getByText("3 of 3 cards revealed.")).toBeInTheDocument();
+  });
+
+  it("returns to setup when a shared reading link is left", async () => {
+    const user = userEvent.setup();
+    const params = new URLSearchParams({
+      v: "1",
+      spread: "thelema-triad",
+      cards: "major-00-fool.u,cups-two.u,major-17-star.u",
+      q: "What should I notice?",
+    });
+
+    render(
+      <MemoryRouter initialEntries={[`/?${params.toString()}`]}>
+        <ReadingPage />
+        <Link to="/">Home</Link>
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText("Shared reading")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("link", { name: /home/i }));
+
+    expect(
+      await screen.findByRole("heading", { name: /set the question/i }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Shared reading")).not.toBeInTheDocument();
+    expect(screen.getByTestId("location").textContent).toBe("");
   });
 
   it("copies a shareable link for the current draw", async () => {

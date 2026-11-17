@@ -5,9 +5,14 @@ import type { ReadingDepth, ReadingLens } from "./types";
 
 /** Bump when the encoded shape changes in a way that cannot be read backwards. */
 const SHARE_VERSION = "1";
-const MAX_QUESTION_LENGTH = 500;
+export const MAX_QUESTION_LENGTH = 500;
 const SHARE_LENSES = new Set<string>(["general", "work", "love", "inner"]);
 const SHARE_DEPTHS = new Set<string>(["brief", "standard", "deep"]);
+
+/** Keeps the builder and the reader on the same question limit. */
+export function normalizeQuestion(question: string): string {
+  return question.trim().slice(0, MAX_QUESTION_LENGTH);
+}
 
 export interface ReadingShareInput {
   spread: Spread;
@@ -46,7 +51,7 @@ export function buildShareParams(input: ReadingShareInput): URLSearchParams {
       .join(","),
   );
 
-  const question = input.question.trim();
+  const question = normalizeQuestion(input.question);
   if (question) {
     params.set("q", question);
   }

@@ -3,6 +3,7 @@ import { ALL_CARDS } from "../../data/cards";
 import { SPREADS } from "../../data/spreads";
 import { drawCards, seededRandom } from "../deck";
 import {
+  MAX_QUESTION_LENGTH,
   buildShareParams,
   buildShareUrl,
   hasShareParams,
@@ -63,6 +64,19 @@ describe("reading share links", () => {
     );
 
     expect(shared?.question).toBe(question);
+  });
+
+  it("keeps an overlong question within the shared limit", () => {
+    const { spread, drawn } = drawFor("thelema-triad");
+    const params = buildShareParams({
+      spread,
+      drawn,
+      question: `  ${"x".repeat(MAX_QUESTION_LENGTH + 50)}  `,
+      shadow: false,
+    });
+
+    expect(params.get("q")).toHaveLength(MAX_QUESTION_LENGTH);
+    expect(readSharedReading(params)).not.toBeNull();
   });
 
   it("round-trips an explicit lens and depth", () => {
