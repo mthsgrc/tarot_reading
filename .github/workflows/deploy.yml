@@ -21,6 +21,18 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v7
 
+      - name: Verify the Pages source
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          build_type="$(gh api "repos/${GITHUB_REPOSITORY}/pages" --jq .build_type)"
+          echo "Pages build type: ${build_type}"
+
+          if [ "${build_type}" != "workflow" ]; then
+            echo "::error::Pages is set to '${build_type}'. Set Settings -> Pages -> Build and deployment -> Source to GitHub Actions, otherwise the deploy silently serves the repository instead of the build."
+            exit 1
+          fi
+
       - name: Set up Node
         uses: actions/setup-node@v7
         with:
