@@ -2,10 +2,13 @@ import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { CardDetailDialog } from "../components/CardDetailDialog";
 import { Hexagram } from "../components/Hexagram";
+import { ReadingInterpretation } from "../components/ReadingInterpretation";
 import { SpreadBoard } from "../components/SpreadBoard";
 import { SpreadPicker } from "../components/SpreadPicker";
 import { DEFAULT_SPREAD, SPREADS, SPREAD_BY_ID } from "../data/spreads";
 import { drawCards } from "../domain/deck";
+import { formatReading } from "../domain/reading/format";
+import { interpretReading } from "../domain/reading/interpret";
 import { ELEMENT_COLORS, ELEMENT_GLYPHS } from "../domain/tree";
 import type { DrawnCard, Element } from "../domain/types";
 import styles from "./ReadingPage.module.css";
@@ -13,32 +16,6 @@ import styles from "./ReadingPage.module.css";
 const ELEMENTS: readonly Element[] = ["Fire", "Water", "Air", "Earth"];
 
 type CopyStatus = "idle" | "copied" | "error";
-
-function formatSummary(
-  spreadName: string,
-  question: string,
-  drawn: readonly DrawnCard[],
-): string {
-  const lines = [`Thoth Tarot — ${spreadName}`];
-
-  if (question.trim()) {
-    lines.push(`Question: ${question.trim()}`);
-  }
-
-  lines.push("");
-
-  drawn.forEach((drawnCard) => {
-    const orientation = drawnCard.orientation === "shadow" ? "shadow" : "upright";
-    lines.push(
-      `${drawnCard.position.label}: ${drawnCard.card.name} (${orientation}) — ${drawnCard.card.keywords
-        .slice(0, 3)
-        .join(", ")}`,
-    );
-  });
-
-  lines.push("", "A reading for reflection, not prediction.");
-  return lines.join("\n");
-}
 
 export function ReadingPage() {
   const [spreadId, setSpreadId] = useState<string>(DEFAULT_SPREAD.id);
@@ -69,9 +46,14 @@ export function ReadingPage() {
     return counts;
   }, [drawn]);
 
+  const interpretation = useMemo(
+    () => (allRevealed ? interpretReading({ spread, drawn, question }) : null),
+    [allRevealed, spread, drawn, question],
+  );
+
   const summaryText = useMemo(
-    () => formatSummary(spread.name, question, drawn),
-    [spread.name, question, drawn],
+    () => (interpretation ? formatReading(interpretation, { spread, question }) : ""),
+    [interpretation, spread, question],
   );
 
   function handleStart(event: FormEvent<HTMLFormElement>) {
@@ -173,99 +155,105 @@ export function ReadingPage() {
           />
 
           {allRevealed ? (
-            <section
-              className={`panel ${styles.summary}`}
-              aria-labelledby="pattern-title"
-            >
-              <div className={styles.summaryHead}>
-                <div>
-                  <p className="eyebrow">Synthesis</p>
-                  <h2 id="pattern-title" className="section-title">
-                    The pattern
-                  </h2>
-                </div>
-                <button
-                  type="button"
-                  className="button button--small"
-                  onClick={handleCopy}
-                >
-                  {copyStatus === "copied" ? "Copied" : "Copy summary"}
-                </button>
-              </div>
-
-              <ol className={styles.summaryList}>
-                {drawn.map((drawnCard, index) => (
-                  <li key={drawnCard.position.id}>
-                    <button
-                      type="button"
-                      className={styles.summaryItem}
-                      onClick={() => setOpenIndex(index)}
-                    >
-                      <span className={styles.summaryPosition}>
-                        {drawnCard.position.label}
-                      </span>
-                      <span className={styles.summaryName}>{drawnCard.card.name}</span>
-                      <span className={styles.summaryMeta}>
-                        {drawnCard.orientation === "shadow" ? "Shadow" : "Upright"}
-                      </span>
-                      <span className={styles.summaryKeywords}>
-                        {drawnCard.card.keywords.slice(0, 3).join(" · ")}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ol>
-
-              <div className={styles.summaryGrid}>
-                <div className={styles.balance}>
-                  <h3 className={styles.summaryTitle}>Elemental balance</h3>
-                  {ELEMENTS.map((element) => {
-                    const count = elementBalance[element];
-                    const proportion = drawn.length > 0 ? count / drawn.length : 0;
-
-                    return (
-                      <div key={element} className={styles.elementRow}>
-                        <span className={styles.elementName}>
-                          <span aria-hidden="true">{ELEMENT_GLYPHS[element]}</span>
-                          {element}
-                        </span>
-                        <span className={styles.elementTrack} aria-hidden="true">
-                          <span
-                            className={styles.elementFill}
-                            style={{
-                              width: `${proportion * 100}%`,
-                              background: ELEMENT_COLORS[element],
-                            }}
-                          />
-                        </span>
-                        <span className={styles.elementCount}>
-                          {count} {count === 1 ? "card" : "cards"}
-                        </span>
-                      </div>
-                    );
-                  })}
+            <>
+              <section
+                className={`panel ${styles.summary}`}
+                aria-labelledby="pattern-title"
+              >
+                <div className={styles.summaryHead}>
+                  <div>
+                    <p className="eyebrow">Synthesis</p>
+                    <h2 id="pattern-title" className="section-title">
+                      The pattern
+                    </h2>
+                  </div>
+                  <button
+                    type="button"
+                    className="button button--small"
+                    onClick={handleCopy}
+                  >
+                    {copyStatus === "copied" ? "Copied" : "Copy reading"}
+                  </button>
                 </div>
 
-                <div className={styles.prompt}>
-                  <h3 className={styles.summaryTitle}>Hold the question</h3>
-                  <p>
-                    Read each card in its position first, then look for repeated elements,
-                    suits, and numbers. A dominant element describes the weather of the
-                    reading, not a fixed verdict.
-                  </p>
-                  <p className={styles.promptNote}>
-                    Shadow cards are not “bad.” They show where a current is blocked,
-                    excessive, or asking for honest attention.
-                  </p>
-                </div>
-              </div>
+                <ol className={styles.summaryList}>
+                  {drawn.map((drawnCard, index) => (
+                    <li key={drawnCard.position.id}>
+                      <button
+                        type="button"
+                        className={styles.summaryItem}
+                        onClick={() => setOpenIndex(index)}
+                      >
+                        <span className={styles.summaryPosition}>
+                          {drawnCard.position.label}
+                        </span>
+                        <span className={styles.summaryName}>{drawnCard.card.name}</span>
+                        <span className={styles.summaryMeta}>
+                          {drawnCard.orientation === "shadow" ? "Shadow" : "Upright"}
+                        </span>
+                        <span className={styles.summaryKeywords}>
+                          {drawnCard.card.keywords.slice(0, 3).join(" · ")}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ol>
 
-              <p className={styles.copyStatus} role="status" aria-live="polite">
-                {copyStatus === "copied" && "Summary copied to the clipboard."}
-                {copyStatus === "error" &&
-                  "The clipboard is unavailable in this browser. Copying is disabled."}
-              </p>
-            </section>
+                <div className={styles.summaryGrid}>
+                  <div className={styles.balance}>
+                    <h3 className={styles.summaryTitle}>Elemental balance</h3>
+                    {ELEMENTS.map((element) => {
+                      const count = elementBalance[element];
+                      const proportion = drawn.length > 0 ? count / drawn.length : 0;
+
+                      return (
+                        <div key={element} className={styles.elementRow}>
+                          <span className={styles.elementName}>
+                            <span aria-hidden="true">{ELEMENT_GLYPHS[element]}</span>
+                            {element}
+                          </span>
+                          <span className={styles.elementTrack} aria-hidden="true">
+                            <span
+                              className={styles.elementFill}
+                              style={{
+                                width: `${proportion * 100}%`,
+                                background: ELEMENT_COLORS[element],
+                              }}
+                            />
+                          </span>
+                          <span className={styles.elementCount}>
+                            {count} {count === 1 ? "card" : "cards"}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className={styles.prompt}>
+                    <h3 className={styles.summaryTitle}>Hold the question</h3>
+                    <p>
+                      Read each card in its position first, then look for repeated
+                      elements, suits, and numbers. A dominant element describes the
+                      weather of the reading, not a fixed verdict.
+                    </p>
+                    <p className={styles.promptNote}>
+                      Shadow cards are not “bad.” They show where a current is blocked,
+                      excessive, or asking for honest attention.
+                    </p>
+                  </div>
+                </div>
+
+                <p className={styles.copyStatus} role="status" aria-live="polite">
+                  {copyStatus === "copied" && "Reading copied to the clipboard."}
+                  {copyStatus === "error" &&
+                    "The clipboard is unavailable in this browser. Copying is disabled."}
+                </p>
+              </section>
+
+              {interpretation && (
+                <ReadingInterpretation interpretation={interpretation} />
+              )}
+            </>
           ) : (
             <p className={styles.waiting}>
               The synthesis appears when every card in the spread is revealed.

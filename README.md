@@ -1,6 +1,6 @@
 # Thoth Tarot
 
-A Thoth Tarot reading app built around Thelema, the Golden Dawn, and the Tree of Life. It includes all 78 cards, six spreads, upright and shadow readings, optimized card artwork, and a searchable study library.
+A Thoth Tarot reading app built around Thelema, the Golden Dawn, and the Tree of Life. It includes all 78 cards, six spreads, upright and shadow readings, optimized card artwork, a searchable study library, and a rule-based interpretation engine that reads the draw rather than looking up a fixed answer.
 
 Readings are for reflection, not prediction, and are not a substitute for medical, legal, financial, or relationship advice.
 
@@ -64,9 +64,9 @@ The **Thelemic correction** is applied: the Emperor is attributed to Tzaddi and 
 ```text
 src/
 ├── app/          # Router, layout, navigation
-├── components/   # Card views, spreads, dialog, Tree diagram
-├── data/         # 78 cards and six spread definitions
-├── domain/       # Types, Tree constants, draw engine, labels
+├── components/   # Card views, spreads, dialog, Tree diagram, interpretation
+├── data/         # 78 cards, six spread definitions, shared tradition notes
+├── domain/       # Types, Tree constants, draw engine, reading engine, labels
 ├── pages/        # Reading, library, card detail, tradition, 404
 ├── styles/       # Design tokens and global base styles
 └── test/         # Vitest setup
@@ -87,7 +87,19 @@ Business logic lives in `src/domain`, content in `src/data`, and presentation in
 - Optional shadow orientation per card
 - A guard that throws if a spread asks for more cards than the deck contains
 
-React state in `ReadingPage` owns the current draw. Cards start face down, reveal individually or all at once, and open a native `<dialog>` with the full entry. The summary exposes the position list, elemental balance, and a copyable text version.
+React state in `ReadingPage` owns the current draw. Cards start face down, reveal individually or all at once, and open a native `<dialog>` with the full entry.
+
+### Interpretation
+
+`src/domain/reading/` is a pure, deterministic expert system. The spread supplies the grammar, each card supplies the vocabulary, and the engine supplies the connective tissue:
+
+1. **Facts** — element, suit, arcana, court, number, orientation, and Sephira counts; repeated numbers; shared Tree stations; card-to-station resonances; and an optional question lens.
+2. **Relations** — card-to-card comparisons with spread-specific recipes for all six spreads.
+3. **Notices** — only the strongest patterns, weighted and capped so a three-card draw does not become a lecture.
+4. **Synthesis** — headline, overview, a position-aware paragraph for every card, the movement of the spread, and one grounded action.
+5. **Transparency** — a “How this reading was built” disclosure shows the facts behind the prose.
+
+The same draw always produces the same reading, including phrase variants. No backend, no LLM, and no `Math.random()` at render time. Copying the reading exports the full interpretation as plain text, with the reflection disclaimer.
 
 ## Card artwork
 
@@ -122,7 +134,9 @@ The suite covers:
 - Existence of both optimized image formats for every card
 - All six spreads, position guidance, and the Tree spread order
 - Shuffle determinism, non-mutation, duplicate-free draws, and shadow orientation
-- The complete reading flow, larger spread selection, library search/filters, card detail pages, and tradition page
+- Reading facts, lens inference, shared Sephira, Tree and planetary resonances
+- Deterministic interpretation, all-spread smoke tests, every card in both orientations, and text export
+- The complete reading flow, interpretation section, copy behavior, larger spread selection, library search/filters, card detail pages, and tradition page
 
 Run:
 
@@ -136,6 +150,7 @@ npm run verify
 - Semantic landmarks and one page-level heading
 - Keyboard-operable card reveal buttons
 - Native `<dialog>` for card details
+- Native `<details>` disclosure for the reading's working
 - Visible focus styles and a skip link
 - `aria-live` status messages for reveal progress
 - Responsive layouts and reduced-motion support
@@ -146,7 +161,7 @@ An automated axe pass against the main pages is a sensible next addition.
 ## Roadmap
 
 - Persist reading history locally in IndexedDB or localStorage
-- Export and share a reading without a backend
+- Export a reading as a shareable image
 - Add a study mode that quizzes correspondences
 - Add automated accessibility checks with axe
 - Add a visual regression pass once the layout stabilizes

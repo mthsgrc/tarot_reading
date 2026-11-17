@@ -1,20 +1,7 @@
 import { TreeOfLifeDiagram } from "../components/TreeOfLifeDiagram";
+import { ELEMENT_PRACTICE, NUMBER_NOTES, SEPHIRA_THEMES } from "../data/tradition";
 import { ELEMENT_COLORS, ELEMENT_GLYPHS, SEPHIROTH } from "../domain/tree";
-import type { Element, Sephira } from "../domain/types";
 import styles from "./TraditionPage.module.css";
-
-const SEPHIRA_THEMES: Record<Sephira, string> = {
-  kether: "Pure being, the point before form, the crown of the Tree.",
-  chokmah: "Dynamic wisdom, the first flash of creative force.",
-  binah: "Understanding, form, the womb that receives and shapes.",
-  chesed: "Mercy, expansion, generosity, the law that builds.",
-  geburah: "Severity, restriction, discipline, the necessary cutting.",
-  tiphareth: "Beauty, harmony, the solar heart and the harmonized self.",
-  netzach: "Victory, desire, emotion, art, and the vitality that persists.",
-  hod: "Splendour, intellect, language, and the architecture of thought.",
-  yesod: "Foundation, imagination, the subconscious root of manifestation.",
-  malkuth: "Kingdom, the body, the earth, and the place where it becomes real.",
-};
 
 const THELEMIC_TRIAD = [
   {
@@ -34,38 +21,6 @@ const THELEMIC_TRIAD = [
   },
 ];
 
-const ELEMENT_PRACTICE: ReadonlyArray<{
-  element: Element;
-  suit: string;
-  theme: string;
-  question: string;
-}> = [
-  {
-    element: "Fire",
-    suit: "Wands",
-    theme: "Will, creativity, initiative, courage.",
-    question: "What wants to begin or burn?",
-  },
-  {
-    element: "Water",
-    suit: "Cups",
-    theme: "Love, feeling, memory, receptivity.",
-    question: "What is moving beneath the surface?",
-  },
-  {
-    element: "Air",
-    suit: "Swords",
-    theme: "Mind, language, analysis, conflict.",
-    question: "What needs to be named clearly?",
-  },
-  {
-    element: "Earth",
-    suit: "Disks",
-    theme: "Body, work, resources, manifestation.",
-    question: "What must be built or tended?",
-  },
-];
-
 const RENAMED_TRUMPS = [
   ["The Magician", "The Magus"],
   ["The High Priestess", "The Priestess"],
@@ -75,19 +30,6 @@ const RENAMED_TRUMPS = [
   ["Temperance", "Art"],
   ["Judgement", "The Aeon"],
   ["The World", "The Universe"],
-];
-
-const NUMBER_NOTES = [
-  ["Ace", "The root or seed of the element."],
-  ["Two", "Polarity, choice, the first relationship."],
-  ["Three", "The first stable form; birth and growth."],
-  ["Four", "Stability, structure, and the risk of stagnation."],
-  ["Five", "Disruption, conflict, and necessary change."],
-  ["Six", "Harmony, balance, and the heart of the cycle."],
-  ["Seven", "Desire, testing, and the strain of manifestation."],
-  ["Eight", "Movement, skill, and the acceleration of the current."],
-  ["Nine", "Culmination, fullness, and the last stage before the end."],
-  ["Ten", "Completion, the return to the world, the end of the cycle."],
 ];
 
 export function TraditionPage() {
@@ -409,9 +351,9 @@ export function TraditionPage() {
         <div className={styles.numberTable}>
           <h3 className={styles.tableTitle}>The number current</h3>
           <dl>
-            {NUMBER_NOTES.map(([number, note]) => (
-              <div key={number}>
-                <dt>{number}</dt>
+            {NUMBER_NOTES.map(({ rank, note }) => (
+              <div key={rank}>
+                <dt>{rank}</dt>
                 <dd>{note}</dd>
               </div>
             ))}

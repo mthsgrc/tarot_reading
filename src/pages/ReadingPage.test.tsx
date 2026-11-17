@@ -1,7 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { ReadingPage } from "./ReadingPage";
 
 function renderReadingPage() {
@@ -61,6 +61,55 @@ describe("ReadingPage", () => {
       screen.getByRole("heading", { name: /set the question/i }),
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /draw the cards/i })).toBeInTheDocument();
+  });
+
+  it("shows the generated interpretation and copies the full reading", async () => {
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText },
+    });
+    renderReadingPage();
+
+    await user.click(screen.getByRole("button", { name: /draw the cards/i }));
+
+    expect(
+      screen.queryByRole("heading", { name: "The reading" }),
+    ).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /reveal all/i }));
+
+    expect(screen.getByRole("heading", { name: "The reading" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 3, name: /what stands out/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 3, name: /the cards in their positions/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 3, name: /how the spread moves/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 3, name: /one action/i }),
+    ).toBeInTheDocument();
+
+    const buildSummary = screen.getByText(/how this reading was built/i);
+    expect(buildSummary.tagName).toBe("SUMMARY");
+    await user.click(buildSummary);
+    expect(buildSummary.closest("details")).toHaveAttribute("open");
+    expect(screen.getByText("Shared Sephira")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /copy reading/i }));
+
+    expect(writeText).toHaveBeenCalledTimes(1);
+    expect(writeText).toHaveBeenCalledWith(
+      expect.stringContaining("How the spread moves"),
+    );
+    expect(writeText).toHaveBeenCalledWith(
+      expect.stringContaining("A reading for reflection, not prediction."),
+    );
+    expect(screen.getByText(/reading copied to the clipboard/i)).toBeInTheDocument();
   });
 
   it("draws the selected larger spread", async () => {
