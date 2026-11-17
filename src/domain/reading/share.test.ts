@@ -87,7 +87,7 @@ describe("reading share links", () => {
       shadow: false,
     });
 
-    expect(url.startsWith("https://example.com/tarot_reading/#/reading?")).toBe(true);
+    expect(url.startsWith("https://example.com/tarot_reading/#/?")).toBe(true);
 
     const params = new URLSearchParams(url.slice(url.indexOf("?") + 1));
     expect(params.get("v")).toBe("1");

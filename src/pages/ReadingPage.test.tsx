@@ -135,7 +135,7 @@ describe("ReadingPage", () => {
       q: "What should I notice?",
     });
 
-    renderReadingPage(`/reading?${params.toString()}`);
+    renderReadingPage(`/?${params.toString()}`);
 
     expect(screen.getByText("Shared reading")).toBeInTheDocument();
     expect(screen.getByText("3 of 3 cards revealed.")).toBeInTheDocument();
@@ -159,7 +159,7 @@ describe("ReadingPage", () => {
     render(
       <MemoryRouter initialEntries={["/reading"]}>
         <ReadingPage />
-        <ShareLinkButton to={`/reading?${params.toString()}`} />
+        <ShareLinkButton to={`/?${params.toString()}`} />
       </MemoryRouter>,
     );
 
@@ -190,7 +190,7 @@ describe("ReadingPage", () => {
     expect(writeText).toHaveBeenCalledTimes(1);
 
     const copied = writeText.mock.calls[0]?.[0] as string;
-    expect(copied).toContain("#/reading?");
+    expect(copied).toContain("#/?");
 
     const shared = new URLSearchParams(copied.slice(copied.indexOf("?") + 1));
     expect(shared.get("v")).toBe("1");
@@ -212,7 +212,7 @@ describe("ReadingPage", () => {
       q: "What should I notice?",
     });
 
-    renderReadingPage(`/reading?${params.toString()}`);
+    renderReadingPage(`/?${params.toString()}`);
     expect(screen.getByTestId("location").textContent).not.toBe("");
 
     await user.click(screen.getByRole("button", { name: /new reading/i }));
@@ -224,7 +224,7 @@ describe("ReadingPage", () => {
   });
 
   it("explains an unreadable shared link", () => {
-    renderReadingPage("/reading?v=1&spread=unknown&cards=major-00-fool.u");
+    renderReadingPage("/?v=1&spread=unknown&cards=major-00-fool.u");
 
     expect(screen.getByText(/could not be read/i)).toBeInTheDocument();
     expect(

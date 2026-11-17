@@ -52,7 +52,8 @@ export function buildShareParams(input: ReadingShareInput): URLSearchParams {
 
 export function buildShareUrl(href: string, input: ReadingShareInput): string {
   const url = new URL(href);
-  url.hash = `#/reading?${buildShareParams(input).toString()}`;
+  // The reading page is the index route, so the share link targets `#/?…`.
+  url.hash = `#/?${buildShareParams(input).toString()}`;
   return url.toString();
 }
 
