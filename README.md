@@ -114,14 +114,16 @@ Output lives in `public/images/cards/` with one file pair per card ID, plus `pub
 
 ## Deployment
 
-`vite.config.ts` uses `base: "./"` and the app uses `HashRouter`, so the production `dist/` can be served from a domain root or a GitHub Pages repository subpath without server rewrites.
+`.github/workflows/deploy.yml` runs the full verification suite and publishes `dist/` to GitHub Pages on every push to `master`. It can also be started manually from the Actions tab.
+
+One-time repository setting: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+
+`vite.config.ts` uses `base: "./"` and the app uses `HashRouter`, so the production `dist/` can be served from a domain root or a GitHub Pages repository subpath without server rewrites. Card image URLs are built with `import.meta.env.BASE_URL`, so they follow the same base path.
 
 ```bash
 npm run build
-# deploy the contents of dist/
+# inspect the result locally with: npm run preview
 ```
-
-Card image URLs are built with `import.meta.env.BASE_URL`, so they follow the same base path.
 
 ## Testing
 
