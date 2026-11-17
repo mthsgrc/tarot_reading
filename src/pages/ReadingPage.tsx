@@ -150,6 +150,10 @@ export function ReadingPage() {
     }
   }
 
+  function handlePrint() {
+    window.print();
+  }
+
   async function handleCopyLink() {
     try {
       if (!navigator.clipboard?.writeText) {
@@ -174,6 +178,8 @@ export function ReadingPage() {
     return (
       <div className={`container ${styles.page}`}>
         <section className={styles.reading} aria-labelledby="reading-title">
+          <p className={styles.printBrand}>Thoth Tarot · Thelema · Golden Dawn</p>
+
           <div className={styles.readingHead}>
             <div>
               <p className="eyebrow">{isShared ? "Shared reading" : "Your reading"}</p>
@@ -255,6 +261,13 @@ export function ReadingPage() {
                       onClick={handleCopyLink}
                     >
                       {copyStatus === "link" ? "Link copied" : "Copy link"}
+                    </button>
+                    <button
+                      type="button"
+                      className="button button--ghost button--small"
+                      onClick={handlePrint}
+                    >
+                      Print reading
                     </button>
                   </div>
                 </div>

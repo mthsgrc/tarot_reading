@@ -142,3 +142,102 @@
     letter-spacing: 0.07em;
   }
 }
+
+/* Restore the named-area layouts after the narrow-screen rules, then size in mm. */
+@media print {
+  .board {
+    gap: 3mm;
+  }
+
+  .row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 160mm;
+    margin-inline: auto;
+  }
+
+  .cross {
+    grid-template-areas:
+      ". crown ."
+      "star abyss aeon"
+      ". root .";
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 122mm;
+    margin-inline: auto;
+  }
+
+  .lovers {
+    grid-template-areas:
+      ". challenge ."
+      "you bond other"
+      ". potential .";
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 122mm;
+    margin-inline: auto;
+  }
+
+  .hexagram {
+    grid-template-areas:
+      ". jupiter ."
+      "saturn sun mars"
+      "mercury moon venus";
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 122mm;
+    margin-inline: auto;
+  }
+
+  .tree {
+    grid-template-areas:
+      ". . kether . ."
+      ". chokmah . binah ."
+      ". chesed . geburah ."
+      ". . tiphareth . ."
+      ". netzach . hod ."
+      ". . yesod . ."
+      ". . malkuth . .";
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    max-width: 150mm;
+    margin-inline: auto;
+  }
+
+  .position,
+  .cross .position,
+  .lovers .position,
+  .hexagram .position,
+  .tree .position {
+    grid-area: var(--grid-area, auto);
+    max-width: none;
+    margin-inline: 0;
+    break-inside: avoid;
+  }
+
+  .row .position {
+    max-width: 50mm;
+    margin-inline: auto;
+  }
+
+  .cross .position,
+  .lovers .position,
+  .hexagram .position {
+    max-width: 36mm;
+    margin-inline: auto;
+  }
+
+  .tree .position {
+    max-width: 26mm;
+    margin-inline: auto;
+  }
+
+  .label {
+    min-height: auto;
+    margin-bottom: 1.5mm;
+    font-size: 7pt;
+    letter-spacing: 0.1em;
+  }
+
+  .tree .label {
+    min-height: auto;
+    margin-bottom: 1mm;
+    font-size: 6pt;
+    letter-spacing: 0.04em;
+  }
+}

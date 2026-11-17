@@ -203,6 +203,22 @@ describe("ReadingPage", () => {
     ).toBeInTheDocument();
   });
 
+  it("prints a fully revealed reading", async () => {
+    const user = userEvent.setup();
+    const print = vi.spyOn(window, "print").mockImplementation(() => {});
+    const params = new URLSearchParams({
+      v: "1",
+      spread: "thelema-triad",
+      cards: "major-00-fool.u,cups-two.s,major-17-star.u",
+      q: "What should I notice?",
+    });
+
+    renderReadingPage(`/?${params.toString()}`);
+    await user.click(screen.getByRole("button", { name: /print reading/i }));
+
+    expect(print).toHaveBeenCalledTimes(1);
+  });
+
   it("clears the share parameters when a new reading starts", async () => {
     const user = userEvent.setup();
     const params = new URLSearchParams({

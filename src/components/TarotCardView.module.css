@@ -175,3 +175,42 @@
     animation: none;
   }
 }
+
+@media print {
+  .slot {
+    animation: none;
+    break-inside: avoid;
+  }
+
+  .cardButton:hover {
+    transform: none;
+  }
+
+  .face {
+    box-shadow: none;
+  }
+
+  .openHint,
+  .backSigil {
+    display: none;
+  }
+
+  .shadowBadge {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .caption {
+    min-height: 0;
+    padding-top: 1.5mm;
+  }
+
+  .captionName {
+    font-size: 7pt;
+  }
+
+  .captionMeta {
+    font-size: 6pt;
+    letter-spacing: 0.1em;
+  }
+}

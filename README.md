@@ -105,6 +105,10 @@ The same draw always produces the same reading, including phrase variants. No ba
 
 **Copy reading** exports the interpretation as plain text. **Copy link** encodes the spread, cards, orientations, question, and shadow flag in the URL, so the recipient sees the reading exactly as it was drawn. Nothing is uploaded; the link is self-contained. Decoding rejects unknown spreads, duplicate or missing cards, malformed orientations, and overlong questions, and shows a notice instead of failing.
 
+### Printing
+
+**Print reading** in the synthesis panel opens the browser's print dialog for paper or **Save as PDF**. The print stylesheet flips the dark interface to ink on white, hides navigation, buttons, dialogs, and status chrome, and keeps every card with its caption. Spread layouts are re-expressed in millimetres so the Tree and cross spreads keep their geometry on A4 or Letter, and long readings break between cards and interpretation blocks rather than through them. The print copy is the same deterministic reading shown on screen.
+
 ## Card artwork
 
 The original scans are in `images/` and were optimized with ImageMagick into native `278×408` AVIF and WebP files:
@@ -143,7 +147,7 @@ The suite covers:
 - Reading facts, lens inference, shared Sephira, Tree and planetary resonances
 - Deterministic interpretation, all-spread smoke tests, every card in both orientations, and text export
 - Share-link round trips for every spread, special characters in questions, and rejection of malformed links
-- The complete reading flow, shared-link loading, interpretation section, copy behavior, larger spread selection, library search/filters, card detail pages, and tradition page
+- The complete reading flow, shared-link loading, interpretation section, copy and print behavior, larger spread selection, library search/filters, card detail pages, and tradition page
 
 Run:
 

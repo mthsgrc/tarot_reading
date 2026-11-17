@@ -287,3 +287,80 @@
     gap: 0.15rem;
   }
 }
+
+@media print {
+  .section {
+    padding: 4mm;
+    margin-top: 6mm;
+  }
+
+  .head {
+    padding-bottom: 3mm;
+  }
+
+  .headline {
+    margin-top: 1.5mm;
+    font-size: 1.15rem;
+  }
+
+  .overview {
+    padding-top: 3mm;
+  }
+
+  .overview p {
+    font-size: 0.8rem;
+  }
+
+  .block {
+    padding-top: 4mm;
+    margin-top: 4mm;
+  }
+
+  .subhead {
+    margin-bottom: 2mm;
+  }
+
+  .notices {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2mm;
+  }
+
+  .notice {
+    padding: 2.5mm 3mm;
+    background: transparent;
+    break-inside: avoid;
+  }
+
+  .position {
+    padding: 2.5mm 0;
+    break-inside: avoid;
+  }
+
+  .positionBody {
+    font-size: 0.78rem;
+  }
+
+  .movement p {
+    font-size: 0.78rem;
+  }
+
+  .action {
+    padding: 3mm;
+    margin-top: 4mm;
+    background: transparent;
+    break-inside: avoid;
+  }
+
+  .actionText {
+    font-size: 0.82rem;
+  }
+
+  /* Keep the methodology out of the paper copy unless it was opened on screen. */
+  .working:not([open]) {
+    display: none;
+  }
+
+  .disclaimer {
+    margin-top: 3mm;
+  }
+}

@@ -205,6 +205,15 @@
   padding-top: clamp(1rem, 3vw, 2rem);
 }
 
+.printBrand {
+  display: none;
+  color: var(--color-gold);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
 .readingHead {
   display: flex;
   flex-wrap: wrap;
@@ -499,5 +508,83 @@
 
   .summaryList {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media print {
+  .page {
+    padding-top: 0;
+  }
+
+  .reading {
+    padding-top: 0;
+  }
+
+  .printBrand {
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  .readingHead {
+    align-items: flex-start;
+  }
+
+  .readingTitle {
+    margin-top: 0.15rem;
+  }
+
+  .actions,
+  .copyActions,
+  .copyStatus,
+  .statusRow,
+  .shareError,
+  .waiting {
+    display: none;
+  }
+
+  .question {
+    margin-top: 0.75rem;
+    font-size: 1.15rem;
+  }
+
+  .description {
+    margin-top: 0.35rem;
+    font-size: 0.78rem;
+  }
+
+  .summary {
+    padding: 0;
+    margin-top: 0.75rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .summaryHead {
+    padding-bottom: 0.35rem;
+  }
+
+  .summaryList {
+    gap: 0.3rem;
+    margin: 0.5rem 0;
+  }
+
+  .summaryItem {
+    padding: 0.4rem 0.5rem;
+    background: transparent;
+    break-inside: avoid;
+  }
+
+  .summaryItem:hover {
+    background: transparent;
+    border-color: var(--line);
+    transform: none;
+  }
+
+  .summaryGrid {
+    gap: 1.1rem;
+    padding-top: 0.5rem;
+  }
+
+  .elementTrack {
+    background: #e8e8e8;
   }
 }

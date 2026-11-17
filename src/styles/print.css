@@ -1,0 +1,108 @@
+/*
+ * Print styles.
+ *
+ * The screen theme is light text on a dark background. Browsers do not print
+ * backgrounds by default, so the print view flips the tokens to ink on paper
+ * and removes the decorative layers. Component-specific layout rules live in
+ * each CSS module.
+ */
+
+@media print {
+  @page {
+    margin: 14mm 13mm;
+  }
+
+  :root {
+    color-scheme: light;
+
+    --color-void: #ffffff;
+    --color-night: #ffffff;
+    --color-surface: #ffffff;
+    --color-surface-strong: #ffffff;
+    --color-parchment: #1a1a1a;
+    --color-parchment-soft: #2e2e2e;
+    --color-muted: #555555;
+    --color-gold: #6d5410;
+    --color-gold-bright: #6d5410;
+    --color-gold-dim: #7a5f12;
+    --color-crimson: #7a1f2c;
+    --color-crimson-bright: #8a1f2f;
+    --color-verdigris: #245c53;
+    --color-verdigris-bright: #245c53;
+
+    --line: #c9c9c9;
+    --line-strong: #9a9a9a;
+    --line-cool: #dddddd;
+    --shadow-card: none;
+    --shadow-glow: none;
+  }
+
+  html {
+    font-size: 10.5pt;
+    scroll-behavior: auto;
+  }
+
+  body {
+    color: var(--color-parchment);
+    background: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body::before {
+    display: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .skip-link {
+    display: none;
+  }
+
+  .visually-hidden {
+    display: none !important;
+  }
+
+  .panel {
+    background: transparent;
+    border-color: var(--line);
+    border-radius: 2mm;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  dialog {
+    display: none !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid;
+  }
+
+  img,
+  picture,
+  figure,
+  blockquote {
+    break-inside: avoid;
+  }
+
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+}
