@@ -50,6 +50,7 @@ function inputFor(
     orientations?: readonly Orientation[];
     question?: string;
     lens?: ReadingInput["lens"];
+    depth?: ReadingInput["depth"];
   } = {},
 ): ReadingInput {
   const { drawn } = drawFor(spreadId, cardIds, options.orientations);
@@ -58,6 +59,7 @@ function inputFor(
     drawn,
     question: options.question,
     lens: options.lens,
+    depth: options.depth,
   };
 }
 
@@ -184,6 +186,40 @@ describe("reading interpretation", () => {
     expect(result.working.sephiraTouches[0]?.sephira).toBe("chokmah");
   });
 
+  it("honours an explicit lens and depth", () => {
+    const input = inputFor("thelema-triad", THELEMA_EXAMPLE, {
+      question: "What does my career need?",
+      lens: "work",
+      depth: "brief",
+    });
+    const result = interpretReading(input);
+
+    expect(result.working.lens).toBe("work");
+    expect(result.working.lensSource).toBe("explicit");
+    expect(result.depth).toBe("brief");
+  });
+
+  it("surfaces more patterns at deeper settings", () => {
+    const base = inputFor("tree-of-life", [
+      "major-00-fool",
+      "cups-two",
+      "major-02-priestess",
+      "major-03-empress",
+      "major-04-emperor",
+      "major-06-lovers",
+      "major-09-hermit",
+      "major-10-fortune",
+      "major-13-death",
+      "major-21-universe",
+    ]);
+    const brief = interpretReading({ ...base, depth: "brief" });
+    const standard = interpretReading({ ...base, depth: "standard" });
+    const deep = interpretReading({ ...base, depth: "deep" });
+
+    expect(brief.notices.length).toBeLessThan(standard.notices.length);
+    expect(deep.notices.length).toBeGreaterThan(standard.notices.length);
+  });
+
   it("is deterministic for the same draw and question", () => {
     const input = inputFor("tree-of-life", [
       "major-00-fool",
@@ -295,6 +331,7 @@ describe("reading formatting", () => {
     expect(text).toContain("Thoth Tarot — Thelema Triad");
     expect(text).toContain("Question: What is my True Will?");
     expect(text).toContain("Lens: Inner work");
+    expect(text).toContain("Depth: Standard");
     expect(text).toContain(result.headline);
     expect(text).toContain("What stands out");
     expect(text).toContain("The cards in their positions");
@@ -304,5 +341,20 @@ describe("reading formatting", () => {
     expect(text).toContain("One action");
     expect(text).toContain(result.action);
     expect(text).toContain("A reading for reflection, not prediction.");
+  });
+
+  it("keeps a brief export short", () => {
+    const input = inputFor("thelema-triad", THELEMA_EXAMPLE, {
+      question: "What is my True Will?",
+      depth: "brief",
+    });
+    const result = interpretReading(input);
+    const text = formatReading(result, input);
+
+    expect(text).toContain("Depth: Brief");
+    expect(text).toContain("What stands out");
+    expect(text).toContain("One action");
+    expect(text).not.toContain("The cards in their positions");
+    expect(text).not.toContain("How the spread moves");
   });
 });

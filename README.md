@@ -102,11 +102,13 @@ React state in `ReadingPage` owns the current draw. Cards start face down, revea
 4. **Synthesis** — headline, overview, a position-aware paragraph for every card, the movement of the spread, and one grounded action.
 5. **Transparency** — a “How this reading was built” disclosure shows the facts behind the prose.
 
+Before drawing, choose a **lens** and a **depth**. The lens can be Automatic, which infers from the question’s wording, or explicit: Open question, Will and work, Love and relationship, or Inner work. An explicit lens always wins. Depth is Brief, Standard, or Deep: Brief keeps the headline, strongest patterns, and action, and omits positions and movement from the screen, copy, and print; Deep raises the number of pattern notices.
+
 The same draw always produces the same reading, including phrase variants. No backend, no LLM, and no `Math.random()` at render time. Copying the reading exports the full interpretation as plain text, with the reflection disclaimer.
 
 ### Sharing
 
-**Copy reading** exports the interpretation as plain text. **Copy link** encodes the spread, cards, orientations, question, and shadow flag in the URL, so the recipient sees the reading exactly as it was drawn. Nothing is uploaded; the link is self-contained. Decoding rejects unknown spreads, duplicate or missing cards, malformed orientations, and overlong questions, and shows a notice instead of failing.
+**Copy reading** exports the interpretation as plain text. **Copy link** encodes the spread, cards, orientations, question, lens, depth, and shadow flag in the URL, so the recipient sees the reading exactly as it was drawn. Lens and depth are additive optional parameters: links made before they existed still infer the lens and use Standard depth. Nothing is uploaded; the link is self-contained. Decoding rejects unknown spreads, cards, orientations, lenses, depths, and overlong questions, and shows a notice instead of failing.
 
 ### Printing
 
@@ -114,7 +116,7 @@ The same draw always produces the same reading, including phrase variants. No ba
 
 ### Journal
 
-**Save to journal** keeps a fully revealed reading in `localStorage` on that device. The `/journal` page lists the 50 most recent saves with their question, cards, and date; each entry reopens the exact draw through the same versioned link format, and entries can be deleted individually or cleared together after confirmation. Nothing is uploaded, no account is involved, and clearing browser storage clears the journal. Stored entries are re-validated when read, so corrupt or hand-edited data is ignored rather than rendered.
+**Save to journal** keeps a fully revealed reading in `localStorage` on that device, including its lens and depth. The `/journal` page lists the 50 most recent saves with their question, cards, lens, depth, and date; each entry reopens the exact draw through the same versioned link format, and entries can be deleted individually or cleared together after confirmation. Nothing is uploaded, no account is involved, and clearing browser storage clears the journal. Stored entries are re-validated when read, so corrupt or hand-edited data is ignored rather than rendered.
 
 ## Card artwork
 
@@ -153,9 +155,9 @@ The suite covers:
 - Existence of both optimized image formats for every card
 - All six spreads, position guidance, and the Tree spread order
 - Shuffle determinism, non-mutation, duplicate-free draws, and shadow orientation
-- Reading facts, lens inference, shared Sephira, Tree and planetary resonances
-- Deterministic interpretation, all-spread smoke tests, every card in both orientations, and text export
-- Share-link round trips for every spread, special characters in questions, and rejection of malformed links
+- Reading facts, lens inference, explicit lens precedence, shared Sephira, Tree and planetary resonances
+- Deterministic interpretation, depth-based notice counts, brief text export, all-spread smoke tests, and every card in both orientations
+- Share-link round trips for every spread, lens/depth parameters, special characters in questions, and rejection of malformed links
 - Journal validation, deduplication, the 50-entry cap, storage failures, and delete/clear flows
 - axe audits of the setup, completed reading, card dialog, library, card page, tradition page, journal, and 404 under the WCAG A/AA tags
 - Lazy route loading, the route loading state, and stale-chunk error recovery

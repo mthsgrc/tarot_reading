@@ -1,5 +1,5 @@
 import type { Element } from "../types";
-import type { ReadingLens } from "./types";
+import type { ReadingDepth, ReadingLens } from "./types";
 
 export interface ElementVoice {
   /** What the element is about, in a phrase. */
@@ -50,6 +50,12 @@ export const LENS_LABELS: Record<ReadingLens, string> = {
   work: "Will and work",
   love: "Love and relationship",
   inner: "Inner work",
+};
+
+export const DEPTH_LABELS: Record<ReadingDepth, string> = {
+  brief: "Brief",
+  standard: "Standard",
+  deep: "Deep",
 };
 
 export const LENS_FRAMES: Record<ReadingLens, string> = {

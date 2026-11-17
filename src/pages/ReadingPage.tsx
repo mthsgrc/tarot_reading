@@ -10,6 +10,7 @@ import { DEFAULT_SPREAD, SPREADS, SPREAD_BY_ID } from "../data/spreads";
 import { drawCards } from "../domain/deck";
 import { formatReading } from "../domain/reading/format";
 import { interpretReading } from "../domain/reading/interpret";
+import { DEPTH_LABELS, LENS_LABELS } from "../domain/reading/language";
 import {
   buildShareParams,
   buildShareUrl,
@@ -17,12 +18,15 @@ import {
   readSharedReading,
 } from "../domain/reading/share";
 import { ELEMENT_COLORS, ELEMENT_GLYPHS } from "../domain/tree";
+import type { ReadingDepth, ReadingLens } from "../domain/reading/types";
 import type { DrawnCard, Element } from "../domain/types";
 import { saveJournalEntry } from "../lib/journalStorage";
 import styles from "./ReadingPage.module.css";
 
 const ELEMENTS: readonly Element[] = ["Fire", "Water", "Air", "Earth"];
+const LENSES: readonly ReadingLens[] = ["general", "work", "love", "inner"];
 
+type LensSelection = "auto" | ReadingLens;
 type CopyStatus = "idle" | "reading" | "link" | "error";
 type JournalStatus = "idle" | "saved" | "error";
 
@@ -39,6 +43,10 @@ export function ReadingPage() {
   );
   const [question, setQuestion] = useState(shared?.question ?? "");
   const [shadowEnabled, setShadowEnabled] = useState(shared?.shadow ?? false);
+  const [lensSelection, setLensSelection] = useState<LensSelection>(
+    shared?.lens ?? "auto",
+  );
+  const [depth, setDepth] = useState<ReadingDepth>(shared?.depth ?? "standard");
   const [drawn, setDrawn] = useState<DrawnCard[]>(shared?.drawn ?? []);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
@@ -67,8 +75,17 @@ export function ReadingPage() {
   }, [drawn]);
 
   const interpretation = useMemo(
-    () => (allRevealed ? interpretReading({ spread, drawn, question }) : null),
-    [allRevealed, spread, drawn, question],
+    () =>
+      allRevealed
+        ? interpretReading({
+            spread,
+            drawn,
+            question,
+            lens: lensSelection === "auto" ? undefined : lensSelection,
+            depth,
+          })
+        : null,
+    [allRevealed, spread, drawn, question, lensSelection, depth],
   );
 
   const summaryText = useMemo(
@@ -98,6 +115,8 @@ export function ReadingPage() {
     setSpreadId(next.spread.id);
     setQuestion(next.question);
     setShadowEnabled(next.shadow);
+    setLensSelection(next.lens ?? "auto");
+    setDepth(next.depth);
     setDrawn(next.drawn);
     setOpenIndex(null);
     setIsShared(true);
@@ -145,6 +164,17 @@ export function ReadingPage() {
     clearShareLink();
   }
 
+  function currentShareInput() {
+    return {
+      spread,
+      drawn,
+      question,
+      shadow: shadowEnabled,
+      lens: lensSelection === "auto" ? undefined : lensSelection,
+      depth,
+    };
+  }
+
   async function handleCopy() {
     try {
       if (!navigator.clipboard?.writeText) {
@@ -163,12 +193,7 @@ export function ReadingPage() {
   }
 
   function handleSaveToJournal() {
-    const params = buildShareParams({
-      spread,
-      drawn,
-      question,
-      shadow: shadowEnabled,
-    });
+    const params = buildShareParams(currentShareInput());
 
     setJournalStatus(saveJournalEntry(params) ? "saved" : "error");
   }
@@ -179,12 +204,7 @@ export function ReadingPage() {
         throw new Error("Clipboard API unavailable");
       }
 
-      const url = buildShareUrl(window.location.href, {
-        spread,
-        drawn,
-        question,
-        shadow: shadowEnabled,
-      });
+      const url = buildShareUrl(window.location.href, currentShareInput());
 
       await navigator.clipboard.writeText(url);
       setCopyStatus("link");
@@ -212,7 +232,9 @@ export function ReadingPage() {
                 {spread.name}
               </h1>
               <p className={styles.readingSub}>
-                {spread.subtitle} · {spread.positions.length} cards
+                {spread.subtitle} · {spread.positions.length} cards ·{" "}
+                {DEPTH_LABELS[depth]} depth
+                {lensSelection !== "auto" && ` · ${LENS_LABELS[lensSelection]}`}
               </p>
             </div>
 
@@ -486,6 +508,51 @@ export function ReadingPage() {
                 </span>
               </span>
             </label>
+
+            <div className={styles.readingOptions}>
+              <div>
+                <label className="field-label" htmlFor="reading-lens">
+                  Lens
+                </label>
+                <select
+                  id="reading-lens"
+                  className={`text-input ${styles.select}`}
+                  value={lensSelection}
+                  onChange={(event) =>
+                    setLensSelection(event.target.value as LensSelection)
+                  }
+                >
+                  <option value="auto">Automatic — infer from the question</option>
+                  {LENSES.map((lens) => (
+                    <option key={lens} value={lens}>
+                      {LENS_LABELS[lens]}
+                    </option>
+                  ))}
+                </select>
+                <p className={styles.help}>
+                  Automatic reads the question’s wording; an explicit lens overrides it.
+                </p>
+              </div>
+
+              <div>
+                <label className="field-label" htmlFor="reading-depth">
+                  Depth
+                </label>
+                <select
+                  id="reading-depth"
+                  className={`text-input ${styles.select}`}
+                  value={depth}
+                  onChange={(event) => setDepth(event.target.value as ReadingDepth)}
+                >
+                  <option value="brief">Brief — headline, patterns, action</option>
+                  <option value="standard">Standard — full reading</option>
+                  <option value="deep">Deep — more patterns</option>
+                </select>
+                <p className={styles.help}>
+                  Brief omits positions and movement; deep keeps more of the pattern.
+                </p>
+              </div>
+            </div>
 
             <div className={styles.submitRow}>
               <button type="submit" className="button button--primary">

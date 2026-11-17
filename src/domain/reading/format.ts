@@ -1,5 +1,5 @@
 import { SEPHIRA_BY_ID } from "../tree";
-import { LENS_LABELS } from "./language";
+import { DEPTH_LABELS, LENS_LABELS } from "./language";
 import { ELEMENTS } from "./positions";
 import { describeCard } from "./text";
 import type { ReadingInput, ReadingInterpretation } from "./types";
@@ -16,7 +16,11 @@ export function formatReading(
     lines.push(`Question: ${question}`);
   }
 
-  lines.push(`Lens: ${LENS_LABELS[interpretation.working.lens]}`, "");
+  lines.push(
+    `Lens: ${LENS_LABELS[interpretation.working.lens]}`,
+    `Depth: ${DEPTH_LABELS[interpretation.depth]}`,
+    "",
+  );
   lines.push(interpretation.headline, "");
 
   interpretation.overview.forEach((paragraph) => {
@@ -33,7 +37,7 @@ export function formatReading(
     lines.push("");
   }
 
-  if (interpretation.positions.length > 0) {
+  if (interpretation.depth !== "brief" && interpretation.positions.length > 0) {
     lines.push("The cards in their positions");
 
     interpretation.positions.forEach((position) => {
@@ -47,7 +51,7 @@ export function formatReading(
     lines.push("");
   }
 
-  if (interpretation.movement.length > 0) {
+  if (interpretation.depth !== "brief" && interpretation.movement.length > 0) {
     lines.push("How the spread moves");
 
     interpretation.movement.forEach((paragraph) => {

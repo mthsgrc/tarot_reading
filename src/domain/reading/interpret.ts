@@ -18,12 +18,14 @@ import type { ReadingInput, ReadingInterpretation } from "./types";
  */
 export function interpretReading(input: ReadingInput): ReadingInterpretation {
   const facts = buildFacts(input);
+  const depth = input.depth ?? "standard";
   const notices = selectInsights(
     [
       ...buildFactInsights(facts, input.drawn),
       ...buildRelationInsights(input.spread, input.drawn),
     ],
     facts.total,
+    depth,
   );
 
   return {
@@ -33,6 +35,7 @@ export function interpretReading(input: ReadingInput): ReadingInterpretation {
     positions: buildPositionInsights(input.spread, input.drawn, facts),
     movement: buildMovement(input.spread, input.drawn, facts),
     action: buildAction(input.spread, facts),
+    depth,
     working: facts,
   };
 }

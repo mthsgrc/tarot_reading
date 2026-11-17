@@ -72,6 +72,7 @@ describe("JournalPage", () => {
     expect(screen.getAllByText(reading!.spread.name).length).toBeGreaterThan(0);
     expect(screen.getByText("What should I notice?")).toBeInTheDocument();
     expect(screen.getByText(reading!.drawn[0]!.card.name)).toBeInTheDocument();
+    expect(screen.getByText(/automatic lens.*standard depth/i)).toBeInTheDocument();
 
     const open = screen.getByRole("link", { name: /open reading/i });
     expect(open.getAttribute("href")).toContain("v=1");

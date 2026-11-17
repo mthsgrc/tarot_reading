@@ -118,6 +118,20 @@
   line-height: 1.55;
 }
 
+.readingOptions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: var(--space-4);
+}
+
+.select {
+  height: 3.05rem;
+  padding-top: 0;
+  padding-bottom: 0;
+  cursor: pointer;
+}
+
 .submitRow {
   display: flex;
   flex-wrap: wrap;
@@ -482,6 +496,12 @@
 
   .elementRow {
     grid-template-columns: 5.5rem minmax(0, 1fr) 3.6rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .readingOptions {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

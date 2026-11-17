@@ -1,4 +1,4 @@
-import { LENS_LABELS } from "../domain/reading/language";
+import { DEPTH_LABELS, LENS_LABELS } from "../domain/reading/language";
 import { ELEMENTS } from "../domain/reading/positions";
 import type { ReadingInterpretation as ReadingInterpretationData } from "../domain/reading/types";
 import { SEPHIRA_BY_ID } from "../domain/tree";
@@ -54,27 +54,32 @@ export function ReadingInterpretation({ interpretation }: ReadingInterpretationP
         </ul>
       </section>
 
-      <section className={styles.block} aria-labelledby="positions-title">
-        <h3 id="positions-title" className={styles.subhead}>
-          The cards in their positions
-        </h3>
-        <ol className={styles.positions}>
-          {interpretation.positions.map(({ drawn, body }) => (
-            <li key={drawn.position.id} className={styles.position}>
-              <div className={styles.positionHead}>
-                <span className={styles.positionLabel}>{drawn.position.label}</span>
-                <span className={styles.positionCard}>{drawn.card.name}</span>
-                <span className={styles.orientation} data-orientation={drawn.orientation}>
-                  {drawn.orientation === "shadow" ? "Shadow" : "Upright"}
-                </span>
-              </div>
-              <p className={styles.positionBody}>{body}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
+      {interpretation.depth !== "brief" && (
+        <section className={styles.block} aria-labelledby="positions-title">
+          <h3 id="positions-title" className={styles.subhead}>
+            The cards in their positions
+          </h3>
+          <ol className={styles.positions}>
+            {interpretation.positions.map(({ drawn, body }) => (
+              <li key={drawn.position.id} className={styles.position}>
+                <div className={styles.positionHead}>
+                  <span className={styles.positionLabel}>{drawn.position.label}</span>
+                  <span className={styles.positionCard}>{drawn.card.name}</span>
+                  <span
+                    className={styles.orientation}
+                    data-orientation={drawn.orientation}
+                  >
+                    {drawn.orientation === "shadow" ? "Shadow" : "Upright"}
+                  </span>
+                </div>
+                <p className={styles.positionBody}>{body}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
 
-      {interpretation.movement.length > 0 && (
+      {interpretation.depth !== "brief" && interpretation.movement.length > 0 && (
         <section className={styles.block} aria-labelledby="movement-title">
           <h3 id="movement-title" className={styles.subhead}>
             How the spread moves
@@ -107,6 +112,10 @@ export function ReadingInterpretation({ interpretation }: ReadingInterpretationP
               <dd>
                 {LENS_LABELS[working.lens]} ({LENS_SOURCES[working.lensSource]})
               </dd>
+            </div>
+            <div>
+              <dt>Depth</dt>
+              <dd>{DEPTH_LABELS[interpretation.depth]}</dd>
             </div>
             <div>
               <dt>Cards</dt>

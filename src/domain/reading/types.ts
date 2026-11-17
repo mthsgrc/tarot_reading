@@ -12,11 +12,14 @@ export type ReadingLens = "general" | "work" | "love" | "inner";
 
 export type LensSource = "explicit" | "inferred" | "default";
 
+export type ReadingDepth = "brief" | "standard" | "deep";
+
 export interface ReadingInput {
   spread: Spread;
   drawn: readonly DrawnCard[];
   question?: string;
   lens?: ReadingLens;
+  depth?: ReadingDepth;
 }
 
 export interface NumberGroup {
@@ -99,5 +102,6 @@ export interface ReadingInterpretation {
   positions: PositionInsight[];
   movement: string[];
   action: string;
+  depth: ReadingDepth;
   working: ReadingFacts;
 }

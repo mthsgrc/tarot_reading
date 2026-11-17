@@ -119,6 +119,12 @@
   text-transform: uppercase;
 }
 
+.entryMeta {
+  margin-top: 0.55rem;
+  color: var(--color-muted);
+  font-size: 0.68rem;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;

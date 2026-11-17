@@ -65,6 +65,44 @@ describe("reading share links", () => {
     expect(shared?.question).toBe(question);
   });
 
+  it("round-trips an explicit lens and depth", () => {
+    const { spread, drawn } = drawFor("thelema-triad");
+    const shared = readSharedReading(
+      buildShareParams({
+        spread,
+        drawn,
+        question: "What does my career need?",
+        shadow: false,
+        lens: "work",
+        depth: "deep",
+      }),
+    );
+
+    expect(shared?.lens).toBe("work");
+    expect(shared?.depth).toBe("deep");
+  });
+
+  it("keeps an explicit general lens and defaults legacy links", () => {
+    const { spread, drawn } = drawFor("thelema-triad");
+    const explicit = buildShareParams({
+      spread,
+      drawn,
+      question: "What should I notice?",
+      shadow: false,
+      lens: "general",
+      depth: "standard",
+    });
+
+    expect(explicit.get("lens")).toBe("general");
+    expect(explicit.has("depth")).toBe(false);
+    expect(readSharedReading(explicit)?.lens).toBe("general");
+    expect(readSharedReading(explicit)?.depth).toBe("standard");
+
+    const legacy = readSharedReading(validParams());
+    expect(legacy?.lens).toBeUndefined();
+    expect(legacy?.depth).toBe("standard");
+  });
+
   it("omits an empty question and a disabled shadow flag", () => {
     const { spread, drawn } = drawFor("thelema-triad", false);
     const params = buildShareParams({
@@ -76,6 +114,8 @@ describe("reading share links", () => {
 
     expect(params.has("q")).toBe(false);
     expect(params.has("shadow")).toBe(false);
+    expect(params.has("lens")).toBe(false);
+    expect(params.has("depth")).toBe(false);
   });
 
   it("builds an absolute URL under the current base path", () => {
@@ -130,6 +170,8 @@ describe("reading share links", () => {
       (params) => params.set("cards", "major-00-fool.u.extra,cups-two.u,major-17-star.u"),
     ],
     ["an overlong question", (params) => params.set("q", "x".repeat(501))],
+    ["an unknown lens", (params) => params.set("lens", "money")],
+    ["an unknown depth", (params) => params.set("depth", "maximal")],
   ];
 
   it.each(invalidCases)("rejects %s", (_label, mutate) => {

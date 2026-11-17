@@ -4,7 +4,7 @@ import type { DrawnCard, Element, Suit } from "../types";
 import { ELEMENT_VOICE } from "./language";
 import { ELEMENTS } from "./positions";
 import { describeCard, joinWithAnd } from "./text";
-import type { Insight, InsightKind, ReadingFacts } from "./types";
+import type { Insight, InsightKind, ReadingDepth, ReadingFacts } from "./types";
 
 const OUTCOME_POSITIONS = new Set(["future", "aeon", "potential", "gnosis", "malkuth"]);
 
@@ -252,15 +252,35 @@ function fallbackInsight(): Insight {
   };
 }
 
-function selectionLimit(total: number): number {
+function selectionLimit(total: number, depth: ReadingDepth): number {
+  if (depth === "brief") {
+    return total <= 3 ? 3 : 4;
+  }
+
+  if (depth === "deep") {
+    if (total <= 3) return 8;
+    if (total <= 5) return 10;
+    return 12;
+  }
+
   if (total <= 3) return 4;
   if (total <= 5) return 5;
   return 6;
 }
 
+function kindLimit(depth: ReadingDepth): number {
+  if (depth === "deep") return 3;
+  return 2;
+}
+
 /** Sort by weight, keep the strongest, and avoid a wall of near-identical notices. */
-export function selectInsights(insights: readonly Insight[], total: number): Insight[] {
-  const limit = selectionLimit(total);
+export function selectInsights(
+  insights: readonly Insight[],
+  total: number,
+  depth: ReadingDepth = "standard",
+): Insight[] {
+  const limit = selectionLimit(total, depth);
+  const perKind = kindLimit(depth);
   const sorted = [...insights].sort(
     (left, right) => right.weight - left.weight || left.id.localeCompare(right.id),
   );
@@ -273,7 +293,7 @@ export function selectInsights(insights: readonly Insight[], total: number): Ins
     if (seen.has(insight.id)) continue;
 
     const kindCount = kindCounts.get(insight.kind) ?? 0;
-    if (kindCount >= 2) continue;
+    if (kindCount >= perKind) continue;
 
     picked.push(insight);
     seen.add(insight.id);

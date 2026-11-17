@@ -1,16 +1,22 @@
 import { CARD_BY_ID } from "../../data/cards";
 import { SPREAD_BY_ID } from "../../data/spreads";
 import type { DrawnCard, Orientation, Spread } from "../types";
+import type { ReadingDepth, ReadingLens } from "./types";
 
 /** Bump when the encoded shape changes in a way that cannot be read backwards. */
 const SHARE_VERSION = "1";
 const MAX_QUESTION_LENGTH = 500;
+const SHARE_LENSES = new Set<string>(["general", "work", "love", "inner"]);
+const SHARE_DEPTHS = new Set<string>(["brief", "standard", "deep"]);
 
 export interface ReadingShareInput {
   spread: Spread;
   drawn: readonly DrawnCard[];
   question: string;
   shadow: boolean;
+  /** Omitted when the reading should infer its lens from the question. */
+  lens?: ReadingLens;
+  depth?: ReadingDepth;
 }
 
 export interface SharedReading {
@@ -18,6 +24,8 @@ export interface SharedReading {
   drawn: DrawnCard[];
   question: string;
   shadow: boolean;
+  lens?: ReadingLens;
+  depth: ReadingDepth;
 }
 
 /**
@@ -41,6 +49,14 @@ export function buildShareParams(input: ReadingShareInput): URLSearchParams {
   const question = input.question.trim();
   if (question) {
     params.set("q", question);
+  }
+
+  if (input.lens) {
+    params.set("lens", input.lens);
+  }
+
+  if (input.depth && input.depth !== "standard") {
+    params.set("depth", input.depth);
   }
 
   if (input.shadow) {
@@ -74,6 +90,16 @@ export function readSharedReading(params: URLSearchParams): SharedReading | null
 
   const question = params.get("q") ?? "";
   if (question.length > MAX_QUESTION_LENGTH) {
+    return null;
+  }
+
+  const encodedLens = params.get("lens");
+  if (encodedLens !== null && !SHARE_LENSES.has(encodedLens)) {
+    return null;
+  }
+
+  const encodedDepth = params.get("depth") ?? "standard";
+  if (!SHARE_DEPTHS.has(encodedDepth)) {
     return null;
   }
 
@@ -122,5 +148,7 @@ export function readSharedReading(params: URLSearchParams): SharedReading | null
     drawn,
     question,
     shadow: params.get("shadow") === "1",
+    lens: encodedLens === null ? undefined : (encodedLens as ReadingLens),
+    depth: encodedDepth as ReadingDepth,
   };
 }

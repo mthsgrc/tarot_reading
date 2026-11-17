@@ -187,6 +187,8 @@ describe("ReadingPage", () => {
     });
     renderReadingPage();
 
+    await user.selectOptions(screen.getByRole("combobox", { name: /lens/i }), "work");
+    await user.selectOptions(screen.getByRole("combobox", { name: /depth/i }), "deep");
     await user.type(screen.getByRole("textbox", { name: /question/i }), "What now?");
     await user.click(screen.getByRole("button", { name: /draw the cards/i }));
     await user.click(screen.getByRole("button", { name: /reveal all/i }));
@@ -201,6 +203,8 @@ describe("ReadingPage", () => {
     expect(shared.get("v")).toBe("1");
     expect(shared.get("spread")).toBe("thelema-triad");
     expect(shared.get("q")).toBe("What now?");
+    expect(shared.get("lens")).toBe("work");
+    expect(shared.get("depth")).toBe("deep");
     expect(shared.get("cards")).toMatch(/^[a-z0-9-]+\.(u|s)(,[a-z0-9-]+\.(u|s)){2}$/);
 
     expect(
@@ -224,13 +228,15 @@ describe("ReadingPage", () => {
     expect(print).toHaveBeenCalledTimes(1);
   });
 
-  it("saves a reading to the local journal", async () => {
+  it("saves a reading to the local journal with its lens and depth", async () => {
     const user = userEvent.setup();
     const params = new URLSearchParams({
       v: "1",
       spread: "thelema-triad",
       cards: "major-00-fool.u,cups-two.s,major-17-star.u",
       q: "What should I notice?",
+      lens: "love",
+      depth: "brief",
     });
 
     renderReadingPage(`/?${params.toString()}`);
@@ -243,6 +249,31 @@ describe("ReadingPage", () => {
     expect(entries).toHaveLength(1);
     expect(entries[0]?.params).toContain("spread=thelema-triad");
     expect(entries[0]?.params).toContain("q=What");
+    expect(entries[0]?.params).toContain("lens=love");
+    expect(entries[0]?.params).toContain("depth=brief");
+  });
+
+  it("keeps a brief reading to its strongest material", () => {
+    const params = new URLSearchParams({
+      v: "1",
+      spread: "thelema-triad",
+      cards: "major-00-fool.u,cups-two.s,major-17-star.u",
+      q: "What should I notice?",
+      lens: "work",
+      depth: "brief",
+    });
+
+    renderReadingPage(`/?${params.toString()}`);
+
+    expect(screen.getByText(/brief depth/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/will and work/i).length).toBeGreaterThan(0);
+    expect(
+      screen.queryByRole("heading", { name: "The cards in their positions" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "How the spread moves" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "What stands out" })).toBeInTheDocument();
   });
 
   it("marks a reading opened from the journal", () => {

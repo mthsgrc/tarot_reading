@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { DEPTH_LABELS, LENS_LABELS } from "../domain/reading/language";
 import { readSharedReading } from "../domain/reading/share";
 import { clearJournal, deleteJournalEntry, loadJournal } from "../lib/journalStorage";
 import styles from "./JournalPage.module.css";
@@ -146,6 +147,11 @@ export function JournalPage() {
                       </li>
                     ))}
                   </ul>
+
+                  <p className={styles.entryMeta}>
+                    {reading.lens ? LENS_LABELS[reading.lens] : "Automatic lens"} ·{" "}
+                    {DEPTH_LABELS[reading.depth]} depth
+                  </p>
 
                   <div className={styles.actions}>
                     <Link className="button button--small" to={`/?${entry.params}&j=1`}>
