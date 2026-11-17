@@ -210,7 +210,7 @@ export function LibraryPage() {
           {filteredCards.map((card) => (
             <li key={card.id}>
               <Link to={`/cards/${card.id}`} className={styles.cardLink}>
-                <CardImage card={card} />
+                <CardImage card={card} decorative />
                 <span className={styles.cardType}>{cardTypeLabel(card)}</span>
                 <span className={styles.cardName}>{card.name}</span>
                 <span className={styles.cardKeywords}>

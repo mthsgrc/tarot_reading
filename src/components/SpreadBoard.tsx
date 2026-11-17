@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { useId, type CSSProperties } from "react";
 import type { DrawnCard, Spread } from "../domain/types";
 import styles from "./SpreadBoard.module.css";
 import { TarotCardView } from "./TarotCardView";
@@ -11,14 +11,19 @@ interface SpreadBoardProps {
 }
 
 export function SpreadBoard({ spread, drawn, onReveal, onOpen }: SpreadBoardProps) {
+  const titleId = useId();
   // Row layouts auto-place their cards; the other layouts name grid areas per position.
   const usesNamedAreas = spread.layout !== "row";
 
   return (
-    <div
+    <section
       className={`${styles.board} ${styles[spread.layout]}`}
-      aria-label={`${spread.name} spread`}
+      aria-labelledby={titleId}
     >
+      <h2 id={titleId} className="visually-hidden">
+        {spread.name} spread
+      </h2>
+
       {drawn.map((drawnCard, index) => (
         <div
           key={drawnCard.position.id}
@@ -40,6 +45,6 @@ export function SpreadBoard({ spread, drawn, onReveal, onOpen }: SpreadBoardProp
           />
         </div>
       ))}
-    </div>
+    </section>
   );
 }

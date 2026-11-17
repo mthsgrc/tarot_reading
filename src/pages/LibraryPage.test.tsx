@@ -27,6 +27,15 @@ describe("LibraryPage", () => {
     );
   });
 
+  it("names the card link without repeating the thumbnail alt text", () => {
+    renderLibraryPage();
+
+    const foolLink = screen.getByRole("link", { name: /the fool/i });
+
+    expect(foolLink).toHaveAccessibleName(/The Fool/);
+    expect(foolLink).not.toHaveAccessibleName(/from the Thoth Tarot/i);
+  });
+
   it("searches by name and reports the reduced count", async () => {
     const user = userEvent.setup();
     renderLibraryPage();

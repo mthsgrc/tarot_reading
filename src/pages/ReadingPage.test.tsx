@@ -220,7 +220,7 @@ describe("ReadingPage", () => {
     await user.type(screen.getByRole("textbox", { name: /question/i }), "What now?");
     await user.click(screen.getByRole("button", { name: /draw the cards/i }));
     await user.click(screen.getByRole("button", { name: /reveal all/i }));
-    await user.click(screen.getByRole("button", { name: /copy link/i }));
+    await user.click(screen.getByRole("button", { name: /^copy link$/i }));
 
     expect(writeText).toHaveBeenCalledTimes(1);
 
@@ -237,6 +237,35 @@ describe("ReadingPage", () => {
 
     expect(
       screen.getByText(/link copied to the clipboard.*includes your question/i),
+    ).toBeInTheDocument();
+  });
+
+  it("copies a shareable link without the question", async () => {
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText },
+    });
+    const params = new URLSearchParams({
+      v: "1",
+      spread: "thelema-triad",
+      cards: "major-00-fool.u,cups-two.u,major-17-star.u",
+      q: "What should I notice?",
+    });
+
+    renderReadingPage(`/?${params.toString()}`);
+    await user.click(
+      screen.getByRole("button", { name: /^copy link without question$/i }),
+    );
+
+    const copied = writeText.mock.calls[0]?.[0] as string;
+    const shared = new URLSearchParams(copied.slice(copied.indexOf("?") + 1));
+
+    expect(shared.has("q")).toBe(false);
+    expect(shared.get("cards")).toBe(params.get("cards"));
+    expect(
+      screen.getByText(/link copied to the clipboard without your question/i),
     ).toBeInTheDocument();
   });
 

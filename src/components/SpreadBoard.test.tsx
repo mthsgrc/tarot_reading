@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { ALL_CARDS } from "../data/cards";
 import { SPREAD_BY_ID } from "../data/spreads";
@@ -21,6 +21,17 @@ function renderBoard(spreadId: string) {
 }
 
 describe("SpreadBoard", () => {
+  it("exposes the spread as a named region with a heading", () => {
+    renderBoard("thelema-triad");
+
+    expect(
+      screen.getByRole("region", { name: /thelema triad spread/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: /thelema triad spread/i }),
+    ).toBeInTheDocument();
+  });
+
   it("auto-places row spreads instead of naming grid areas", () => {
     const positions = renderBoard("thelema-triad");
 

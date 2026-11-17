@@ -27,7 +27,7 @@ const ELEMENTS: readonly Element[] = ["Fire", "Water", "Air", "Earth"];
 const LENSES: readonly ReadingLens[] = ["general", "work", "love", "inner"];
 
 type LensSelection = "auto" | ReadingLens;
-type CopyStatus = "idle" | "reading" | "link" | "error";
+type CopyStatus = "idle" | "reading" | "link" | "linkWithoutQuestion" | "error";
 type JournalStatus = "idle" | JournalSaveStatus;
 
 export function ReadingPage() {
@@ -174,11 +174,11 @@ export function ReadingPage() {
     clearShareLink();
   }
 
-  function currentShareInput() {
+  function currentShareInput(includeQuestion = true) {
     return {
       spread,
       drawn,
-      question,
+      question: includeQuestion ? question : "",
       shadow: shadowEnabled,
       lens: lensSelection === "auto" ? undefined : lensSelection,
       depth,
@@ -208,16 +208,16 @@ export function ReadingPage() {
     setJournalStatus(saveJournalEntry(params));
   }
 
-  async function handleCopyLink() {
+  async function handleCopyLink(includeQuestion: boolean) {
     try {
       if (!navigator.clipboard?.writeText) {
         throw new Error("Clipboard API unavailable");
       }
 
-      const url = buildShareUrl(window.location.href, currentShareInput());
+      const url = buildShareUrl(window.location.href, currentShareInput(includeQuestion));
 
       await navigator.clipboard.writeText(url);
-      setCopyStatus("link");
+      setCopyStatus(includeQuestion ? "link" : "linkWithoutQuestion");
     } catch {
       setCopyStatus("error");
     }
@@ -315,9 +315,18 @@ export function ReadingPage() {
                     <button
                       type="button"
                       className="button button--ghost button--small"
-                      onClick={handleCopyLink}
+                      onClick={() => handleCopyLink(true)}
                     >
                       {copyStatus === "link" ? "Link copied" : "Copy link"}
+                    </button>
+                    <button
+                      type="button"
+                      className="button button--ghost button--small"
+                      onClick={() => handleCopyLink(false)}
+                    >
+                      {copyStatus === "linkWithoutQuestion"
+                        ? "Link copied"
+                        : "Copy link without question"}
                     </button>
                     <button
                       type="button"
@@ -407,7 +416,11 @@ export function ReadingPage() {
                 <p className={styles.copyStatus} role="status" aria-live="polite">
                   {copyStatus === "reading" && "Reading copied to the clipboard."}
                   {copyStatus === "link" &&
-                    "Link copied to the clipboard. It includes your question."}
+                    (question.trim()
+                      ? "Link copied to the clipboard. It includes your question."
+                      : "Link copied to the clipboard.")}
+                  {copyStatus === "linkWithoutQuestion" &&
+                    "Link copied to the clipboard without your question."}
                   {copyStatus === "error" &&
                     "The clipboard is unavailable in this browser. Copying is disabled."}
                   {journalStatus === "saved" && "Reading saved to your journal."}
