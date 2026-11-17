@@ -11,17 +11,20 @@ import { drawCards } from "../domain/deck";
 import { formatReading } from "../domain/reading/format";
 import { interpretReading } from "../domain/reading/interpret";
 import {
+  buildShareParams,
   buildShareUrl,
   hasShareParams,
   readSharedReading,
 } from "../domain/reading/share";
 import { ELEMENT_COLORS, ELEMENT_GLYPHS } from "../domain/tree";
 import type { DrawnCard, Element } from "../domain/types";
+import { saveJournalEntry } from "../lib/journalStorage";
 import styles from "./ReadingPage.module.css";
 
 const ELEMENTS: readonly Element[] = ["Fire", "Water", "Air", "Earth"];
 
 type CopyStatus = "idle" | "reading" | "link" | "error";
+type JournalStatus = "idle" | "saved" | "error";
 
 export function ReadingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -39,9 +42,11 @@ export function ReadingPage() {
   const [drawn, setDrawn] = useState<DrawnCard[]>(shared?.drawn ?? []);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
+  const [journalStatus, setJournalStatus] = useState<JournalStatus>("idle");
 
   const spread = SPREAD_BY_ID.get(spreadId) ?? DEFAULT_SPREAD;
   const isReading = drawn.length > 0;
+  const fromJournal = isShared && searchParams.get("j") === "1";
   const revealedCount = drawn.filter((drawnCard) => drawnCard.revealed).length;
   const allRevealed = isReading && revealedCount === drawn.length;
   const selectedCard = openIndex === null ? null : (drawn[openIndex] ?? null);
@@ -98,6 +103,7 @@ export function ReadingPage() {
     setIsShared(true);
     setShareError(false);
     setCopyStatus("idle");
+    setJournalStatus("idle");
   }, [searchParams, appliedShare]);
 
   function clearShareLink() {
@@ -111,6 +117,7 @@ export function ReadingPage() {
     setIsShared(false);
     setShareError(false);
     setCopyStatus("idle");
+    setJournalStatus("idle");
     clearShareLink();
   }
 
@@ -134,6 +141,7 @@ export function ReadingPage() {
     setIsShared(false);
     setShareError(false);
     setCopyStatus("idle");
+    setJournalStatus("idle");
     clearShareLink();
   }
 
@@ -152,6 +160,17 @@ export function ReadingPage() {
 
   function handlePrint() {
     window.print();
+  }
+
+  function handleSaveToJournal() {
+    const params = buildShareParams({
+      spread,
+      drawn,
+      question,
+      shadow: shadowEnabled,
+    });
+
+    setJournalStatus(saveJournalEntry(params) ? "saved" : "error");
   }
 
   async function handleCopyLink() {
@@ -182,7 +201,13 @@ export function ReadingPage() {
 
           <div className={styles.readingHead}>
             <div>
-              <p className="eyebrow">{isShared ? "Shared reading" : "Your reading"}</p>
+              <p className="eyebrow">
+                {fromJournal
+                  ? "Saved reading"
+                  : isShared
+                    ? "Shared reading"
+                    : "Your reading"}
+              </p>
               <h1 id="reading-title" className={`section-title ${styles.readingTitle}`}>
                 {spread.name}
               </h1>
@@ -269,6 +294,14 @@ export function ReadingPage() {
                     >
                       Print reading
                     </button>
+                    <button
+                      type="button"
+                      className="button button--ghost button--small"
+                      disabled={journalStatus === "saved"}
+                      onClick={handleSaveToJournal}
+                    >
+                      {journalStatus === "saved" ? "Saved" : "Save to journal"}
+                    </button>
                   </div>
                 </div>
 
@@ -345,6 +378,9 @@ export function ReadingPage() {
                     "Link copied to the clipboard. It includes your question."}
                   {copyStatus === "error" &&
                     "The clipboard is unavailable in this browser. Copying is disabled."}
+                  {journalStatus === "saved" && "Reading saved to your journal."}
+                  {journalStatus === "error" &&
+                    "The journal is unavailable in this browser. Browser storage may be disabled or full."}
                 </p>
               </section>
 
@@ -456,7 +492,8 @@ export function ReadingPage() {
                 Draw the cards
               </button>
               <p className={styles.submitNote}>
-                No account. No storage. The draw happens in your browser.
+                No account. Nothing leaves your browser. Saved readings stay on this
+                device.
               </p>
             </div>
           </form>

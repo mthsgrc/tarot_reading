@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { HashRouter, Route, Routes, useLocation } from "react-router-dom";
 import { CardPage } from "../pages/CardPage";
+import { JournalPage } from "../pages/JournalPage";
 import { LibraryPage } from "../pages/LibraryPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { ReadingPage } from "../pages/ReadingPage";
@@ -25,6 +26,7 @@ export function App() {
         <Route element={<Layout />}>
           <Route index element={<ReadingPage />} />
           <Route path="library" element={<LibraryPage />} />
+          <Route path="journal" element={<JournalPage />} />
           <Route path="cards/:cardId" element={<CardPage />} />
           <Route path="tradition" element={<TraditionPage />} />
           <Route path="*" element={<NotFoundPage />} />

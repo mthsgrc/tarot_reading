@@ -7,5 +7,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     css: true,
+    // The full interaction tests exceed the 5s default when files run in parallel.
+    testTimeout: 10_000,
   },
 });

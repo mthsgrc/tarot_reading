@@ -5,6 +5,7 @@ import styles from "./Layout.module.css";
 const NAV_ITEMS = [
   { to: "/", label: "Reading", end: true },
   { to: "/library", label: "Card Library" },
+  { to: "/journal", label: "Journal" },
   { to: "/tradition", label: "The Tradition" },
 ];
 

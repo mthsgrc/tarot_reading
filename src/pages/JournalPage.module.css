@@ -1,0 +1,157 @@
+.page {
+  padding-top: clamp(2rem, 5vw, 4rem);
+}
+
+.hero {
+  max-width: 860px;
+  padding-bottom: var(--space-5);
+}
+
+.title {
+  margin-top: 0.8rem;
+}
+
+.lede {
+  margin-top: 1.2rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.count {
+  color: var(--color-gold);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.clearArea {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.confirm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  color: var(--color-parchment-soft);
+  font-size: 0.8rem;
+}
+
+.error {
+  padding: 0.9rem 1rem;
+  margin-top: var(--space-4);
+  color: var(--color-crimson-bright);
+  font-size: 0.82rem;
+  line-height: 1.65;
+  background: rgba(194, 76, 94, 0.08);
+  border: 1px solid rgba(194, 76, 94, 0.35);
+  border-radius: var(--radius-sm);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0;
+  margin: var(--space-4) 0 0;
+  list-style: none;
+}
+
+.entry {
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.entryHead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.entryTitle {
+  margin-top: 0.35rem;
+  font-size: clamp(1.2rem, 2.4vw, 1.65rem);
+  line-height: 1.25;
+}
+
+.time {
+  color: var(--color-muted);
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.cardList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.1rem;
+  padding: 0;
+  margin: 0.85rem 0 0;
+  color: var(--color-parchment-soft);
+  font-size: 0.78rem;
+  list-style: none;
+}
+
+.cardList li {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: baseline;
+}
+
+.cardMeta {
+  color: var(--color-gold);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.empty {
+  display: flex;
+  max-width: 620px;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  margin: var(--space-4) auto;
+}
+
+.emptyTitle {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+.emptyText {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+  .toolbar {
+    align-items: flex-start;
+  }
+
+  .clearArea {
+    justify-content: flex-start;
+  }
+}

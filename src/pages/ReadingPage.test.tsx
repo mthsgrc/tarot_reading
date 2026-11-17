@@ -1,7 +1,8 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, useLocation, useNavigate } from "react-router-dom";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { loadJournal } from "../lib/journalStorage";
 import { ReadingPage } from "./ReadingPage";
 
 function LocationProbe() {
@@ -26,6 +27,10 @@ function renderReadingPage(initialEntry = "/reading") {
     </MemoryRouter>,
   );
 }
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe("ReadingPage", () => {
   it("draws, reveals, opens, and resets a reading", async () => {
@@ -217,6 +222,59 @@ describe("ReadingPage", () => {
     await user.click(screen.getByRole("button", { name: /print reading/i }));
 
     expect(print).toHaveBeenCalledTimes(1);
+  });
+
+  it("saves a reading to the local journal", async () => {
+    const user = userEvent.setup();
+    const params = new URLSearchParams({
+      v: "1",
+      spread: "thelema-triad",
+      cards: "major-00-fool.u,cups-two.s,major-17-star.u",
+      q: "What should I notice?",
+    });
+
+    renderReadingPage(`/?${params.toString()}`);
+    await user.click(screen.getByRole("button", { name: /save to journal/i }));
+
+    expect(screen.getByText("Reading saved to your journal.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^saved$/i })).toBeDisabled();
+
+    const entries = loadJournal();
+    expect(entries).toHaveLength(1);
+    expect(entries[0]?.params).toContain("spread=thelema-triad");
+    expect(entries[0]?.params).toContain("q=What");
+  });
+
+  it("marks a reading opened from the journal", () => {
+    const params = new URLSearchParams({
+      v: "1",
+      spread: "thelema-triad",
+      cards: "major-00-fool.u,cups-two.s,major-17-star.u",
+      q: "What should I notice?",
+    });
+
+    renderReadingPage(`/?${params.toString()}&j=1`);
+
+    expect(screen.getByText("Saved reading")).toBeInTheDocument();
+  });
+
+  it("reports when the journal cannot be written", async () => {
+    const user = userEvent.setup();
+    const params = new URLSearchParams({
+      v: "1",
+      spread: "thelema-triad",
+      cards: "major-00-fool.u,cups-two.s,major-17-star.u",
+      q: "What should I notice?",
+    });
+
+    renderReadingPage(`/?${params.toString()}`);
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("Quota exceeded");
+    });
+
+    await user.click(screen.getByRole("button", { name: /save to journal/i }));
+
+    expect(screen.getByText(/journal is unavailable/i)).toBeInTheDocument();
   });
 
   it("clears the share parameters when a new reading starts", async () => {

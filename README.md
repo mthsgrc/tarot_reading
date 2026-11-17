@@ -67,8 +67,9 @@ src/
 ├── components/   # Card views, spreads, dialog, Tree diagram, interpretation
 ├── data/         # 78 cards, six spread definitions, shared tradition notes
 ├── domain/       # Types, Tree constants, draw engine, reading engine, labels
-├── pages/        # Reading, library, card detail, tradition, 404
-├── styles/       # Design tokens and global base styles
+├── lib/          # Browser storage adapters
+├── pages/        # Reading, journal, library, card detail, tradition, 404
+├── styles/       # Design tokens, global base and print styles
 └── test/         # Vitest setup
 scripts/
 └── optimize-images.mjs
@@ -109,6 +110,10 @@ The same draw always produces the same reading, including phrase variants. No ba
 
 **Print reading** in the synthesis panel opens the browser's print dialog for paper or **Save as PDF**. The print stylesheet flips the dark interface to ink on white, hides navigation, buttons, dialogs, and status chrome, and keeps every card with its caption. Spread layouts are re-expressed in millimetres so the Tree and cross spreads keep their geometry on A4 or Letter, and long readings break between cards and interpretation blocks rather than through them. The print copy is the same deterministic reading shown on screen.
 
+### Journal
+
+**Save to journal** keeps a fully revealed reading in `localStorage` on that device. The `/journal` page lists the 50 most recent saves with their question, cards, and date; each entry reopens the exact draw through the same versioned link format, and entries can be deleted individually or cleared together after confirmation. Nothing is uploaded, no account is involved, and clearing browser storage clears the journal. Stored entries are re-validated when read, so corrupt or hand-edited data is ignored rather than rendered.
+
 ## Card artwork
 
 The original scans are in `images/` and were optimized with ImageMagick into native `278×408` AVIF and WebP files:
@@ -147,7 +152,8 @@ The suite covers:
 - Reading facts, lens inference, shared Sephira, Tree and planetary resonances
 - Deterministic interpretation, all-spread smoke tests, every card in both orientations, and text export
 - Share-link round trips for every spread, special characters in questions, and rejection of malformed links
-- The complete reading flow, shared-link loading, interpretation section, copy and print behavior, larger spread selection, library search/filters, card detail pages, and tradition page
+- Journal validation, deduplication, the 50-entry cap, storage failures, and delete/clear flows
+- The complete reading flow, shared-link loading, journal saves, interpretation section, copy and print behavior, larger spread selection, library search/filters, card detail pages, and tradition page
 
 Run:
 
@@ -171,7 +177,7 @@ An automated axe pass against the main pages is a sensible next addition.
 
 ## Roadmap
 
-- Persist reading history locally in IndexedDB or localStorage
+- Export the journal as a JSON backup
 - Export a reading as a shareable image
 - Add a study mode that quizzes correspondences
 - Add automated accessibility checks with axe
