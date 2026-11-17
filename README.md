@@ -10,6 +10,7 @@ Readings are for reflection, not prediction, and are not a substitute for medica
 - React Router with `HashRouter` for static hosting
 - Custom CSS Modules and design tokens
 - Vitest + Testing Library + jsdom
+- axe-core for accessibility checks
 - oxlint + Prettier
 - ImageMagick for the AVIF/WebP asset pipeline
 
@@ -33,6 +34,7 @@ Open the local URL printed by Vite.
 | `npm run preview`      | Preview the production build                   |
 | `npm run test`         | Run the Vitest suite once                      |
 | `npm run test:watch`   | Run Vitest in watch mode                       |
+| `npm run test:a11y`    | Run only the axe accessibility audit           |
 | `npm run typecheck`    | Run the TypeScript project build               |
 | `npm run lint`         | Run oxlint                                     |
 | `npm run format`       | Format the repository with Prettier            |
@@ -70,7 +72,7 @@ src/
 ├── lib/          # Browser storage adapters
 ├── pages/        # Reading, journal, library, card detail, tradition, 404
 ├── styles/       # Design tokens, global base and print styles
-└── test/         # Vitest setup
+└── test/         # Vitest setup and the axe helper
 scripts/
 └── optimize-images.mjs
 ```
@@ -153,6 +155,7 @@ The suite covers:
 - Deterministic interpretation, all-spread smoke tests, every card in both orientations, and text export
 - Share-link round trips for every spread, special characters in questions, and rejection of malformed links
 - Journal validation, deduplication, the 50-entry cap, storage failures, and delete/clear flows
+- axe audits of the setup, completed reading, card dialog, library, card page, tradition page, journal, and 404 under the WCAG A/AA tags
 - The complete reading flow, shared-link loading, journal saves, interpretation section, copy and print behavior, larger spread selection, library search/filters, card detail pages, and tradition page
 
 Run:
@@ -173,7 +176,7 @@ npm run verify
 - Responsive layouts and reduced-motion support
 - Color is not the only carrier of meaning
 
-An automated axe pass against the main pages is a sensible next addition.
+`npm run test:a11y` runs axe-core over every main page and the card dialog under the WCAG 2.0/2.1 A and AA tags. jsdom has no layout or paint, so color contrast is disabled in that pass and should be checked in a real browser.
 
 ## Roadmap
 
