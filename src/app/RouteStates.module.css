@@ -1,0 +1,44 @@
+.loading {
+  display: grid;
+  min-height: 50vh;
+  padding-block: var(--space-6);
+  place-items: center;
+}
+
+.loadingText {
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.errorPage {
+  padding-top: clamp(2rem, 5vw, 4rem);
+}
+
+.errorPanel {
+  max-width: 720px;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  margin-inline: auto;
+}
+
+.errorTitle {
+  margin-top: 0.6rem;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+}
+
+.errorText {
+  max-width: 60ch;
+  margin-top: 0.8rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.errorActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.2rem;
+}

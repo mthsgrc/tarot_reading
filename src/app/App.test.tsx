@@ -33,4 +33,14 @@ describe("App", () => {
     expect(screen.getByText("3 of 3 cards revealed.")).toBeInTheDocument();
     expect(screen.queryByText(/the path turns back/i)).not.toBeInTheDocument();
   });
+
+  it("loads a secondary route from its own chunk", async () => {
+    window.location.hash = "#/journal";
+    render(<App />);
+
+    expect(
+      await screen.findByRole("heading", { name: /readings you kept/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /draw a reading/i })).toBeInTheDocument();
+  });
 });

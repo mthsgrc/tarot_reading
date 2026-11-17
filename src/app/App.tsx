@@ -1,12 +1,33 @@
-import { useEffect } from "react";
+import { lazy, useEffect } from "react";
 import { HashRouter, Route, Routes, useLocation } from "react-router-dom";
-import { CardPage } from "../pages/CardPage";
-import { JournalPage } from "../pages/JournalPage";
-import { LibraryPage } from "../pages/LibraryPage";
-import { NotFoundPage } from "../pages/NotFoundPage";
 import { ReadingPage } from "../pages/ReadingPage";
-import { TraditionPage } from "../pages/TraditionPage";
 import { Layout } from "./Layout";
+
+// The reading page stays eager: it is the index route and every share link
+// opens here, so it should not wait on a second chunk.
+const CardPage = lazy(() =>
+  import("../pages/CardPage").then((module) => ({ default: module.CardPage })),
+);
+const JournalPage = lazy(() =>
+  import("../pages/JournalPage").then((module) => ({
+    default: module.JournalPage,
+  })),
+);
+const LibraryPage = lazy(() =>
+  import("../pages/LibraryPage").then((module) => ({
+    default: module.LibraryPage,
+  })),
+);
+const NotFoundPage = lazy(() =>
+  import("../pages/NotFoundPage").then((module) => ({
+    default: module.NotFoundPage,
+  })),
+);
+const TraditionPage = lazy(() =>
+  import("../pages/TraditionPage").then((module) => ({
+    default: module.TraditionPage,
+  })),
+);
 
 function ScrollToTop() {
   const { pathname } = useLocation();

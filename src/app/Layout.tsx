@@ -1,6 +1,8 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { Suspense } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { Hexagram } from "../components/Hexagram";
 import styles from "./Layout.module.css";
+import { RouteErrorBoundary, RouteFallback } from "./RouteStates";
 
 const NAV_ITEMS = [
   { to: "/", label: "Reading", end: true },
@@ -10,6 +12,8 @@ const NAV_ITEMS = [
 ];
 
 export function Layout() {
+  const { pathname } = useLocation();
+
   return (
     <div className={styles.shell}>
       <a className="skip-link" href="#main-content">
@@ -45,7 +49,11 @@ export function Layout() {
       </header>
 
       <main id="main-content" className={styles.main}>
-        <Outlet />
+        <RouteErrorBoundary key={pathname}>
+          <Suspense fallback={<RouteFallback />}>
+            <Outlet />
+          </Suspense>
+        </RouteErrorBoundary>
       </main>
 
       <footer className={styles.footer}>

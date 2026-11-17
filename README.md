@@ -135,6 +135,8 @@ One-time repository setting: **Settings → Pages → Build and deployment → S
 
 `vite.config.ts` uses `base: "./"` and the app uses `HashRouter`, so the production `dist/` can be served from a domain root or a GitHub Pages repository subpath without server rewrites. Card image URLs are built with `import.meta.env.BASE_URL`, so they follow the same base path.
 
+The reading page ships in the entry bundle because it is the index route and every share link opens there. Library, journal, card, tradition, and 404 routes are lazy-loaded into separate chunks. Suspense keeps the header and navigation visible while a chunk loads, and a route error boundary offers a reload if a previously cached page requests a chunk that a deployment has replaced.
+
 ```bash
 npm run build
 # inspect the result locally with: npm run preview
@@ -156,6 +158,7 @@ The suite covers:
 - Share-link round trips for every spread, special characters in questions, and rejection of malformed links
 - Journal validation, deduplication, the 50-entry cap, storage failures, and delete/clear flows
 - axe audits of the setup, completed reading, card dialog, library, card page, tradition page, journal, and 404 under the WCAG A/AA tags
+- Lazy route loading, the route loading state, and stale-chunk error recovery
 - The complete reading flow, shared-link loading, journal saves, interpretation section, copy and print behavior, larger spread selection, library search/filters, card detail pages, and tradition page
 
 Run:

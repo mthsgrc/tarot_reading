@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it } from "vitest";
+import { MemoryRouter } from "react-router-dom";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { ALL_CARDS } from "../data/cards";
 import { SPREADS } from "../data/spreads";
 import { drawCards, seededRandom } from "../domain/deck";
@@ -8,6 +9,7 @@ import { buildShareParams } from "../domain/reading/share";
 import { saveJournalEntry } from "../lib/journalStorage";
 import { expectNoAccessibilityViolations } from "../test/axe";
 import { App } from "./App";
+import { RouteErrorBoundary } from "./RouteStates";
 
 function triadShare() {
   const spread = SPREADS.find((item) => item.id === "thelema-triad");
@@ -32,6 +34,7 @@ function openRoute(hash: string) {
 
 afterEach(() => {
   window.location.hash = "";
+  vi.restoreAllMocks();
 });
 
 describe("accessibility audit", () => {
@@ -107,6 +110,25 @@ describe("accessibility audit", () => {
   it("keeps the not-found page free of violations", async () => {
     openRoute("#/nowhere");
     await screen.findByRole("heading", { name: /no card is laid here/i });
+
+    await expectNoAccessibilityViolations();
+  });
+
+  it("keeps the route error state free of violations", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    function BrokenRoute(): never {
+      throw new Error("Chunk failed to load");
+    }
+
+    render(
+      <MemoryRouter>
+        <RouteErrorBoundary reload={() => {}}>
+          <BrokenRoute />
+        </RouteErrorBoundary>
+      </MemoryRouter>,
+    );
+    await screen.findByRole("heading", { name: /this page did not load/i });
 
     await expectNoAccessibilityViolations();
   });
