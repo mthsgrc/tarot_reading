@@ -67,6 +67,9 @@ describe("ReadingPage", () => {
 
     const dialog = screen.getByRole("dialog");
     expect(within(dialog).getByText(/in the .* position/i)).toBeInTheDocument();
+    expect(
+      within(dialog).getByRole("heading", { level: 3, name: "Essence" }),
+    ).toBeInTheDocument();
 
     await user.click(within(dialog).getByRole("button", { name: /close card details/i }));
 

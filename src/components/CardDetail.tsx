@@ -96,6 +96,9 @@ export function CardDetail({
   headingLevel: Heading = "h2",
 }: CardDetailProps) {
   const detailId = useId();
+  // Keep subsection headings one level below the card title, so the card page
+  // (h1) does not jump to h3 and the dialog (h2) keeps its h3 sections.
+  const Section = Heading === "h1" ? "h2" : "h3";
   const essenceId = `${detailId}-essence`;
   const uprightId = `${detailId}-upright`;
   const shadowId = `${detailId}-shadow`;
@@ -186,9 +189,9 @@ export function CardDetail({
         </dl>
 
         <section className={styles.section} aria-labelledby={essenceId}>
-          <h3 id={essenceId} className={styles.sectionTitle}>
+          <Section id={essenceId} className={styles.sectionTitle}>
             Essence
-          </h3>
+          </Section>
           <p className={styles.prose}>{card.essence}</p>
         </section>
 
@@ -199,9 +202,9 @@ export function CardDetail({
             }`}
             aria-labelledby={uprightId}
           >
-            <h3 id={uprightId} className={styles.meaningTitle}>
+            <Section id={uprightId} className={styles.meaningTitle}>
               Upright
-            </h3>
+            </Section>
             <p>{card.upright}</p>
           </section>
           <section
@@ -210,17 +213,17 @@ export function CardDetail({
             }`}
             aria-labelledby={shadowId}
           >
-            <h3 id={shadowId} className={styles.meaningTitle}>
+            <Section id={shadowId} className={styles.meaningTitle}>
               Shadow
-            </h3>
+            </Section>
             <p>{card.shadow}</p>
           </section>
         </div>
 
         <section className={styles.section} aria-labelledby={symbolismId}>
-          <h3 id={symbolismId} className={styles.sectionTitle}>
+          <Section id={symbolismId} className={styles.sectionTitle}>
             Symbolism
-          </h3>
+          </Section>
           <ul className={styles.symbolism}>
             {card.symbolism.map((symbol) => (
               <li key={symbol}>{symbol}</li>

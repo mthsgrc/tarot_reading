@@ -26,6 +26,10 @@ describe("CardPage", () => {
     expect(
       screen.getByRole("img", { name: /the fool from the thoth tarot/i }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Essence" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { level: 3 })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /next/i })).toBeInTheDocument();
   });
 
