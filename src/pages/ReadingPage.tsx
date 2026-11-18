@@ -177,12 +177,21 @@ export function ReadingPage() {
   }
 
   function currentShareInput(includeQuestion = true) {
+    // Without the question, automatic inference would fall back to "general".
+    // Carry the resolved lens so the shared reading matches the one on screen.
+    const resolvedLens =
+      lensSelection === "auto"
+        ? includeQuestion
+          ? undefined
+          : interpretation?.working.lens
+        : lensSelection;
+
     return {
       spread,
       drawn,
       question: includeQuestion ? question : "",
       shadow: shadowEnabled,
-      lens: lensSelection === "auto" ? undefined : lensSelection,
+      lens: resolvedLens,
       depth,
     };
   }

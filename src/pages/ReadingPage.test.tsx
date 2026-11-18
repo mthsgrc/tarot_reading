@@ -269,6 +269,32 @@ describe("ReadingPage", () => {
     ).toBeInTheDocument();
   });
 
+  it("preserves the inferred lens when copying a link without the question", async () => {
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText },
+    });
+    renderReadingPage();
+
+    await user.type(
+      screen.getByRole("textbox", { name: /question/i }),
+      "What does my career need?",
+    );
+    await user.click(screen.getByRole("button", { name: /draw the cards/i }));
+    await user.click(screen.getByRole("button", { name: /reveal all/i }));
+    await user.click(
+      screen.getByRole("button", { name: /^copy link without question$/i }),
+    );
+
+    const copied = writeText.mock.calls[0]?.[0] as string;
+    const shared = new URLSearchParams(copied.slice(copied.indexOf("?") + 1));
+
+    expect(shared.has("q")).toBe(false);
+    expect(shared.get("lens")).toBe("work");
+  });
+
   it("prints a fully revealed reading", async () => {
     const user = userEvent.setup();
     const print = vi.spyOn(window, "print").mockImplementation(() => {});
