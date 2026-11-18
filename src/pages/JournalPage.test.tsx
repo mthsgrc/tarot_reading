@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -105,7 +105,42 @@ describe("JournalPage", () => {
     );
 
     expect(screen.getByText(/nothing kept yet/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /nothing kept yet/i })).toHaveFocus();
     expect(loadJournal()).toEqual([]);
+  });
+
+  it("moves focus to the next reading after a keyboard delete", async () => {
+    const user = userEvent.setup();
+    saveJournalEntry(paramsFor("First"));
+    saveJournalEntry(paramsFor("Second"));
+    saveJournalEntry(paramsFor("Third"));
+    renderJournalPage();
+
+    // Entries are newest first: Third, Second, First.
+    const second = screen.getByText("Second").closest("li");
+    const deleteSecond = within(second!).getByRole("button", { name: /delete/i });
+    deleteSecond.focus();
+    await user.keyboard("{Enter}");
+
+    const links = screen.getAllByRole("link", { name: /open reading/i });
+    expect(links).toHaveLength(2);
+    expect(links[1]).toHaveFocus();
+    expect(links[1]!.closest("li")).toHaveTextContent("First");
+  });
+
+  it("moves focus to the previous reading when the last one is deleted", async () => {
+    const user = userEvent.setup();
+    saveJournalEntry(paramsFor("First"));
+    saveJournalEntry(paramsFor("Second"));
+    renderJournalPage();
+
+    const first = screen.getByText("First").closest("li");
+    await user.click(within(first!).getByRole("button", { name: /delete/i }));
+
+    const links = screen.getAllByRole("link", { name: /open reading/i });
+    expect(links).toHaveLength(1);
+    expect(links[0]).toHaveFocus();
+    expect(links[0]!.closest("li")).toHaveTextContent("Second");
   });
 
   it("clears every reading after an explicit confirmation", async () => {
@@ -124,6 +159,7 @@ describe("JournalPage", () => {
     await user.click(screen.getByRole("button", { name: /yes, clear all/i }));
 
     expect(screen.getByText(/nothing kept yet/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /nothing kept yet/i })).toHaveFocus();
     expect(loadJournal()).toEqual([]);
   });
 
@@ -137,6 +173,7 @@ describe("JournalPage", () => {
 
     expect(screen.queryByRole("group", { name: /confirm clearing/i })).toBeNull();
     expect(screen.getByText("1 saved reading")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /clear journal/i })).toHaveFocus();
     expect(loadJournal()).toHaveLength(1);
   });
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { DEPTH_LABELS, LENS_LABELS } from "../domain/reading/language";
 import { readSharedReading } from "../domain/reading/share";
@@ -15,10 +15,16 @@ const DATE_FORMAT = new Intl.DateTimeFormat(undefined, {
   timeStyle: "short",
 });
 
+type PendingFocus = { kind: "entry"; index: number } | { kind: "empty" } | null;
+
 export function JournalPage() {
   const [entries, setEntries] = useState(loadJournal);
   const [confirmClear, setConfirmClear] = useState(false);
   const [storageError, setStorageError] = useState(false);
+  const listRef = useRef<HTMLUListElement>(null);
+  const emptyHeadingRef = useRef<HTMLHeadingElement>(null);
+  const clearButtonRef = useRef<HTMLButtonElement>(null);
+  const pendingFocus = useRef<PendingFocus>(null);
 
   useEffect(() => {
     function handleStorage(event: StorageEvent) {
@@ -33,12 +39,38 @@ export function JournalPage() {
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
+  // Wait for the list to re-render before moving focus, so the target exists
+  // and a deleted entry cannot strand focus on the document body.
+  useEffect(() => {
+    const target = pendingFocus.current;
+    if (!target) {
+      return;
+    }
+
+    pendingFocus.current = null;
+
+    if (target.kind === "empty") {
+      emptyHeadingRef.current?.focus();
+      return;
+    }
+
+    const links =
+      listRef.current?.querySelectorAll<HTMLAnchorElement>("[data-journal-open]");
+    links?.[target.index]?.focus();
+  }, [entries]);
+
   function handleDelete(id: string) {
+    const index = entries.findIndex((entry) => entry.id === id);
     const remaining = deleteJournalEntry(id);
     if (!remaining) {
       setStorageError(true);
       return;
     }
+
+    pendingFocus.current =
+      remaining.length === 0
+        ? { kind: "empty" }
+        : { kind: "entry", index: Math.min(index, remaining.length - 1) };
 
     setEntries(remaining);
     setStorageError(false);
@@ -51,9 +83,15 @@ export function JournalPage() {
       return;
     }
 
+    pendingFocus.current = { kind: "empty" };
     setEntries([]);
     setConfirmClear(false);
     setStorageError(false);
+  }
+
+  function handleCancelClear() {
+    setConfirmClear(false);
+    clearButtonRef.current?.focus();
   }
 
   return (
@@ -70,7 +108,12 @@ export function JournalPage() {
       {entries.length === 0 ? (
         <section className={`panel ${styles.empty}`} aria-labelledby="journal-empty">
           <p className="eyebrow">The journal is empty</p>
-          <h2 id="journal-empty" className={styles.emptyTitle}>
+          <h2
+            id="journal-empty"
+            className={styles.emptyTitle}
+            ref={emptyHeadingRef}
+            tabIndex={-1}
+          >
             Nothing kept yet.
           </h2>
           <p className={styles.emptyText}>
@@ -93,6 +136,7 @@ export function JournalPage() {
                 type="button"
                 className="button button--small button--ghost"
                 aria-expanded={confirmClear}
+                ref={clearButtonRef}
                 onClick={() => setConfirmClear((open) => !open)}
               >
                 Clear journal
@@ -115,7 +159,7 @@ export function JournalPage() {
                   <button
                     type="button"
                     className="button button--small button--ghost"
-                    onClick={() => setConfirmClear(false)}
+                    onClick={handleCancelClear}
                   >
                     Cancel
                   </button>
@@ -131,7 +175,7 @@ export function JournalPage() {
             </p>
           )}
 
-          <ul className={styles.list}>
+          <ul className={styles.list} ref={listRef}>
             {entries.map((entry) => {
               const reading = readSharedReading(new URLSearchParams(entry.params));
               if (!reading) {
@@ -172,7 +216,11 @@ export function JournalPage() {
                   </p>
 
                   <div className={styles.actions}>
-                    <Link className="button button--small" to={`/?${entry.params}&j=1`}>
+                    <Link
+                      className="button button--small"
+                      to={`/?${entry.params}&j=1`}
+                      data-journal-open
+                    >
                       Open reading
                     </Link>
                     <button
