@@ -23,6 +23,11 @@ const NotFoundPage = lazy(() =>
     default: module.NotFoundPage,
   })),
 );
+const StudyPage = lazy(() =>
+  import("../pages/StudyPage").then((module) => ({
+    default: module.StudyPage,
+  })),
+);
 const TraditionPage = lazy(() =>
   import("../pages/TraditionPage").then((module) => ({
     default: module.TraditionPage,
@@ -48,6 +53,7 @@ export function App() {
           <Route index element={<ReadingPage />} />
           <Route path="library" element={<LibraryPage />} />
           <Route path="journal" element={<JournalPage />} />
+          <Route path="study" element={<StudyPage />} />
           <Route path="cards/:cardId" element={<CardPage />} />
           <Route path="tradition" element={<TraditionPage />} />
           <Route path="*" element={<NotFoundPage />} />

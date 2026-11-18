@@ -1,6 +1,6 @@
 # Thoth Tarot
 
-A Thoth Tarot reading app built around Thelema, the Golden Dawn, and the Tree of Life. It includes all 78 cards, six spreads, upright and shadow readings, optimized card artwork, a searchable study library, and a rule-based interpretation engine that reads the draw rather than looking up a fixed answer.
+A Thoth Tarot reading app built around Thelema, the Golden Dawn, and the Tree of Life. It includes all 78 cards, six spreads, upright and shadow readings, optimized card artwork, a searchable study library, a correspondence quiz, and a rule-based interpretation engine that reads the draw rather than looking up a fixed answer.
 
 Readings are for reflection, not prediction, and are not a substitute for medical, legal, financial, or relationship advice.
 
@@ -70,7 +70,7 @@ src/
 ├── data/         # 78 cards, six spread definitions, shared tradition notes
 ├── domain/       # Types, Tree constants, draw engine, reading engine, labels
 ├── lib/          # Browser storage adapters
-├── pages/        # Reading, journal, library, card detail, tradition, 404
+├── pages/        # Reading, journal, library, study, card detail, tradition, 404
 ├── styles/       # Design tokens, global base and print styles
 └── test/         # Vitest setup and the axe helper
 scripts/
@@ -118,6 +118,12 @@ The same draw always produces the same reading, including phrase variants. No ba
 
 **Save to journal** keeps a fully revealed reading in `localStorage` on that device, including its lens and depth. The `/journal` page lists the 50 most recent saves with their question, cards, lens, depth, and date; each entry reopens the exact draw through the same versioned link format, and entries can be deleted individually or cleared together after confirmation. Nothing is uploaded, no account is involved, and clearing browser storage clears the journal. Stored entries are re-validated when read, so corrupt or hand-edited data is ignored rather than rendered.
 
+### Study mode
+
+The `/study` page drills correspondences with a four-choice quiz. Each question draws a card and asks one of six topics: element for any card; Hebrew letter, Tree path, or Golden Dawn title for majors; Sephira for minors; elemental nature for court cards. Answers are scored in memory only, and each result shows a short explanation plus a link to the full card entry. Leaving the page resets the score.
+
+`src/domain/study.ts` builds each question from the static deck with four unique options. It accepts an injected `RandomSource`, so tests use `seededRandom` while the page uses `Math.random`. No persistence, backend, or LLM is involved.
+
 ## Card artwork
 
 The original scans are in `images/` and were optimized with ImageMagick into native `278×408` AVIF and WebP files:
@@ -139,7 +145,7 @@ One-time repository setting: **Settings → Pages → Build and deployment → S
 
 `public/architecture.html` is copied into `dist/` by Vite, so the styled architecture guide is published at `/architecture.html` alongside the app.
 
-The reading page ships in the entry bundle because it is the index route and every share link opens there. Library, journal, card, tradition, and 404 routes are lazy-loaded into separate chunks. Suspense keeps the header and navigation visible while a chunk loads, and a route error boundary offers a reload if a previously cached page requests a chunk that a deployment has replaced.
+The reading page ships in the entry bundle because it is the index route and every share link opens there. Library, study, journal, card, tradition, and 404 routes are lazy-loaded into separate chunks. Suspense keeps the header and navigation visible while a chunk loads, and a route error boundary offers a reload if a previously cached page requests a chunk that a deployment has replaced.
 
 ```bash
 npm run build
@@ -161,7 +167,9 @@ The suite covers:
 - Deterministic interpretation, depth-based notice counts, brief text export, all-spread smoke tests, and every card in both orientations
 - Share-link round trips for every spread, lens/depth parameters, special characters in questions, and rejection of malformed links
 - Journal validation, deduplication, the 50-entry cap, storage failures, and delete/clear flows
-- axe audits of the setup, completed reading, card dialog, library, card page, tradition page, journal, and 404 under the WCAG A/AA tags
+- Study question topics, four unique options, correct answers, full topic coverage, and seeded determinism
+- Study quiz scoring, wrong-answer feedback, skip behavior, focus movement, and card links
+- axe audits of the setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
 - Lazy route loading, the route loading state, and stale-chunk error recovery
 - The complete reading flow, shared-link loading, journal saves, interpretation section, copy and print behavior, larger spread selection, library search/filters, card detail pages, and tradition page
 
@@ -190,15 +198,14 @@ npm run verify
 Run `npm run build && npm run preview` before a release, then verify:
 
 - Text and focus indicators meet WCAG AA contrast.
-- The reading board, library grid, and print preview do not overflow at 320 px, 768 px, and 1280 px.
-- Keyboard navigation, the card dialog, and reduced-motion preferences behave correctly.
+- The reading board, library grid, study quiz, and print preview do not overflow at 320 px, 768 px, and 1280 px.
+- Keyboard navigation, the card dialog, study answer focus, and reduced-motion preferences behave correctly.
 - The journal persists after a reload and stays in sync when a second tab changes it.
 
 ## Roadmap
 
 - Export the journal as a JSON backup
 - Export a reading as a shareable image
-- Add a study mode that quizzes correspondences
 - Add real-browser contrast and layout checks beyond the jsdom axe pass
 - Add a visual regression pass once the layout stabilizes
 

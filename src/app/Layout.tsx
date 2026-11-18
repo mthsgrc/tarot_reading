@@ -9,6 +9,7 @@ const SITE_NAME = "Thoth Tarot";
 const NAV_ITEMS = [
   { to: "/", label: "Reading", end: true },
   { to: "/library", label: "Card Library" },
+  { to: "/study", label: "Study" },
   { to: "/journal", label: "Journal" },
   { to: "/tradition", label: "The Tradition" },
 ];
@@ -16,6 +17,7 @@ const NAV_ITEMS = [
 const ROUTE_TITLES: Record<string, string> = {
   "/": `Reading · ${SITE_NAME}`,
   "/library": `Card Library · ${SITE_NAME}`,
+  "/study": `Study · ${SITE_NAME}`,
   "/journal": `Journal · ${SITE_NAME}`,
   "/tradition": `The Tradition · ${SITE_NAME}`,
 };

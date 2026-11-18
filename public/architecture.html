@@ -550,7 +550,7 @@
             <span class="pill">Client-only SPA</span>
             <span class="pill">React 19 + TypeScript</span>
             <span class="pill">Deterministic engine</span>
-            <span class="pill">Snapshot: 2026-11-17</span>
+            <span class="pill">Snapshot: 2026-11-18</span>
           </div>
         </header>
 
@@ -564,8 +564,8 @@
             <span>Six spreads, upright and shadow orientations.</span>
           </div>
           <div class="quick-card">
-            <strong>132 tests</strong>
-            <span>Across 18 files, plus typecheck, lint, and build.</span>
+            <strong>150 tests</strong>
+            <span>Across 20 files, plus typecheck, lint, and build.</span>
           </div>
           <div class="quick-card">
             <strong>Local only</strong>
@@ -652,8 +652,8 @@
             index.html └── src/main.tsx ├── global CSS └── app/App.tsx └── HashRouter ├──
             ScrollToTop └── Routes └── app/Layout.tsx ├── header / navigation / footer ├──
             RouteErrorBoundary + Suspense └── &lt;Outlet /&gt; ├── ReadingPage (eager) ├──
-            LibraryPage (lazy) ├── JournalPage (lazy) ├── CardPage (lazy) ├──
-            TraditionPage (lazy) └── NotFoundPage (lazy)
+            LibraryPage (lazy) ├── StudyPage (lazy) ├── JournalPage (lazy) ├── CardPage
+            (lazy) ├── TraditionPage (lazy) └── NotFoundPage (lazy)
           </div>
 
           <h3>Layer responsibilities</h3>
@@ -729,7 +729,7 @@
 
         <section id="routes">
           <h2>Routes</h2>
-          <p><code>src/app/App.tsx:42</code> defines:</p>
+          <p><code>src/app/App.tsx</code> defines:</p>
           <div class="table-wrap">
             <table>
               <thead>
@@ -748,6 +748,11 @@
                 <tr>
                   <td><code>/library</code></td>
                   <td><code>LibraryPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+                <tr>
+                  <td><code>/study</code></td>
+                  <td><code>StudyPage</code></td>
                   <td>Lazy</td>
                 </tr>
                 <tr>
@@ -971,6 +976,21 @@
             rebuild every card's searchable text on each keystroke.
           </p>
 
+          <h3>Study quiz</h3>
+          <div class="flow">
+            <span class="flow-title">Correspondence drill</span>
+            StudyPage → domain/study.ts createStudyQuestion → ALL_CARDS + Tree/Sephira
+            metadata → one topic for the card kind → four shuffled, unique options and an
+            explanation → local question, selected answer, and in-session score → links to
+            /cards/:cardId after answering
+          </div>
+          <p>
+            <code>createStudyQuestion</code> accepts an injected
+            <code>RandomSource</code>: the page uses <code>Math.random</code>, and tests
+            use <code>seededRandom</code> to prove determinism and full topic coverage.
+            There is no saved score or URL state, so leaving the page resets the quiz.
+          </p>
+
           <h3>Tradition page</h3>
           <div class="flow">
             <span class="flow-title">Static study content</span>
@@ -1089,7 +1109,8 @@
                   <td>Domain logic</td>
                   <td>
                     <code>src/domain/deck.test.ts</code>,
-                    <code>src/domain/cardLabels.test.ts</code>
+                    <code>src/domain/cardLabels.test.ts</code>,
+                    <code>src/domain/study.test.ts</code>
                   </td>
                 </tr>
                 <tr>
@@ -1115,7 +1136,7 @@
                   <td>
                     <code>ReadingPage.test.tsx</code>, <code>LibraryPage.test.tsx</code>,
                     <code>CardPage.test.tsx</code>, <code>JournalPage.test.tsx</code>,
-                    <code>TraditionPage.test.tsx</code>
+                    <code>TraditionPage.test.tsx</code>, <code>StudyPage.test.tsx</code>
                   </td>
                 </tr>
                 <tr>
@@ -1160,6 +1181,9 @@
               </li>
               <li>Share links and journal entries use one validated encoding format.</li>
               <li>Strong data-integrity and domain test coverage.</li>
+              <li>
+                Injected randomness keeps quiz generation testable without a live source.
+              </li>
               <li>Lazy-loaded secondary routes with route error recovery.</li>
               <li>
                 Accessibility is treated as part of the component and API design, not an

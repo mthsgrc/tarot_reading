@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -103,6 +103,23 @@ describe("accessibility audit", () => {
 
     openRoute("#/journal");
     await screen.findByText("1 saved reading");
+
+    await expectNoAccessibilityViolations();
+  });
+
+  it("keeps the study quiz free of violations before and after answering", async () => {
+    const user = userEvent.setup();
+    openRoute("#/study");
+    await screen.findByRole("heading", {
+      level: 1,
+      name: /train the correspondences/i,
+    });
+
+    await expectNoAccessibilityViolations();
+
+    const choices = screen.getByRole("list", { name: /answer choices/i });
+    await user.click(within(choices).getAllByRole("button")[0]!);
+    expect(screen.getByText(/1 answered/i)).toBeInTheDocument();
 
     await expectNoAccessibilityViolations();
   });

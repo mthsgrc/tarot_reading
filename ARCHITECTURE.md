@@ -4,7 +4,7 @@
 
 A practical map of the Thoth Tarot application: technology, layers, data flow, and how the files communicate.
 
-> Snapshot of the repository as of 2026-11-18. Current verification: **139 tests across 18 files**, plus typecheck, lint, formatting, and production build.
+> Snapshot of the repository as of 2026-11-18. Current verification: **150 tests across 20 files**, plus typecheck, lint, formatting, and production build.
 
 ## Contents
 
@@ -57,6 +57,7 @@ index.html
                     └── <Outlet />
                         ├── ReadingPage     (eager)
                         ├── LibraryPage     (lazy)
+                        ├── StudyPage       (lazy)
                         ├── JournalPage     (lazy)
                         ├── CardPage        (lazy)
                         ├── TraditionPage   (lazy)
@@ -80,12 +81,13 @@ The main dependency direction is **one-way**: `pages → domain/data/lib/compone
 
 ## Routes
 
-`src/app/App.tsx:42` defines:
+`src/app/App.tsx` defines:
 
 | Route            | Page            | Loading |
 | ---------------- | --------------- | ------- |
 | `/`              | `ReadingPage`   | Eager   |
 | `/library`       | `LibraryPage`   | Lazy    |
+| `/study`         | `StudyPage`     | Lazy    |
 | `/journal`       | `JournalPage`   | Lazy    |
 | `/cards/:cardId` | `CardPage`      | Lazy    |
 | `/tradition`     | `TraditionPage` | Lazy    |
@@ -235,6 +237,20 @@ LibraryPage
 
 The search index is precomputed once at module load, so typing does not rebuild every card's searchable text on each keystroke.
 
+### Study quiz
+
+```text
+StudyPage
+  → domain/study.ts createStudyQuestion
+      → ALL_CARDS + Tree/Sephira metadata
+      → one topic for the card kind
+      → four shuffled, unique options and an explanation
+  → local question, selected answer, and in-session score
+  → links to /cards/:cardId after answering
+```
+
+`createStudyQuestion` accepts an injected `RandomSource`: the page uses `Math.random`, and tests use `seededRandom` to prove determinism and full topic coverage. There is no saved score or URL state, so leaving the page resets the quiz.
+
 ### Tradition page
 
 ```text
@@ -287,17 +303,17 @@ There is no CSS-in-JS runtime and no utility framework.
 
 Tests are colocated by concern:
 
-| Test area             | Files                                                                                                                 |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Static data integrity | `src/data/cards.test.ts`, `src/data/spreads.test.ts`                                                                  |
-| Domain logic          | `src/domain/deck.test.ts`, `src/domain/cardLabels.test.ts`                                                            |
-| Reading engine        | `src/domain/reading/reading.test.ts`                                                                                  |
-| Share/journal         | `share.test.ts`, `journal.test.ts`                                                                                    |
-| Browser adapter       | `src/lib/journalStorage.test.ts`                                                                                      |
-| Components            | `SpreadBoard.test.tsx`, `CardImage.test.tsx`                                                                          |
-| Pages                 | `ReadingPage.test.tsx`, `LibraryPage.test.tsx`, `CardPage.test.tsx`, `JournalPage.test.tsx`, `TraditionPage.test.tsx` |
-| App/routing           | `App.test.tsx`, `RouteStates.test.tsx`                                                                                |
-| Accessibility         | `src/app/accessibility.test.tsx` + `src/test/axe.ts`                                                                  |
+| Test area             | Files                                                                                                                                       |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Static data integrity | `src/data/cards.test.ts`, `src/data/spreads.test.ts`                                                                                        |
+| Domain logic          | `src/domain/deck.test.ts`, `src/domain/cardLabels.test.ts`, `src/domain/study.test.ts`                                                      |
+| Reading engine        | `src/domain/reading/reading.test.ts`                                                                                                        |
+| Share/journal         | `share.test.ts`, `journal.test.ts`                                                                                                          |
+| Browser adapter       | `src/lib/journalStorage.test.ts`                                                                                                            |
+| Components            | `SpreadBoard.test.tsx`, `CardImage.test.tsx`                                                                                                |
+| Pages                 | `ReadingPage.test.tsx`, `LibraryPage.test.tsx`, `CardPage.test.tsx`, `JournalPage.test.tsx`, `TraditionPage.test.tsx`, `StudyPage.test.tsx` |
+| App/routing           | `App.test.tsx`, `RouteStates.test.tsx`                                                                                                      |
+| Accessibility         | `src/app/accessibility.test.tsx` + `src/test/axe.ts`                                                                                        |
 
 The accessibility audit renders real pages with axe under WCAG A/AA tags, but explicitly disables color contrast because jsdom has no paint/layout. Real-browser contrast and layout checks remain a manual step.
 
@@ -309,6 +325,7 @@ CI (`.github/workflows/ci.yml`) runs `npm run verify` on push to `master` and pu
 - Deterministic interpretation engine with no network or runtime randomness during rendering.
 - Share links and journal entries use one validated encoding format.
 - Strong data-integrity and domain test coverage.
+- Injected randomness keeps quiz generation testable without a live source.
 - Lazy-loaded secondary routes with route error recovery.
 - Accessibility is treated as part of the component/API design, not an afterthought.
 

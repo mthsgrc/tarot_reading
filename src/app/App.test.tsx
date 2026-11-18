@@ -46,6 +46,19 @@ describe("App", () => {
     expect(screen.getByRole("link", { name: /draw a reading/i })).toBeInTheDocument();
   });
 
+  it("loads study mode with its own title", async () => {
+    window.location.hash = "#/study";
+    render(<App />);
+
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: /train the correspondences/i,
+      }),
+    ).toBeInTheDocument();
+    expect(document.title).toBe("Study · Thoth Tarot");
+  });
+
   it("keeps the skip link inside the app and focuses main content", async () => {
     const user = userEvent.setup();
     vi.spyOn(window, "scrollTo").mockImplementation(() => {});
