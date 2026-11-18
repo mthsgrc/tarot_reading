@@ -30,7 +30,9 @@ describe("LibraryPage", () => {
   it("names the card link without repeating the thumbnail alt text", () => {
     renderLibraryPage();
 
-    const foolLink = screen.getByRole("link", { name: /the fool/i });
+    // Querying all 78 links by accessible name is expensive in jsdom, so find
+    // the link by its text and assert the accessible name on that element.
+    const foolLink = screen.getByText("The Fool").closest("a");
 
     expect(foolLink).toHaveAccessibleName(/The Fool/);
     expect(foolLink).not.toHaveAccessibleName(/from the Thoth Tarot/i);
