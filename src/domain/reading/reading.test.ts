@@ -109,10 +109,28 @@ describe("reading facts", () => {
     const { drawn } = drawFor("thelema-triad", THELEMA_EXAMPLE);
 
     expect(buildFacts({ drawn, question: "Will they come back?" }).lens).toBe("general");
+    expect(buildFacts({ drawn, question: "Will my friends come back?" }).lens).toBe(
+      "love",
+    );
     expect(buildFacts({ drawn, question: "What is my True Will?" }).lens).toBe("inner");
+    expect(buildFacts({ drawn, question: "What is my will asking of me?" }).lens).toBe(
+      "inner",
+    );
     expect(buildFacts({ drawn, question: "How do I approach my inner work?" }).lens).toBe(
       "inner",
     );
+  });
+
+  it("matches plural keywords against the singular lens table", () => {
+    const { drawn } = drawFor("thelema-triad", THELEMA_EXAMPLE);
+
+    expect(buildFacts({ drawn, question: "What do my relationships need?" }).lens).toBe(
+      "love",
+    );
+    expect(buildFacts({ drawn, question: "Which projects should I finish?" }).lens).toBe(
+      "work",
+    );
+    expect(buildFacts({ drawn, question: "How do my studies fit?" }).lens).toBe("work");
   });
 
   it("detects a minor sitting in its own Sephira and a major touching its path", () => {

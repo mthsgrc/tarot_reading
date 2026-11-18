@@ -71,7 +71,7 @@ const LENS_KEYWORDS: ReadonlyArray<{
   {
     lens: "inner",
     // "will" is deliberately absent: it is usually an auxiliary verb ("Will they…?").
-    // Phrases carry the stronger signal and outrank single-word matches.
+    // Possessive phrases carry the stronger signal and outrank single-word matches.
     words: [
       "purpose",
       "path",
@@ -87,11 +87,35 @@ const LENS_KEYWORDS: ReadonlyArray<{
       "spiritual",
       "truth",
     ],
-    phrases: ["true will", "inner work", "inner life", "great work"],
+    phrases: [
+      "true will",
+      "my will",
+      "own will",
+      "inner work",
+      "inner life",
+      "great work",
+    ],
   },
 ];
 
 const PHRASE_WEIGHT = 2;
+
+/** Adds common singular forms so plural keywords still match the table. */
+function singularForms(token: string): readonly string[] {
+  if (token.endsWith("ies") && token.length > 3) {
+    return [token, `${token.slice(0, -3)}y`];
+  }
+
+  if (token.endsWith("es") && token.length > 2) {
+    return [token, token.slice(0, -1), token.slice(0, -2)];
+  }
+
+  if (token.endsWith("s") && token.length > 1) {
+    return [token, token.slice(0, -1)];
+  }
+
+  return [token];
+}
 
 function countPhrase(tokens: readonly string[], phrase: string): number {
   const phraseWords = phrase.split(" ");
@@ -107,11 +131,12 @@ function countPhrase(tokens: readonly string[], phrase: string): number {
 
 export function inferLens(question = ""): ReadingLens {
   const tokens: readonly string[] = question.toLowerCase().match(/[a-z']+/g) ?? [];
+  const wordForms = new Set(tokens.flatMap((token) => singularForms(token)));
   let best: { lens: ReadingLens; score: number } = { lens: "general", score: 0 };
 
   for (const { lens, words: keywords, phrases = [] } of LENS_KEYWORDS) {
     const wordScore = keywords.reduce(
-      (total, keyword) => total + (tokens.includes(keyword) ? 1 : 0),
+      (total, keyword) => total + (wordForms.has(keyword) ? 1 : 0),
       0,
     );
     const phraseScore = phrases.reduce(
