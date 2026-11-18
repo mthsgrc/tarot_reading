@@ -1,10 +1,10 @@
 # Project Architecture
 
-> A styled, standalone browser version is available at [architecture.html](architecture.html).
+> A styled, standalone browser version is available at [public/architecture.html](public/architecture.html) and is published with the app at [/architecture.html](https://mthsgrc.github.io/tarot_reading/architecture.html).
 
 A practical map of the Thoth Tarot application: technology, layers, data flow, and how the files communicate.
 
-> Snapshot of the repository as of 2026-11-17. Current verification: **132 tests across 18 files**, plus typecheck, lint, formatting, and production build.
+> Snapshot of the repository as of 2026-11-18. Current verification: **139 tests across 18 files**, plus typecheck, lint, formatting, and production build.
 
 ## Contents
 

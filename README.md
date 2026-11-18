@@ -108,7 +108,7 @@ The same draw always produces the same reading, including phrase variants. No ba
 
 ### Sharing
 
-**Copy reading** exports the interpretation as plain text. **Copy link** encodes the spread, cards, orientations, question, lens, depth, and shadow flag in the URL, so the recipient sees the reading exactly as it was drawn. Lens and depth are additive optional parameters: links made before they existed still infer the lens and use Standard depth. Nothing is uploaded; the link is self-contained. Decoding rejects unknown spreads, cards, orientations, lenses, depths, and overlong questions, and shows a notice instead of failing.
+**Copy reading** exports the interpretation as plain text. **Copy link** encodes the spread, cards, orientations, question, lens, depth, and shadow flag in the URL, so the recipient sees the reading exactly as it was drawn. **Copy link without question** leaves the question out but keeps the resolved lens, so a private question does not change how the shared reading is framed. Lens and depth are additive optional parameters: links made before they existed still infer the lens and use Standard depth. Nothing is uploaded; the link is self-contained. Decoding rejects unknown spreads, cards, orientations, lenses, depths, and overlong questions, and shows a notice instead of failing.
 
 ### Printing
 
@@ -136,6 +136,8 @@ Output lives in `public/images/cards/` with one file pair per card ID, plus `pub
 One-time repository setting: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 
 `vite.config.ts` uses `base: "./"` and the app uses `HashRouter`, so the production `dist/` can be served from a domain root or a GitHub Pages repository subpath without server rewrites. Card image URLs are built with `import.meta.env.BASE_URL`, so they follow the same base path.
+
+`public/architecture.html` is copied into `dist/` by Vite, so the styled architecture guide is published at `/architecture.html` alongside the app.
 
 The reading page ships in the entry bundle because it is the index route and every share link opens there. Library, journal, card, tradition, and 404 routes are lazy-loaded into separate chunks. Suspense keeps the header and navigation visible while a chunk loads, and a route error boundary offers a reload if a previously cached page requests a chunk that a deployment has replaced.
 
