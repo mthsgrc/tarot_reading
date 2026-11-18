@@ -1,8 +1,10 @@
-import { Suspense, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { Hexagram } from "../components/Hexagram";
 import styles from "./Layout.module.css";
 import { RouteErrorBoundary, RouteFallback } from "./RouteStates";
+
+const SITE_NAME = "Thoth Tarot";
 
 const NAV_ITEMS = [
   { to: "/", label: "Reading", end: true },
@@ -11,9 +13,38 @@ const NAV_ITEMS = [
   { to: "/tradition", label: "The Tradition" },
 ];
 
+const ROUTE_TITLES: Record<string, string> = {
+  "/": `Reading · ${SITE_NAME}`,
+  "/library": `Card Library · ${SITE_NAME}`,
+  "/journal": `Journal · ${SITE_NAME}`,
+  "/tradition": `The Tradition · ${SITE_NAME}`,
+};
+
+function titleForPath(pathname: string): string {
+  if (pathname.startsWith("/cards/")) {
+    return `Card Library · ${SITE_NAME}`;
+  }
+
+  return ROUTE_TITLES[pathname] ?? `Page not found · ${SITE_NAME}`;
+}
+
 export function Layout() {
   const { pathname } = useLocation();
   const mainRef = useRef<HTMLElement>(null);
+  const previousPathname = useRef(pathname);
+
+  // Route changes happen without a page load, so update the title and move
+  // focus to the new content like a real navigation would.
+  useEffect(() => {
+    document.title = titleForPath(pathname);
+
+    if (previousPathname.current === pathname) {
+      return;
+    }
+
+    previousPathname.current = pathname;
+    mainRef.current?.focus();
+  }, [pathname]);
 
   function focusMainContent() {
     mainRef.current?.focus();

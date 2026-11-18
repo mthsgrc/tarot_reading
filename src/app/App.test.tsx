@@ -9,6 +9,7 @@ import { App } from "./App";
 
 afterEach(() => {
   window.location.hash = "";
+  document.title = "";
 });
 
 describe("App", () => {
@@ -57,5 +58,34 @@ describe("App", () => {
     expect(window.location.hash).toBe("#/");
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
     expect(screen.queryByText(/no card is laid here/i)).not.toBeInTheDocument();
+  });
+
+  it("updates the title and focuses main content after navigation", async () => {
+    const user = userEvent.setup();
+    vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    window.location.hash = "#/";
+    render(<App />);
+
+    expect(document.title).toBe("Reading · Thoth Tarot");
+    expect(screen.getByRole("main")).not.toHaveFocus();
+
+    await user.click(screen.getByRole("link", { name: /card library/i }));
+
+    expect(
+      await screen.findByRole("heading", { name: /seventy-eight doors/i }),
+    ).toBeInTheDocument();
+    expect(document.title).toBe("Card Library · Thoth Tarot");
+    expect(screen.getByRole("main")).toHaveFocus();
+  });
+
+  it("titles a card page as part of the library", async () => {
+    vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    window.location.hash = "#/cards/major-00-fool";
+    render(<App />);
+
+    expect(
+      await screen.findByRole("heading", { level: 1, name: /the fool/i }),
+    ).toBeInTheDocument();
+    expect(document.title).toBe("Card Library · Thoth Tarot");
   });
 });
