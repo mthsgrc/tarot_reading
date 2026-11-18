@@ -1,0 +1,1216 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Architecture, technology, and data flow of the Thoth Tarot application."
+    />
+    <title>Thoth Tarot — Project Architecture</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --page: #f5f1e8;
+        --surface: #fffdf8;
+        --surface-soft: #eee8da;
+        --ink: #211f1a;
+        --muted: #625d53;
+        --gold: #806316;
+        --gold-bright: #a67c16;
+        --crimson: #7d2838;
+        --green: #2f665b;
+        --line: #d8cfbc;
+        --line-strong: #b9ac91;
+        --code: #f0ebdf;
+        --shadow: 0 18px 50px rgba(70, 55, 20, 0.09);
+        --radius: 16px;
+        --sidebar: 280px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 2rem;
+      }
+
+      body {
+        min-width: 320px;
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 100% 0%, rgba(166, 124, 22, 0.11), transparent 28rem),
+          radial-gradient(circle at 0% 100%, rgba(47, 102, 91, 0.08), transparent 25rem),
+          var(--page);
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        font-size: 16px;
+        line-height: 1.65;
+      }
+
+      a {
+        color: var(--gold);
+        text-underline-offset: 0.18em;
+      }
+
+      a:hover {
+        color: var(--gold-bright);
+      }
+
+      code {
+        padding: 0.12em 0.35em;
+        color: #3c3320;
+        background: var(--code);
+        border: 1px solid #e4dccb;
+        border-radius: 5px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        overflow-wrap: anywhere;
+      }
+
+      .shell {
+        display: grid;
+        grid-template-columns: var(--sidebar) minmax(0, 1fr);
+        gap: 0;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 2rem 1.5rem;
+        background: rgba(255, 253, 248, 0.86);
+        border-right: 1px solid var(--line);
+        backdrop-filter: blur(12px);
+      }
+
+      .brand {
+        margin-bottom: 2rem;
+      }
+
+      .brand-mark {
+        display: inline-grid;
+        place-items: center;
+        width: 2.6rem;
+        height: 2.6rem;
+        margin-bottom: 0.8rem;
+        color: var(--gold);
+        border: 1px solid var(--line-strong);
+        border-radius: 50%;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.25rem;
+      }
+
+      .brand p {
+        margin: 0;
+      }
+
+      .brand-name {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.25rem;
+        letter-spacing: 0.03em;
+      }
+
+      .brand-sub {
+        color: var(--muted);
+        font-size: 0.76rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .toc-label {
+        margin: 0 0 0.65rem;
+        color: var(--muted);
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .toc {
+        display: grid;
+        gap: 0.2rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .toc a {
+        display: block;
+        padding: 0.42rem 0.65rem;
+        color: var(--ink);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        text-decoration: none;
+      }
+
+      .toc a:hover {
+        color: var(--gold);
+        background: var(--surface-soft);
+      }
+
+      .main {
+        width: min(100%, 1050px);
+        padding: 3rem clamp(1.25rem, 4vw, 4rem) 5rem;
+      }
+
+      .hero {
+        padding: clamp(1.5rem, 4vw, 3rem);
+        margin-bottom: 2.5rem;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.72), transparent 55%),
+          var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+      }
+
+      .eyebrow {
+        margin: 0 0 0.7rem;
+        color: var(--gold);
+        font-size: 0.72rem;
+        font-weight: 750;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: Georgia, "Times New Roman", serif;
+        font-weight: 500;
+        line-height: 1.15;
+      }
+
+      h1 {
+        max-width: 17ch;
+        margin: 0;
+        font-size: clamp(2.4rem, 6vw, 4.4rem);
+        letter-spacing: 0.015em;
+      }
+
+      .lede {
+        max-width: 68ch;
+        margin: 1rem 0 0;
+        color: var(--muted);
+        font-size: clamp(1rem, 1.5vw, 1.12rem);
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+        margin-top: 1.4rem;
+      }
+
+      .pill {
+        padding: 0.36rem 0.72rem;
+        color: var(--muted);
+        background: var(--surface-soft);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 650;
+      }
+
+      .quick-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.9rem;
+        margin: 0 0 2.5rem;
+      }
+
+      .quick-card {
+        padding: 1rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      .quick-card strong {
+        display: block;
+        color: var(--gold);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+
+      .quick-card span {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      section {
+        margin-top: 3rem;
+        scroll-margin-top: 2rem;
+      }
+
+      section > h2 {
+        margin: 0 0 1rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid var(--line);
+        font-size: clamp(1.7rem, 3vw, 2.3rem);
+      }
+
+      h3 {
+        margin: 1.8rem 0 0.65rem;
+        font-size: 1.3rem;
+      }
+
+      p {
+        margin: 0 0 1rem;
+      }
+
+      ul,
+      ol {
+        padding-left: 1.35rem;
+      }
+
+      li {
+        margin: 0.28rem 0;
+      }
+
+      .callout {
+        padding: 1rem 1.1rem;
+        margin: 1.2rem 0;
+        color: var(--muted);
+        background: var(--surface-soft);
+        border-left: 4px solid var(--gold);
+        border-radius: 0 10px 10px 0;
+      }
+
+      .table-wrap {
+        margin: 1rem 0 1.4rem;
+        overflow-x: auto;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.7rem 0.85rem;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        color: var(--gold);
+        background: #f1ecdf;
+        font-size: 0.72rem;
+        font-weight: 750;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      tbody tr:hover {
+        background: #fbf7ec;
+      }
+
+      .flow,
+      .tree {
+        padding: 1.15rem;
+        margin: 1rem 0 1.4rem;
+        overflow-x: auto;
+        color: #2e281b;
+        background: #f1ecdf;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.82rem;
+        line-height: 1.7;
+        white-space: pre;
+      }
+
+      .flow-title {
+        display: block;
+        margin-bottom: 0.45rem;
+        color: var(--muted);
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          Arial,
+          sans-serif;
+        font-size: 0.7rem;
+        font-weight: 750;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin: 1rem 0 1.4rem;
+      }
+
+      .card {
+        padding: 1.1rem 1.2rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      .card h3 {
+        margin-top: 0;
+      }
+
+      .card p:last-child,
+      .card ul:last-child {
+        margin-bottom: 0;
+      }
+
+      .card--good {
+        border-top: 4px solid var(--green);
+      }
+
+      .card--risk {
+        border-top: 4px solid var(--crimson);
+      }
+
+      .tag {
+        display: inline-block;
+        padding: 0.12rem 0.42rem;
+        color: var(--muted);
+        background: var(--surface-soft);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .footer {
+        padding-top: 1.5rem;
+        margin-top: 4rem;
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+        font-size: 0.8rem;
+      }
+
+      @media (max-width: 960px) {
+        .shell {
+          display: block;
+        }
+
+        .sidebar {
+          position: static;
+          width: auto;
+          height: auto;
+          padding: 1.25rem;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .brand {
+          margin-bottom: 1rem;
+        }
+
+        .toc {
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+
+        .main {
+          padding-top: 2rem;
+        }
+
+        .quick-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 640px) {
+        .quick-grid,
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: clamp(2.2rem, 12vw, 3.2rem);
+        }
+      }
+
+      @media print {
+        :root {
+          --page: #fff;
+          --surface: #fff;
+          --surface-soft: #f4f4f4;
+          --ink: #111;
+          --muted: #444;
+          --line: #ccc;
+        }
+
+        body {
+          background: #fff;
+          font-size: 10.5pt;
+        }
+
+        .shell {
+          display: block;
+        }
+
+        .sidebar {
+          display: none;
+        }
+
+        .main {
+          width: 100%;
+          max-width: none;
+          padding: 0;
+        }
+
+        .hero,
+        .card,
+        .table-wrap,
+        .flow {
+          box-shadow: none;
+        }
+
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+
+        section {
+          break-inside: avoid;
+        }
+
+        h2,
+        h3 {
+          break-after: avoid;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">Θ</span>
+          <p class="brand-name">Thoth Tarot</p>
+          <p class="brand-sub">Architecture notes</p>
+        </div>
+
+        <p class="toc-label">Contents</p>
+        <nav aria-label="Document contents">
+          <ul class="toc">
+            <li><a href="#snapshot">Snapshot</a></li>
+            <li><a href="#tech-stack">Tech stack</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#routes">Routes</a></li>
+            <li><a href="#file-flow">How files talk</a></li>
+            <li><a href="#data-model">Data model</a></li>
+            <li><a href="#assets">Assets</a></li>
+            <li><a href="#styling">Styling</a></li>
+            <li><a href="#testing">Testing and CI</a></li>
+            <li><a href="#strengths">Strengths</a></li>
+            <li><a href="#risks">Risks</a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <header class="hero">
+          <p class="eyebrow">Project map</p>
+          <h1>Architecture of the Thoth Tarot app</h1>
+          <p class="lede">
+            A practical guide to the technology, layers, data flow, and communication
+            paths in this repository.
+          </p>
+          <div class="meta">
+            <span class="pill">Client-only SPA</span>
+            <span class="pill">React 19 + TypeScript</span>
+            <span class="pill">Deterministic engine</span>
+            <span class="pill">Snapshot: 2026-11-17</span>
+          </div>
+        </header>
+
+        <div class="quick-grid" aria-label="Project quick facts">
+          <div class="quick-card">
+            <strong>No backend</strong>
+            <span>Static hosting, no database, no runtime API.</span>
+          </div>
+          <div class="quick-card">
+            <strong>78 cards</strong>
+            <span>Six spreads, upright and shadow orientations.</span>
+          </div>
+          <div class="quick-card">
+            <strong>132 tests</strong>
+            <span>Across 18 files, plus typecheck, lint, and build.</span>
+          </div>
+          <div class="quick-card">
+            <strong>Local only</strong>
+            <span>Share links and the journal stay in the browser.</span>
+          </div>
+        </div>
+
+        <section id="snapshot">
+          <h2>Snapshot</h2>
+          <p>
+            A client-only <strong>React SPA</strong> for Thoth Tarot readings. There is no
+            backend, database, authentication, LLM, or runtime API. The deck, spreads, and
+            interpretation rules are static data plus deterministic TypeScript logic;
+            saved readings and shareable links are encoded locally.
+          </p>
+        </section>
+
+        <section id="tech-stack">
+          <h2>Tech stack</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Area</th>
+                  <th scope="col">Technology</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>UI</td>
+                  <td>React 19, React DOM</td>
+                </tr>
+                <tr>
+                  <td>Routing</td>
+                  <td>React Router 7 with <code>HashRouter</code></td>
+                </tr>
+                <tr>
+                  <td>Language</td>
+                  <td>TypeScript 7, strict mode, bundler resolution</td>
+                </tr>
+                <tr>
+                  <td>Build</td>
+                  <td>Vite 8, relative <code>base: "./"</code></td>
+                </tr>
+                <tr>
+                  <td>Styling</td>
+                  <td>CSS Modules, global design tokens, <code>@fontsource</code></td>
+                </tr>
+                <tr>
+                  <td>Persistence</td>
+                  <td><code>localStorage</code> behind a browser adapter</td>
+                </tr>
+                <tr>
+                  <td>Testing</td>
+                  <td>Vitest 5, Testing Library, jsdom, axe-core</td>
+                </tr>
+                <tr>
+                  <td>Quality</td>
+                  <td><code>tsc</code>, oxlint, Prettier</td>
+                </tr>
+                <tr>
+                  <td>Images</td>
+                  <td>ImageMagick-generated AVIF + WebP</td>
+                </tr>
+                <tr>
+                  <td>CI/CD</td>
+                  <td>GitHub Actions, GitHub Pages</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="architecture">
+          <h2>Architecture</h2>
+          <p>
+            The project is a layered front end with a strict practical boundary:
+            <strong>domain and data are pure</strong>, pages orchestrate, components
+            render, and <code>lib</code> owns browser side effects.
+          </p>
+
+          <div class="flow">
+            <span class="flow-title">Application tree</span>
+            index.html └── src/main.tsx ├── global CSS └── app/App.tsx └── HashRouter ├──
+            ScrollToTop └── Routes └── app/Layout.tsx ├── header / navigation / footer ├──
+            RouteErrorBoundary + Suspense └── &lt;Outlet /&gt; ├── ReadingPage (eager) ├──
+            LibraryPage (lazy) ├── JournalPage (lazy) ├── CardPage (lazy) ├──
+            TraditionPage (lazy) └── NotFoundPage (lazy)
+          </div>
+
+          <h3>Layer responsibilities</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Directory</th>
+                  <th scope="col">Responsibility</th>
+                  <th scope="col">Depends on</th>
+                  <th scope="col">Consumed by</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>src/app</code></td>
+                  <td>Shell, router, layout, route loading and error states</td>
+                  <td>pages, components, router</td>
+                  <td><code>main.tsx</code></td>
+                </tr>
+                <tr>
+                  <td><code>src/pages</code></td>
+                  <td>Route-level state and feature orchestration</td>
+                  <td>domain, data, lib, components</td>
+                  <td><code>app/App.tsx</code></td>
+                </tr>
+                <tr>
+                  <td><code>src/components</code></td>
+                  <td>Reusable presentation and interaction</td>
+                  <td>domain types, occasionally data</td>
+                  <td>pages and other components</td>
+                </tr>
+                <tr>
+                  <td><code>src/domain</code></td>
+                  <td>Types, deck logic, Tree constants, interpretation engine</td>
+                  <td>data, other domain modules</td>
+                  <td>pages, components, lib</td>
+                </tr>
+                <tr>
+                  <td><code>src/data</code></td>
+                  <td>78 cards, six spreads, tradition notes</td>
+                  <td>domain types</td>
+                  <td>domain, pages, components</td>
+                </tr>
+                <tr>
+                  <td><code>src/lib</code></td>
+                  <td>Browser storage adapter</td>
+                  <td>domain journal and share logic</td>
+                  <td>pages</td>
+                </tr>
+                <tr>
+                  <td><code>src/styles</code></td>
+                  <td>Tokens, global base styles, print overrides</td>
+                  <td>fonts</td>
+                  <td><code>main.tsx</code></td>
+                </tr>
+                <tr>
+                  <td><code>src/test</code></td>
+                  <td>Vitest setup and axe helper</td>
+                  <td>Testing Library, axe</td>
+                  <td>tests</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="callout">
+            The main dependency direction is <strong>one-way</strong>:
+            <code>pages → domain/data/lib/components</code>. Components do not import
+            pages, and domain modules do not import React.
+          </p>
+        </section>
+
+        <section id="routes">
+          <h2>Routes</h2>
+          <p><code>src/app/App.tsx:42</code> defines:</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Route</th>
+                  <th scope="col">Page</th>
+                  <th scope="col">Loading</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/</code></td>
+                  <td><code>ReadingPage</code></td>
+                  <td>Eager</td>
+                </tr>
+                <tr>
+                  <td><code>/library</code></td>
+                  <td><code>LibraryPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+                <tr>
+                  <td><code>/journal</code></td>
+                  <td><code>JournalPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+                <tr>
+                  <td><code>/cards/:cardId</code></td>
+                  <td><code>CardPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+                <tr>
+                  <td><code>/tradition</code></td>
+                  <td><code>TraditionPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+                <tr>
+                  <td><code>*</code></td>
+                  <td><code>NotFoundPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The reading page stays in the entry bundle because it is the index route and
+            every share link opens there. <code>Layout</code> wraps pages in a
+            <code>RouteErrorBoundary</code> keyed by pathname and a <code>Suspense</code>
+            fallback (<code>src/app/Layout.tsx:52</code>).
+          </p>
+        </section>
+
+        <section id="file-flow">
+          <h2>How the files talk</h2>
+
+          <h3>Application startup</h3>
+          <div class="flow">
+            <span class="flow-title">Boot sequence</span>
+            index.html → src/main.tsx → imports styles/tokens.css, base.css, print.css →
+            renders &lt;App /&gt; → App creates HashRouter and route table → Layout
+            renders navigation and &lt;Outlet /&gt; → selected page renders
+          </div>
+          <p>
+            <code>ScrollToTop</code> listens to router location changes and scrolls on
+            navigation (<code>src/app/App.tsx:32</code>).
+          </p>
+
+          <h3>Reading flow</h3>
+          <div class="flow">
+            <span class="flow-title">Main feature path</span>
+            ReadingPage → data/spreads.ts spread definitions and defaults → domain/deck.ts
+            shuffle and draw → components/SpreadPicker choose spread →
+            components/SpreadBoard → components/TarotCardView → components/CardImage /
+            CardBack → domain/reading/interpret.ts once all cards are revealed →
+            components/ReadingInterpretation → components/CardDetailDialog →
+            components/CardDetail → CardImage + TreeOfLifeDiagram
+          </div>
+          <p>
+            <code>ReadingPage</code> is the main state owner: spread, question, shadow
+            flag, lens, depth, drawn cards, reveal state, dialog index, clipboard status,
+            and journal status. Children receive values and callbacks; they do not reach
+            into storage or the URL directly.
+          </p>
+          <ul>
+            <li>
+              <strong>Draw</strong> → <code>handleStart</code> calls
+              <code>drawCards</code> and stores the result in <code>drawn</code>.
+            </li>
+            <li>
+              <strong>Reveal</strong> → updates the matching card's
+              <code>revealed</code> flag.
+            </li>
+            <li>
+              <strong>Open card</strong> → stores <code>openIndex</code>;
+              <code>CardDetailDialog</code> renders the selected <code>DrawnCard</code>.
+            </li>
+            <li>
+              <strong>Interpret</strong> → once every card is revealed, a memo calls
+              <code>interpretReading</code> and passes the result to
+              <code>ReadingInterpretation</code>.
+            </li>
+            <li>
+              <strong>Copy reading</strong> → <code>formatReading</code> converts the
+              interpretation to plain text.
+            </li>
+            <li>
+              <strong>Print</strong> → <code>window.print()</code>; <code>print.css</code>
+              and component print rules take over.
+            </li>
+          </ul>
+
+          <h3>Interpretation engine</h3>
+          <p>
+            <code>src/domain/reading/interpret.ts:19</code> is the single pure entry
+            point:
+          </p>
+          <div class="flow">
+            <span class="flow-title">Domain pipeline</span>
+            ReadingInput → buildFacts counts, arcana, suits, elements, orientations,
+            repeated numbers, shared Sephiroth, card-to-station resonances,
+            inferred/explicit lens → buildFactInsights + buildRelationInsights element,
+            major, court, shadow, number, Sephira, resonance, keyword observations,
+            spread-specific card-to-card relations → selectInsights sort by weight,
+            deduplicate, cap by depth, limit each insight kind → synthesis headline,
+            overview, per-position paragraphs, spread-specific movement, one action →
+            ReadingInterpretation
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">File</th>
+                  <th scope="col">Role</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>facts.ts</code></td>
+                  <td>Builds the factual model of the draw</td>
+                </tr>
+                <tr>
+                  <td><code>relations.ts</code></td>
+                  <td>Compares cards and builds spread-specific relations</td>
+                </tr>
+                <tr>
+                  <td><code>notices.ts</code></td>
+                  <td>Creates, scores, and caps pattern observations</td>
+                </tr>
+                <tr>
+                  <td><code>synthesis.ts</code></td>
+                  <td>Turns facts and notices into prose</td>
+                </tr>
+                <tr>
+                  <td><code>language.ts</code></td>
+                  <td>Labels, lens frames, element voices, element relations</td>
+                </tr>
+                <tr>
+                  <td><code>positions.ts</code></td>
+                  <td>Position intros, Tree triads, shared element list</td>
+                </tr>
+                <tr>
+                  <td><code>text.ts</code></td>
+                  <td>Text helpers, hashing, deterministic phrase selection</td>
+                </tr>
+                <tr>
+                  <td><code>format.ts</code></td>
+                  <td>Plain-text export</td>
+                </tr>
+                <tr>
+                  <td><code>types.ts</code></td>
+                  <td>Reading input/output types and shared lens/depth constants</td>
+                </tr>
+                <tr>
+                  <td><code>share.ts</code></td>
+                  <td>Share-link encoding, decoding, validation</td>
+                </tr>
+                <tr>
+                  <td><code>journal.ts</code></td>
+                  <td>Journal validation, serialization, deduplication</td>
+                </tr>
+                <tr>
+                  <td><code>interpret.ts</code></td>
+                  <td>Pipeline composition</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Determinism matters here: the draw is encoded, and phrase variants are
+            selected from a hash of the spread and cards plus a salt
+            (<code>pickVariant</code>), so the same draw produces the same reading.
+          </p>
+
+          <h3>Share-link loop</h3>
+          <div class="flow">
+            <span class="flow-title">Share state</span>
+            ReadingPage state → buildShareParams → buildShareUrl → clipboard URL hash →
+            readSharedReading → validates version, spread, cards, orientations,
+            duplicates, lens, depth, question length → ReadingPage state
+          </div>
+          <p>
+            <code>readSharedReading</code> returns <code>null</code> for malformed links.
+            <code>ReadingPage</code> handles that by returning to setup and showing an
+            error, rather than rendering partial data. Removing share parameters also
+            resets stale reading state.
+          </p>
+          <p>
+            Share links are self-contained. They contain the spread, card IDs,
+            orientations, optional question, shadow flag, lens, and depth. Nothing is
+            uploaded.
+          </p>
+
+          <h3>Journal loop</h3>
+          <div class="flow">
+            <span class="flow-title">Local persistence</span>
+            ReadingPage → buildShareParams → lib/journalStorage.saveJournalEntry →
+            domain/reading/journal.upsertJournalEntry → validates through
+            readSharedReading → serialize → localStorage JournalPage → loadJournal →
+            parseJournal → re-validates each stored entry through readSharedReading →
+            renders entries as links: /?&lt;params&gt;&amp;j=1 → opens the same
+            ReadingPage share-link path
+          </div>
+          <p>
+            The journal deliberately reuses the share format instead of inventing a second
+            serialization format. Entries store the encoded parameters, timestamp, and
+            stable ID. Cross-tab changes are detected with a <code>storage</code> event
+            listener in <code>JournalPage</code>.
+          </p>
+
+          <h3>Library and card page</h3>
+          <div class="flow">
+            <span class="flow-title">Deck browsing</span>
+            LibraryPage → ALL_CARDS → module-level CARD_SEARCH_WORDS index → local
+            search/arcana/suit/element filters → links to /cards/:cardId → CardPage →
+            useParams → getCardById → CardDetail → previous/next card pager from ALL_CARDS
+          </div>
+          <p>
+            The search index is precomputed once at module load, so typing does not
+            rebuild every card's searchable text on each keystroke.
+          </p>
+
+          <h3>Tradition page</h3>
+          <div class="flow">
+            <span class="flow-title">Static study content</span>
+            TraditionPage → data/tradition.ts Sephira themes, number notes, element
+            practices → domain/tree.ts Sephiroth and element metadata → TreeOfLifeDiagram
+            visual Tree with optional highlight
+          </div>
+          <p>
+            <code>TreeOfLifeDiagram</code> also imports the major cards so each path can
+            be drawn and labelled from the card's <code>path</code> metadata.
+          </p>
+        </section>
+
+        <section id="data-model">
+          <h2>Data model</h2>
+          <p>Core types live in <code>src/domain/types.ts</code>:</p>
+          <ul>
+            <li>
+              <code>Element</code>, <code>Suit</code>, <code>CourtRank</code>,
+              <code>NumberRank</code>, <code>Sephira</code>, <code>Orientation</code>
+            </li>
+            <li>
+              <code>MajorCard | MinorCard | CourtCard</code> → <code>TarotCard</code>
+            </li>
+            <li>
+              <code>Spread</code>, <code>SpreadPosition</code>, <code>SpreadLayout</code>
+            </li>
+            <li>
+              <code>DrawnCard</code> = card + position + orientation + revealed flag
+            </li>
+          </ul>
+
+          <p>Card content lives under <code>src/data/cards/</code>, split by suit:</p>
+          <ul>
+            <li><code>majors.ts</code> — 22 Atu</li>
+            <li>
+              <code>wands.ts</code>, <code>cups.ts</code>, <code>swords.ts</code>,
+              <code>disks.ts</code> — 14 each
+            </li>
+            <li>
+              <code>index.ts</code> — combines them into <code>ALL_CARDS</code> and
+              <code>CARD_BY_ID</code>
+            </li>
+          </ul>
+          <p>
+            <code>src/data/cards.test.ts</code> enforces deck integrity: 78 unique cards,
+            22 majors, four suits of 14, unique Hebrew letters, unique Tree paths, valid
+            ranks, valid Sephiroth, content completeness, and the existence of AVIF/WebP
+            art for every card.
+          </p>
+        </section>
+
+        <section id="assets">
+          <h2>Assets</h2>
+          <p>
+            Original artwork lives in <code>images/</code> and is not formatted by
+            Prettier. <code>scripts/optimize-images.mjs</code> uses ImageMagick to
+            generate:
+          </p>
+          <ul>
+            <li><code>public/images/cards/&lt;card-id&gt;.avif</code></li>
+            <li><code>public/images/cards/&lt;card-id&gt;.webp</code></li>
+            <li><code>public/images/back-cover.avif</code></li>
+            <li><code>public/images/back-cover.webp</code></li>
+          </ul>
+          <p>
+            <code>CardImage</code> renders a <code>&lt;picture&gt;</code> with AVIF first,
+            WebP fallback, and a styled placeholder on failure. Image URLs use
+            <code>import.meta.env.BASE_URL</code>, so they work from a GitHub Pages
+            subpath.
+          </p>
+        </section>
+
+        <section id="styling">
+          <h2>Styling</h2>
+          <ul>
+            <li>
+              <code>src/styles/tokens.css</code> — colors, fonts, spacing, radii, shadows.
+            </li>
+            <li>
+              <code>src/styles/base.css</code> — reset, typography, buttons, panels,
+              focus, skip link, visually-hidden utilities.
+            </li>
+            <li>
+              <code>src/styles/print.css</code> — flips the dark theme to ink-on-paper,
+              hides navigation and dialogs, and controls page breaks.
+            </li>
+            <li>
+              Each component/page has a colocated <code>.module.css</code> for scoped
+              layout and print rules.
+            </li>
+          </ul>
+          <p>There is no CSS-in-JS runtime and no utility framework.</p>
+        </section>
+
+        <section id="testing">
+          <h2>Testing and CI</h2>
+          <p>Tests are colocated by concern:</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Test area</th>
+                  <th scope="col">Files</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Static data integrity</td>
+                  <td>
+                    <code>src/data/cards.test.ts</code>,
+                    <code>src/data/spreads.test.ts</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Domain logic</td>
+                  <td>
+                    <code>src/domain/deck.test.ts</code>,
+                    <code>src/domain/cardLabels.test.ts</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Reading engine</td>
+                  <td><code>src/domain/reading/reading.test.ts</code></td>
+                </tr>
+                <tr>
+                  <td>Share and journal</td>
+                  <td><code>share.test.ts</code>, <code>journal.test.ts</code></td>
+                </tr>
+                <tr>
+                  <td>Browser adapter</td>
+                  <td><code>src/lib/journalStorage.test.ts</code></td>
+                </tr>
+                <tr>
+                  <td>Components</td>
+                  <td>
+                    <code>SpreadBoard.test.tsx</code>, <code>CardImage.test.tsx</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Pages</td>
+                  <td>
+                    <code>ReadingPage.test.tsx</code>, <code>LibraryPage.test.tsx</code>,
+                    <code>CardPage.test.tsx</code>, <code>JournalPage.test.tsx</code>,
+                    <code>TraditionPage.test.tsx</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>App and routing</td>
+                  <td><code>App.test.tsx</code>, <code>RouteStates.test.tsx</code></td>
+                </tr>
+                <tr>
+                  <td>Accessibility</td>
+                  <td>
+                    <code>src/app/accessibility.test.tsx</code> +
+                    <code>src/test/axe.ts</code>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The accessibility audit renders real pages with axe under WCAG A/AA tags, but
+            explicitly disables color contrast because jsdom has no paint or layout.
+            Real-browser contrast and layout checks remain a manual step.
+          </p>
+          <p>
+            CI (<code>.github/workflows/ci.yml</code>) runs <code>npm run verify</code> on
+            push to <code>master</code> and pull requests. Deployment
+            (<code>.github/workflows/deploy.yml</code>) reruns verification, builds
+            <code>dist/</code>, and publishes to GitHub Pages.
+          </p>
+        </section>
+
+        <section id="strengths">
+          <h2>Architectural strengths</h2>
+          <div class="card card--good">
+            <ul>
+              <li>
+                Clear separation between <strong>content</strong>,
+                <strong>domain logic</strong>, <strong>presentation</strong>, and
+                <strong>browser side effects</strong>.
+              </li>
+              <li>
+                Deterministic interpretation engine with no network or runtime randomness
+                during rendering.
+              </li>
+              <li>Share links and journal entries use one validated encoding format.</li>
+              <li>Strong data-integrity and domain test coverage.</li>
+              <li>Lazy-loaded secondary routes with route error recovery.</li>
+              <li>
+                Accessibility is treated as part of the component and API design, not an
+                afterthought.
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="risks">
+          <h2>Notable coupling and risks</h2>
+          <div class="card card--risk">
+            <ul>
+              <li>
+                <code>ReadingPage</code> is still the largest orchestration point, owning
+                setup, reading, URL sync, clipboard, journal, and dialog state. The
+                planned M8 split into <code>ReadingSetup</code>,
+                <code>ReadingResult</code>, and a reducer or hook has not been done.
+              </li>
+              <li>
+                The reading engine has spread-specific branches in
+                <code>relations.ts</code>, <code>notices.ts</code>, and
+                <code>synthesis.ts</code>, all keyed by position IDs. This is readable,
+                but adding a spread requires coordinated updates in several modules.
+              </li>
+              <li>
+                <code>domain/deck.ts</code> imports <code>ALL_CARDS</code> directly, even
+                though <code>drawCards</code> also accepts an injected deck. Domain
+                modules therefore depend on static data rather than being fully
+                content-agnostic.
+              </li>
+              <li>
+                <code>HashRouter</code> keeps GitHub Pages deployment simple, but URLs
+                live after <code>#</code>, which is less SEO-friendly and requires the
+                <code>#/?...</code> share format.
+              </li>
+              <li>
+                Color contrast and visual layout still need real-browser verification; the
+                jsdom axe pass cannot judge them.
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <footer class="footer">
+          <p>
+            Thoth Tarot architecture notes. Open this file directly in a browser, or keep
+            <code>ARCHITECTURE.md</code> as the source-friendly version.
+          </p>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>
