@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useRef } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { Hexagram } from "../components/Hexagram";
 import styles from "./Layout.module.css";
@@ -13,10 +13,23 @@ const NAV_ITEMS = [
 
 export function Layout() {
   const { pathname } = useLocation();
+  const mainRef = useRef<HTMLElement>(null);
+
+  function focusMainContent() {
+    mainRef.current?.focus();
+  }
 
   return (
     <div className={styles.shell}>
-      <a className="skip-link" href="#main-content">
+      <a
+        className="skip-link"
+        href="#main-content"
+        onClick={(event) => {
+          // HashRouter treats a bare #anchor as a route, so focus the target directly.
+          event.preventDefault();
+          focusMainContent();
+        }}
+      >
         Skip to content
       </a>
 
@@ -48,7 +61,7 @@ export function Layout() {
         </div>
       </header>
 
-      <main id="main-content" className={styles.main}>
+      <main id="main-content" className={styles.main} tabIndex={-1} ref={mainRef}>
         <RouteErrorBoundary key={pathname}>
           <Suspense fallback={<RouteFallback />}>
             <Outlet />

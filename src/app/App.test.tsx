@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ALL_CARDS } from "../data/cards";
 import { SPREADS } from "../data/spreads";
@@ -42,5 +43,19 @@ describe("App", () => {
       await screen.findByRole("heading", { name: /readings you kept/i }),
     ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /draw a reading/i })).toBeInTheDocument();
+  });
+
+  it("keeps the skip link inside the app and focuses main content", async () => {
+    const user = userEvent.setup();
+    vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    window.location.hash = "#/";
+    render(<App />);
+
+    await user.click(screen.getByRole("link", { name: /skip to content/i }));
+
+    expect(screen.getByRole("main")).toHaveFocus();
+    expect(window.location.hash).toBe("#/");
+    expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
+    expect(screen.queryByText(/no card is laid here/i)).not.toBeInTheDocument();
   });
 });
