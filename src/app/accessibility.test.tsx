@@ -54,6 +54,23 @@ describe("accessibility audit", () => {
     await expectNoAccessibilityViolations();
   });
 
+  it("keeps the Sigil Forge free of violations before and after forging", async () => {
+    const user = userEvent.setup();
+    openRoute("#/chaos/sigil");
+    await screen.findByRole("heading", { level: 1, name: /forge a sigil/i });
+
+    await expectNoAccessibilityViolations();
+
+    await user.type(
+      screen.getByRole("textbox", { name: /what are you encoding/i }),
+      "I will finish the work",
+    );
+    await user.click(screen.getByRole("button", { name: /forge sigil/i }));
+    await screen.findByRole("heading", { name: /your sigil/i });
+
+    await expectNoAccessibilityViolations();
+  });
+
   it("keeps the setup and a completed reading free of violations", async () => {
     const user = userEvent.setup();
     openRoute("#/thelema");

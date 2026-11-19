@@ -172,6 +172,28 @@ describe("App", () => {
     expect(window.location.hash).toBe("#/thelema/cards/major-00-fool?from=old");
   });
 
+  it("lists the toolkit and opens the Sigil Forge", async () => {
+    const user = userEvent.setup();
+    vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    window.location.hash = "#/chaos";
+    render(<App />);
+
+    expect(await screen.findByText("Eight tools, one experiment.")).toBeInTheDocument();
+    const openSigil = screen.getByRole("link", { name: /open sigil forge/i });
+    expect(openSigil).toHaveAttribute("href", "#/chaos/sigil");
+    expect(
+      screen.queryByRole("link", { name: /open gnosis timer/i }),
+    ).not.toBeInTheDocument();
+
+    await user.click(openSigil);
+
+    expect(
+      await screen.findByRole("heading", { level: 1, name: /forge a sigil/i }),
+    ).toBeInTheDocument();
+    expect(window.location.hash).toBe("#/chaos/sigil");
+    expect(document.title).toBe("Sigil Forge · Two Currents");
+  });
+
   it("themes the Chaos route with one accent and rerolls a new signal", async () => {
     const user = userEvent.setup();
     vi.spyOn(window, "scrollTo").mockImplementation(() => {});

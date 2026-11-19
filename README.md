@@ -44,6 +44,7 @@ Open the local URL printed by Vite.
 | `/thelema/tradition` | Thelema · Golden Dawn | Thelema and Golden Dawn notes |
 | `/thelema/cards/:id` | Thelema · Golden Dawn | Card detail                   |
 | `/chaos`             | Chaos Magic           | Chaos toolkit shell and index |
+| `/chaos/sigil`       | Chaos Magic           | Sigil Forge                   |
 
 Old paths such as `#/library`, `#/journal`, and `#/cards/:id` redirect to their `/thelema` equivalents. Old `#/?...` share links are forwarded from the chooser to `#/thelema?...`, so links already in circulation keep working.
 
@@ -152,7 +153,13 @@ The `/chaos` route uses a deliberately different shell: black and white, sans-se
 
 `src/app/chaosAccent.ts` owns the accent ids and the injected-random picker. The CSS owns the colours, and a test reads the stylesheet back to verify every accent stays contrast-safe. The palette is intentionally small so the shell still reads as black and white rather than a theme park.
 
-The toolkit route is the shell for the Chaos system. Sigils, gnosis, servitors, paradigm shifting, cut-up divination, workings, and the magical record are being added as small, tested tools rather than one large launch. Nothing will leave the browser.
+The toolkit route is the shell for the Chaos system. The home index lists all eight planned tools and marks only the ones with a real route as **Available**; the rest say **Next**. Tools are added as small, tested pieces rather than one large launch. Nothing leaves the browser.
+
+### Sigil Forge
+
+`/chaos/sigil` turns a written statement into a deterministic glyph. The domain layer in `src/domain/chaos/sigil.ts` collapses whitespace, removes vowels, then removes repeated consonants. The surviving charge letters seed an FNV-1a hash, and a seeded `mulberry32` generator places the mirrored path points. The same statement therefore always produces the same shape; no `Math.random()` runs during render.
+
+A statement needs at least two surviving consonants. The page explains the reduction, shows the charge letters, moves focus to the result heading, and can download a standalone SVG. The SVG is generated locally from a blob with a white background and only the charge letters in its metadata, so the private statement is not embedded in the file. Reset returns focus to the statement field, and print styles reduce the result to ink on white. A sigil is framed as a creative focus object, not a prediction.
 
 ## Card artwork
 
@@ -201,7 +208,9 @@ The suite covers:
 - Study quiz scoring, wrong-answer feedback, skip behavior, focus movement, and card links
 - Canonical `/thelema` routes, home chooser links, old route redirects, and old share-link forwarding
 - Chaos accent selection, reroll behavior, and a stylesheet-backed AAA contrast check for every accent
-- axe audits of the chooser, Chaos shell, setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
+- Sigil statement normalization, consonant reduction, deterministic geometry, mirrored paths, and escaped SVG export
+- Sigil Forge validation, normalized repeatability, result focus, reset focus, download status, and toolkit navigation
+- axe audits of the chooser, Chaos toolkit, Sigil Forge, setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
 - Lazy route loading, the route loading state, and stale-chunk error recovery
 - The complete reading flow, shared-link loading, journal saves, interpretation section, copy and print behavior, larger spread selection, library search/filters, card detail pages, and tradition page
 
@@ -230,8 +239,8 @@ npm run verify
 Run `npm run build && npm run preview` before a release, then verify:
 
 - Text and focus indicators meet WCAG AA contrast.
-- The reading board, library grid, study quiz, and print preview do not overflow at 320 px, 768 px, and 1280 px.
-- Keyboard navigation, the card dialog, study answer focus, and reduced-motion preferences behave correctly.
+- The reading board, library grid, study quiz, Sigil Forge, and print preview do not overflow at 320 px, 768 px, and 1280 px.
+- Keyboard navigation, the card dialog, study answer focus, Sigil Forge focus movement, and reduced-motion preferences behave correctly.
 - The journal persists after a reload and stays in sync when a second tab changes it.
 
 ## Roadmap

@@ -7,6 +7,14 @@ export const PATHS = {
   journal: "/thelema/journal",
   tradition: "/thelema/tradition",
   chaos: "/chaos",
+  chaosSigil: "/chaos/sigil",
+  chaosGnosis: "/chaos/gnosis",
+  chaosCutUp: "/chaos/cut-up",
+  chaosServitors: "/chaos/servitors",
+  chaosParadigms: "/chaos/paradigms",
+  chaosRecord: "/chaos/record",
+  chaosWorking: "/chaos/working",
+  chaosSources: "/chaos/sources",
 } as const;
 
 export type AppSystem = "home" | "thelema" | "chaos";

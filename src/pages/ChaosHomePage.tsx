@@ -1,17 +1,8 @@
 import { Link } from "react-router-dom";
+import { CHAOS_TOOLS } from "../app/chaosTools";
 import { PATHS } from "../app/paths";
 import { ChaosStar } from "../components/ChaosStar";
 import styles from "./ChaosHomePage.module.css";
-
-const TOOLS = [
-  "Sigil Forge",
-  "Gnosis timer",
-  "Servitor workshop",
-  "Paradigm shift",
-  "Cut-up oracle",
-  "Magical record",
-  "Working composer",
-];
 
 export function ChaosHomePage() {
   return (
@@ -26,22 +17,59 @@ export function ChaosHomePage() {
         </p>
       </header>
 
-      <section className={`panel ${styles.panel}`} aria-labelledby="chaos-toolkit">
-        <p className="eyebrow">The toolkit</p>
-        <h2 id="chaos-toolkit" className={styles.panelTitle}>
-          This current is being assembled.
-        </h2>
-        <p className={styles.text}>
-          The Chaos system is arriving in small, tested pieces. The first tools will
-          include:
-        </p>
-        <ul className={styles.toolList}>
-          {TOOLS.map((tool) => (
-            <li key={tool}>{tool}</li>
-          ))}
+      <section className={styles.toolkit} aria-labelledby="chaos-toolkit">
+        <div className={styles.toolkitIntro}>
+          <p className="eyebrow">The toolkit</p>
+          <h2 id="chaos-toolkit" className={styles.panelTitle}>
+            Eight tools, one experiment.
+          </h2>
+          <p className={styles.text}>
+            The Chaos current is arriving in small, tested pieces. Open what is ready;
+            everything else stays listed so you can see the shape of the whole.
+          </p>
+        </div>
+
+        <ul className={styles.toolGrid}>
+          {CHAOS_TOOLS.map((tool, index) => {
+            const available = tool.status === "available";
+
+            return (
+              <li key={tool.id} className={`panel ${styles.toolCard}`}>
+                <div className={styles.toolMeta}>
+                  <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                  <span
+                    className={
+                      available ? `${styles.status} ${styles.statusReady}` : styles.status
+                    }
+                  >
+                    {available ? "Available" : "Next"}
+                  </span>
+                </div>
+                <h3 className={styles.toolTitle}>
+                  {available ? (
+                    <Link to={tool.path} className={styles.toolLink}>
+                      {tool.title}
+                    </Link>
+                  ) : (
+                    tool.title
+                  )}
+                </h3>
+                <p className={styles.toolText}>{tool.description}</p>
+                {available ? (
+                  <Link to={tool.path} className={styles.toolAction}>
+                    Open {tool.title} <span aria-hidden="true">→</span>
+                  </Link>
+                ) : (
+                  <p className={styles.toolPending}>In the works</p>
+                )}
+              </li>
+            );
+          })}
         </ul>
+
         <p className={styles.note}>
-          Nothing here is uploaded. Records will stay in this browser.
+          Nothing here is uploaded. Records will stay in this browser, and every working
+          is an experiment to review rather than a promise to believe.
         </p>
       </section>
 

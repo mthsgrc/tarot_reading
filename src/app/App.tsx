@@ -37,6 +37,11 @@ const NotFoundPage = lazy(() =>
     default: module.NotFoundPage,
   })),
 );
+const SigilPage = lazy(() =>
+  import("../pages/chaos/SigilPage").then((module) => ({
+    default: module.SigilPage,
+  })),
+);
 const StudyPage = lazy(() =>
   import("../pages/StudyPage").then((module) => ({
     default: module.StudyPage,
@@ -96,6 +101,7 @@ export function App() {
           <Route path="thelema/tradition" element={<TraditionPage />} />
 
           <Route path="chaos" element={<ChaosHomePage />} />
+          <Route path="chaos/sigil" element={<SigilPage />} />
 
           {/* Old links keep working after the move under /thelema. */}
           <Route path="library" element={<LegacyRedirect to={PATHS.library} />} />

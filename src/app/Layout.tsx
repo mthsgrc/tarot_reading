@@ -50,6 +50,7 @@ const ROUTE_TITLES: Record<string, string> = {
   [PATHS.journal]: `Journal · ${SITE_NAME}`,
   [PATHS.tradition]: `The Tradition · ${SITE_NAME}`,
   [PATHS.chaos]: `Chaos Magic · ${UMBRELLA_NAME}`,
+  [PATHS.chaosSigil]: `Sigil Forge · ${UMBRELLA_NAME}`,
   // Legacy routes redirect immediately, but a matching title avoids a flash.
   "/library": `Card Library · ${SITE_NAME}`,
   "/study": `Study · ${SITE_NAME}`,
@@ -58,6 +59,11 @@ const ROUTE_TITLES: Record<string, string> = {
 };
 
 function titleForPath(pathname: string): string {
+  const exactTitle = ROUTE_TITLES[pathname];
+  if (exactTitle) {
+    return exactTitle;
+  }
+
   if (pathname.startsWith(`${PATHS.thelema}/cards/`) || pathname.startsWith("/cards/")) {
     return `Card Library · ${SITE_NAME}`;
   }
@@ -66,7 +72,7 @@ function titleForPath(pathname: string): string {
     return `Chaos Magic · ${UMBRELLA_NAME}`;
   }
 
-  return ROUTE_TITLES[pathname] ?? `Page not found · ${UMBRELLA_NAME}`;
+  return `Page not found · ${UMBRELLA_NAME}`;
 }
 
 const NAV_BY_SYSTEM: Record<AppSystem, NavItem[]> = {
