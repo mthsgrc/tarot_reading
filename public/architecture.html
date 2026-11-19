@@ -564,22 +564,24 @@
             <span>Six spreads, upright and shadow orientations.</span>
           </div>
           <div class="quick-card">
-            <strong>161 tests</strong>
-            <span>Across 21 files, plus typecheck, lint, and build.</span>
+            <strong>332 tests</strong>
+            <span>Across 40 files, plus typecheck, lint, and build.</span>
           </div>
           <div class="quick-card">
             <strong>Local only</strong>
-            <span>Share links and the journal stay in the browser.</span>
+            <span>Share links, journals, and Chaos records stay in the browser.</span>
           </div>
         </div>
 
         <section id="snapshot">
           <h2>Snapshot</h2>
           <p>
-            A client-only <strong>React SPA</strong> for Thoth Tarot readings. There is no
+            A client-only <strong>React SPA</strong> with two systems: Thoth Tarot through
+            Thelema and the Golden Dawn, and a local Chaos Magic toolkit. There is no
             backend, database, authentication, LLM, or runtime API. The deck, spreads, and
             interpretation rules are static data plus deterministic TypeScript logic;
-            saved readings and shareable links are encoded locally.
+            saved readings, shareable links, servitors, paradigms, and magical records are
+            encoded or stored locally.
           </p>
         </section>
 
@@ -653,8 +655,12 @@
             ScrollToTop └── Routes └── app/Layout.tsx (system-aware shell + accent) ├──
             header / navigation / footer ├── RouteErrorBoundary + Suspense └── &lt;Outlet
             /&gt; ├── HomePage (eager chooser) ├── ReadingPage (eager, /thelema) ├──
-            ChaosHomePage (lazy, /chaos) ├── LibraryPage (lazy) ├── StudyPage (lazy) ├──
-            JournalPage (lazy) ├── CardPage (lazy) ├── TraditionPage (lazy) └──
+            ChaosHomePage (lazy, /chaos) ├── SigilPage (lazy, /chaos/sigil) ├── GnosisPage
+            (lazy, /chaos/gnosis) ├── CutUpPage (lazy, /chaos/cut-up) ├── ServitorsPage
+            (lazy, /chaos/servitors) ├── ParadigmPage (lazy, /chaos/paradigms) ├──
+            RecordPage (lazy, /chaos/record) ├── WorkingPage (lazy, /chaos/working) ├──
+            SourcesPage (lazy, /chaos/sources) ├── LibraryPage (lazy) ├── StudyPage (lazy)
+            ├── JournalPage (lazy) ├── CardPage (lazy) ├── TraditionPage (lazy) └──
             NotFoundPage (lazy)
           </div>
 
@@ -690,21 +696,23 @@
                 </tr>
                 <tr>
                   <td><code>src/domain</code></td>
-                  <td>Types, deck logic, Tree constants, interpretation engine</td>
+                  <td>
+                    Types, deck logic, Tree constants, interpretation engine, Chaos tools
+                  </td>
                   <td>data, other domain modules</td>
                   <td>pages, components, lib</td>
                 </tr>
                 <tr>
                   <td><code>src/data</code></td>
-                  <td>78 cards, six spreads, tradition notes</td>
+                  <td>78 cards, six spreads, tradition notes, Chaos source copy</td>
                   <td>domain types</td>
                   <td>domain, pages, components</td>
                 </tr>
                 <tr>
                   <td><code>src/lib</code></td>
-                  <td>Browser storage adapter</td>
-                  <td>domain journal and share logic</td>
-                  <td>pages</td>
+                  <td>Browser storage adapters and shared id generation</td>
+                  <td>domain journal, share, and Chaos storage logic</td>
+                  <td>pages and other Chaos tools</td>
                 </tr>
                 <tr>
                   <td><code>src/styles</code></td>
@@ -783,6 +791,46 @@
                   <td>Lazy</td>
                 </tr>
                 <tr>
+                  <td><code>/chaos/sigil</code></td>
+                  <td><code>SigilPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+                <tr>
+                  <td><code>/chaos/gnosis</code></td>
+                  <td><code>GnosisPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+                <tr>
+                  <td><code>/chaos/cut-up</code></td>
+                  <td><code>CutUpPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+                <tr>
+                  <td><code>/chaos/servitors</code></td>
+                  <td><code>ServitorsPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+                <tr>
+                  <td><code>/chaos/paradigms</code></td>
+                  <td><code>ParadigmPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+                <tr>
+                  <td><code>/chaos/record</code></td>
+                  <td><code>RecordPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+                <tr>
+                  <td><code>/chaos/working</code></td>
+                  <td><code>WorkingPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+                <tr>
+                  <td><code>/chaos/sources</code></td>
+                  <td><code>SourcesPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+                <tr>
                   <td><code>*</code></td>
                   <td><code>NotFoundPage</code></td>
                   <td>Lazy</td>
@@ -796,6 +844,11 @@
             redirect to their canonical <code>/thelema</code> paths and preserve search
             parameters. Old <code>#/?...</code> share links are forwarded by
             <code>HomePage</code> to <code>#/thelema?...</code>.
+          </p>
+          <p>
+            The Chaos toolkit index is generated from <code>src/app/chaosTools.ts</code>.
+            The home grid and the Sources page read the same list. All eight Chaos routes
+            are lazy-loaded and keep their state in memory or local storage.
           </p>
           <p>
             The reading page stays in the entry bundle because it is the main Thelema
@@ -1026,6 +1079,27 @@
             <code>TreeOfLifeDiagram</code> also imports the major cards so each path can
             be drawn and labelled from the card's <code>path</code> metadata.
           </p>
+
+          <h3>Chaos toolkit</h3>
+          <div class="flow">
+            <span class="flow-title">Tools and storage</span>
+            SigilPage → deterministic mirrored glyph from surviving consonants │
+            GnosisPage → deadline-based attention timer │ CutUpPage → seeded Fisher-Yates
+            shuffle │ ServitorsPage → localStorage records (50 cap) │ ParadigmPage → one
+            open experiment plus 30-record history │ RecordPage → shared log (100 cap) │
+            WorkingPage → workingToRecordDraft → addStoredRecord │ SourcesPage → static
+            context, safety, and references
+          </div>
+          <p>
+            The Chaos domain modules own validation, deterministic geometry, seeded
+            shuffles, date math, and record shapes. Browser adapters in
+            <code>src/lib</code> own <code>localStorage</code>, id generation, caps, and
+            storage-event refreshes. The Magical Record adapter is deliberately reusable:
+            the Working Composer writes into the same log with the kind set to
+            <code>working</code>. The Sources page is static reference content in
+            <code>src/data/chaosSources.ts</code>; it keeps ritual and banishing as
+            context rather than guided exercises.
+          </p>
         </section>
 
         <section id="data-model">
@@ -1158,7 +1232,8 @@
                   <td>
                     <code>src/domain/deck.test.ts</code>,
                     <code>src/domain/cardLabels.test.ts</code>,
-                    <code>src/domain/study.test.ts</code>
+                    <code>src/domain/study.test.ts</code>,
+                    <code>src/domain/chaos/*.test.ts</code>
                   </td>
                 </tr>
                 <tr>
@@ -1171,7 +1246,12 @@
                 </tr>
                 <tr>
                   <td>Browser adapter</td>
-                  <td><code>src/lib/journalStorage.test.ts</code></td>
+                  <td>
+                    <code>src/lib/journalStorage.test.ts</code>,
+                    <code>src/lib/servitorStorage.test.ts</code>,
+                    <code>src/lib/paradigmStorage.test.ts</code>,
+                    <code>src/lib/recordStorage.test.ts</code>
+                  </td>
                 </tr>
                 <tr>
                   <td>Components</td>
@@ -1185,6 +1265,7 @@
                     <code>ReadingPage.test.tsx</code>, <code>LibraryPage.test.tsx</code>,
                     <code>CardPage.test.tsx</code>, <code>JournalPage.test.tsx</code>,
                     <code>TraditionPage.test.tsx</code>, <code>StudyPage.test.tsx</code>
+                    and the eight Chaos page tests
                   </td>
                 </tr>
                 <tr>
@@ -1198,7 +1279,8 @@
                   <td>Accessibility</td>
                   <td>
                     <code>src/app/accessibility.test.tsx</code> +
-                    <code>src/test/axe.ts</code> (chooser, Chaos shell, Thelema pages)
+                    <code>src/test/axe.ts</code> (chooser, all Chaos tools, all Thelema
+                    pages)
                   </td>
                 </tr>
               </tbody>
@@ -1231,6 +1313,10 @@
                 during rendering.
               </li>
               <li>Share links and journal entries use one validated encoding format.</li>
+              <li>
+                The eight Chaos tools share validation and storage patterns where useful;
+                the Working Composer writes into the same Magical Record format.
+              </li>
               <li>Strong data-integrity and domain test coverage.</li>
               <li>
                 Injected randomness keeps quiz generation testable without a live source.
@@ -1275,6 +1361,10 @@
               <li>
                 Color contrast and visual layout still need real-browser verification; the
                 jsdom axe pass cannot judge them.
+              </li>
+              <li>
+                Journal and Chaos records live only in <code>localStorage</code>. Clearing
+                browser data removes them, and there is no export or backup yet.
               </li>
             </ul>
           </div>

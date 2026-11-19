@@ -205,6 +205,11 @@ describe("App", () => {
       "href",
       "#/chaos/working",
     );
+    expect(screen.getByRole("link", { name: /open sources & context/i })).toHaveAttribute(
+      "href",
+      "#/chaos/sources",
+    );
+    expect(screen.queryByText(/in the works/i)).toBeNull();
 
     await user.click(openSigil);
 
@@ -309,6 +314,23 @@ describe("App", () => {
       screen.getByRole("heading", { level: 3, name: /nothing composed yet/i }),
     ).toBeInTheDocument();
     expect(document.title).toBe("Working Composer · Two Currents");
+  });
+
+  it("loads Sources & Context with its own title", async () => {
+    vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    window.location.hash = "#/chaos/sources";
+    render(<App />);
+
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: /sources & context/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /context, not lineage/i }),
+    ).toBeInTheDocument();
+    expect(document.title).toBe("Sources & Context · Two Currents");
   });
 
   it("themes the Chaos route with one accent and rerolls a new signal", async () => {

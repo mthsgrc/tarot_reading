@@ -207,6 +207,13 @@ describe("accessibility audit", () => {
     await expectNoAccessibilityViolations();
   });
 
+  it("keeps Sources & Context free of violations", async () => {
+    openRoute("#/chaos/sources");
+    await screen.findByRole("heading", { level: 1, name: /sources & context/i });
+
+    await expectNoAccessibilityViolations();
+  });
+
   it("keeps the setup and a completed reading free of violations", async () => {
     const user = userEvent.setup();
     openRoute("#/thelema");

@@ -1,0 +1,220 @@
+.page {
+  padding-top: clamp(2rem, 5vw, 4rem);
+  padding-bottom: var(--space-7);
+}
+
+.hero {
+  max-width: 900px;
+  padding-bottom: var(--space-6);
+}
+
+.backLink {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 160ms ease;
+}
+
+.backLink:hover {
+  color: var(--color-accent-bright);
+}
+
+.title {
+  margin-top: 0.75rem;
+}
+
+.hero .lede {
+  margin-top: 1.2rem;
+}
+
+.section {
+  padding: clamp(1.5rem, 3.5vw, 2.5rem);
+  margin-top: var(--space-4);
+}
+
+.sectionTitle {
+  margin-top: 0.4rem;
+  font-size: clamp(1.6rem, 2.8vw, 2.1rem);
+}
+
+.sectionIntro {
+  max-width: 72ch;
+  margin-top: var(--space-3);
+  color: var(--color-parchment-soft);
+  font-size: 0.9rem;
+  line-height: 1.75;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.card {
+  padding: var(--space-3);
+  background: rgb(255 255 255 / 0.025);
+  border: 1px solid var(--line-cool);
+  border-radius: var(--radius-md);
+}
+
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 1.8vw, 1.25rem);
+  line-height: 1.4;
+}
+
+.cardText {
+  margin-top: var(--space-2);
+  color: var(--color-parchment-soft);
+  font-size: 0.84rem;
+  line-height: 1.75;
+}
+
+.toolList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: var(--space-3);
+  padding: 0;
+  margin: var(--space-4) 0 0;
+  list-style: none;
+}
+
+.toolItem {
+  padding: var(--space-3);
+  background: rgb(255 255 255 / 0.025);
+  border: 1px solid var(--line-cool);
+  border-radius: var(--radius-md);
+}
+
+.toolTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1.9vw, 1.35rem);
+}
+
+.toolLink {
+  color: var(--color-accent-bright);
+  text-decoration: none;
+}
+
+.toolLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.claimList {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.claimList dt {
+  color: var(--color-muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.claimList dd {
+  margin: 0.2rem 0 0;
+  color: var(--color-parchment-soft);
+  font-size: 0.84rem;
+  line-height: 1.7;
+}
+
+.referenceSection {
+  margin-top: var(--space-6);
+}
+
+.referenceHead {
+  max-width: 72ch;
+}
+
+.referenceTitle {
+  margin-top: 0.4rem;
+  font-size: clamp(1.6rem, 2.8vw, 2.1rem);
+}
+
+.sourceList,
+.readingList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr));
+  gap: var(--space-3);
+  padding: 0;
+  margin: var(--space-4) 0 0;
+  list-style: none;
+}
+
+.sourceItem,
+.readingItem {
+  padding: var(--space-3);
+  background: rgb(255 255 255 / 0.025);
+  border: 1px solid var(--line-cool);
+  border-radius: var(--radius-md);
+}
+
+.sourceLink {
+  color: var(--color-accent-bright);
+  font-size: 1rem;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+}
+
+.sourceLink:hover {
+  color: var(--color-parchment);
+}
+
+.sourcePublisher {
+  margin-top: var(--space-2);
+  color: var(--color-muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sourceNote,
+.readingNote {
+  margin-top: var(--space-2);
+  color: var(--color-parchment-soft);
+  font-size: 0.82rem;
+  line-height: 1.7;
+}
+
+.readingTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 1.8vw, 1.25rem);
+  line-height: 1.4;
+}
+
+.readingMeta {
+  margin-top: var(--space-2);
+  color: var(--color-muted);
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+}
+
+.note {
+  max-width: 78ch;
+  margin-top: var(--space-6);
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  line-height: 1.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backLink {
+    transition: none;
+  }
+}

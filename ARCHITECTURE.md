@@ -65,6 +65,7 @@ index.html
                         ├── ParadigmPage    (lazy, /chaos/paradigms)
                         ├── RecordPage      (lazy, /chaos/record)
                         ├── WorkingPage     (lazy, /chaos/working)
+                        ├── SourcesPage     (lazy, /chaos/sources)
                         ├── LibraryPage     (lazy)
                         ├── StudyPage       (lazy)
                         ├── JournalPage     (lazy)
@@ -75,16 +76,16 @@ index.html
 
 ### Layer responsibilities
 
-| Directory        | Responsibility                                           | Depends on                      | Consumed by                |
-| ---------------- | -------------------------------------------------------- | ------------------------------- | -------------------------- |
-| `src/app`        | Shell, router, layout, accent picker, route states       | pages, components, router       | `main.tsx`                 |
-| `src/pages`      | Route-level state and feature orchestration              | domain, data, lib, components   | `app/App.tsx`              |
-| `src/components` | Reusable presentation and interaction                    | domain types, occasionally data | pages and other components |
-| `src/domain`     | Types, deck logic, Tree constants, interpretation engine | data, other domain modules      | pages, components, lib     |
-| `src/data`       | 78 cards, six spreads, tradition notes                   | domain types                    | domain, pages, components  |
-| `src/lib`        | Browser storage adapters                                 | domain journal/share logic      | pages                      |
-| `src/styles`     | Tokens, base styles, Chaos theme, print overrides        | fonts                           | `main.tsx`                 |
-| `src/test`       | Vitest setup and axe helper                              | Testing Library, axe            | tests                      |
+| Directory        | Responsibility                                            | Depends on                      | Consumed by                |
+| ---------------- | --------------------------------------------------------- | ------------------------------- | -------------------------- |
+| `src/app`        | Shell, router, layout, accent picker, route states        | pages, components, router       | `main.tsx`                 |
+| `src/pages`      | Route-level state and feature orchestration               | domain, data, lib, components   | `app/App.tsx`              |
+| `src/components` | Reusable presentation and interaction                     | domain types, occasionally data | pages and other components |
+| `src/domain`     | Types, deck logic, Tree constants, interpretation engine  | data, other domain modules      | pages, components, lib     |
+| `src/data`       | 78 cards, six spreads, tradition notes, chaos source copy | domain types                    | domain, pages, components  |
+| `src/lib`        | Browser storage adapters                                  | domain journal/share logic      | pages                      |
+| `src/styles`     | Tokens, base styles, Chaos theme, print overrides         | fonts                           | `main.tsx`                 |
+| `src/test`       | Vitest setup and axe helper                               | Testing Library, axe            | tests                      |
 
 The main dependency direction is **one-way**: `pages → domain/data/lib/components`. Components do not import pages, and domain modules do not import React.
 
@@ -109,13 +110,14 @@ The main dependency direction is **one-way**: `pages → domain/data/lib/compone
 | `/chaos/paradigms`   | `ParadigmPage`  | Lazy    |
 | `/chaos/record`      | `RecordPage`    | Lazy    |
 | `/chaos/working`     | `WorkingPage`   | Lazy    |
+| `/chaos/sources`     | `SourcesPage`   | Lazy    |
 | `*`                  | `NotFoundPage`  | Lazy    |
 
 Legacy routes (`/library`, `/study`, `/journal`, `/tradition`, `/cards/:cardId`) redirect to their canonical `/thelema` paths and preserve search parameters. Old `#/?...` share links are forwarded by `HomePage` to `#/thelema?...`.
 
 The reading page stays in the entry bundle because it is the main Thelema route and every share link opens there. `Layout` wraps pages in a `RouteErrorBoundary` keyed by pathname and a `Suspense` fallback (`src/app/Layout.tsx`). `Layout` derives the active system from the path, swaps brand/navigation/footer content, and sets `data-system` and `data-accent` on `<html>` so global tokens follow the current system. The chosen Chaos accent lives in `Layout` state, so it survives route changes.
 
-The Chaos toolkit index is generated from `src/app/chaosTools.ts`. Each entry carries a title, path, description, and an `available` or `next` status; only routes that actually exist are marked available. `SigilPage`, `GnosisPage`, `CutUpPage`, `ServitorsPage`, `ParadigmPage`, `RecordPage`, and `WorkingPage` are the live tools.
+The Chaos toolkit index is generated from `src/app/chaosTools.ts`. Each entry carries a title, path, and description. The home grid and the Sources page both read the same list. `SigilPage`, `GnosisPage`, `CutUpPage`, `ServitorsPage`, `ParadigmPage`, `RecordPage`, `WorkingPage`, and `SourcesPage` cover the eight tools.
 
 ## How the files talk
 
@@ -379,6 +381,17 @@ WorkingPage
 
 The composer's length limits are chosen so the longest possible practice text still fits inside one record entry. Saving writes the full sequence to `localStorage` and keeps the composed text on screen; editing any field clears the saved state and re-enables the button. The working is a plan, not guided instruction: the copy asks for a form the user can stop safely and a closing that returns to ordinary attention.
 
+### Sources & Context
+
+```text
+SourcesPage
+  → data/chaosSources.ts        context notes, tool claims, safety, sources, books
+  → app/chaosTools.ts           canonical tool titles and paths
+  → external links              target="_blank" rel="noreferrer"
+```
+
+The final page is static reference content, not a practice. `src/data/chaosSources.ts` separates the claims from the tools: each practice tool has an “It does” and “It does not” statement, the safety notes cover coercion, dangerous practices, privacy, and professional advice, and ritual or banishing remains context rather than a guided exercise. The sources include Wikipedia overviews, the Hermetic Library (which blocks some automated fetchers), and a further-reading list of primary and practitioner texts. The app does not copy their exercises or claim affiliation.
+
 ## Data model
 
 Core types live in `src/domain/types.ts`:
@@ -435,9 +448,9 @@ Tests are colocated by concern:
 | Share/journal         | `share.test.ts`, `journal.test.ts`                                                                                                                                                                                                                                                                                                                                                |
 | Browser adapter       | `src/lib/journalStorage.test.ts`, `src/lib/servitorStorage.test.ts`, `src/lib/paradigmStorage.test.ts`, `src/lib/recordStorage.test.ts`                                                                                                                                                                                                                                           |
 | Components            | `SpreadBoard.test.tsx`, `CardImage.test.tsx`                                                                                                                                                                                                                                                                                                                                      |
-| Pages                 | `ReadingPage.test.tsx`, `LibraryPage.test.tsx`, `CardPage.test.tsx`, `JournalPage.test.tsx`, `TraditionPage.test.tsx`, `StudyPage.test.tsx`, `SigilPage.test.tsx`, `GnosisPage.test.tsx`, `CutUpPage.test.tsx`, `ServitorsPage.test.tsx`, `ParadigmPage.test.tsx`, `RecordPage.test.tsx`, `WorkingPage.test.tsx`                                                                  |
+| Pages                 | `ReadingPage.test.tsx`, `LibraryPage.test.tsx`, `CardPage.test.tsx`, `JournalPage.test.tsx`, `TraditionPage.test.tsx`, `StudyPage.test.tsx`, `SigilPage.test.tsx`, `GnosisPage.test.tsx`, `CutUpPage.test.tsx`, `ServitorsPage.test.tsx`, `ParadigmPage.test.tsx`, `RecordPage.test.tsx`, `WorkingPage.test.tsx`, `SourcesPage.test.tsx`                                          |
 | App/routing           | `App.test.tsx`, `RouteStates.test.tsx`, `chaosAccent.test.ts`                                                                                                                                                                                                                                                                                                                     |
-| Accessibility         | `src/app/accessibility.test.tsx` + `src/test/axe.ts` (chooser, Chaos toolkit, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, Paradigm Shift, Magical Record, Working Composer, Thelema pages)                                                                                                                                                                       |
+| Accessibility         | `src/app/accessibility.test.tsx` + `src/test/axe.ts` (chooser, Chaos toolkit, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, Paradigm Shift, Magical Record, Working Composer, Sources & Context, Thelema pages)                                                                                                                                                    |
 
 The accessibility audit renders real pages with axe under WCAG A/AA tags, but explicitly disables color contrast because jsdom has no paint/layout. Real-browser contrast and layout checks remain a manual step.
 

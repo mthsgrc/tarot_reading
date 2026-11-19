@@ -51,6 +51,7 @@ Open the local URL printed by Vite.
 | `/chaos/paradigms`   | Chaos Magic           | Paradigm Shift                |
 | `/chaos/record`      | Chaos Magic           | Magical Record                |
 | `/chaos/working`     | Chaos Magic           | Working Composer              |
+| `/chaos/sources`     | Chaos Magic           | Sources and safety context    |
 
 Old paths such as `#/library`, `#/journal`, and `#/cards/:id` redirect to their `/thelema` equivalents. Old `#/?...` share links are forwarded from the chooser to `#/thelema?...`, so links already in circulation keep working.
 
@@ -159,7 +160,7 @@ The `/chaos` route uses a deliberately different shell: black and white, sans-se
 
 `src/app/chaosAccent.ts` owns the accent ids and the injected-random picker. The CSS owns the colours, and a test reads the stylesheet back to verify every accent stays contrast-safe. The palette is intentionally small so the shell still reads as black and white rather than a theme park.
 
-The toolkit route is the shell for the Chaos system. The home index lists all eight planned tools and marks only the ones with a real route as **Available**; the rest say **Next**. Tools are added as small, tested pieces rather than one large launch. Nothing leaves the browser.
+The toolkit route is the shell for the Chaos system. The home index lists all eight local tools with short descriptions and direct links. Every tool is built and works without a network; records stay in the browser.
 
 ### Sigil Forge
 
@@ -202,6 +203,12 @@ Records are validated twice: in `src/domain/chaos/servitor.ts` before creation a
 `/chaos/working` writes a structured working into the shared Magical Record. A working has a title, date, intention, optional preparation, action, closing, and optional reflection. The right panel previews the sequence as you write. Saving calls the same `addStoredRecord` adapter as the record page, with the kind set to `working`; the intention, preparation, action, and closing become labelled plain text in the record. The composer stays on screen after a save and disables the save button until you change something, so the same text does not create duplicate entries.
 
 The composer does not teach a ritual. The safety copy asks you to avoid breath-holding, hyperventilation, sleep deprivation, fasting, pain, or anything that could harm you or someone else, and to stop whenever you choose. The closing field asks how you will end and return to ordinary attention, not for a prescribed banishing.
+
+### Sources & Context
+
+`/chaos/sources` is the reference page for the toolkit. It separates the historical and contested claims from the tools: chaos magic as a modern current with no single lineage; Spare's sigil work and this app's original deterministic variation; the different uses of “gnosis”; practitioner language around servitors and egregores; cut-up as an art technique; and records as reflection rather than proof of causation. Each practice tool gets an “It does” and “It does not” statement.
+
+The page also collects safety and scope notes: no guided breath-holding, hyperventilation, sleep deprivation, fasting, or pain; stop and get support if a practice leaves you unwell; keep workings consent-based; ritual and banishing stay as context rather than guided exercises; records are local; and nothing here is professional advice. External sources and a short further-reading list are included, with a note that the site is independent and does not reproduce the source exercises.
 
 ## Card artwork
 
@@ -259,7 +266,8 @@ The suite covers:
 - Paradigm duration math, readiness, belief/reflection validation, one-open-experiment enforcement, start/complete/discard flows, storage failures, and cross-tab refresh
 - Magical Record validation, kind filters, diary ordering, add/delete focus, storage failures, the 100-entry cap, and cross-tab refresh
 - Working Composer validation, live preview, save-to-record conversion, saved-state clearing, clear, storage failures, and record-full handling
-- axe audits of the chooser, Chaos toolkit, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, Paradigm Shift, Magical Record, Working Composer, setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
+- Sources & Context tool claims, safety boundaries, external-link attributes, further reading, and toolkit links
+- axe audits of the chooser, Chaos toolkit, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, Paradigm Shift, Magical Record, Working Composer, Sources & Context, setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
 - Lazy route loading, the route loading state, and stale-chunk error recovery
 - The complete reading flow, shared-link loading, journal saves, interpretation section, copy and print behavior, larger spread selection, library search/filters, card detail pages, and tradition page
 
@@ -288,8 +296,8 @@ npm run verify
 Run `npm run build && npm run preview` before a release, then verify:
 
 - Text and focus indicators meet WCAG AA contrast.
-- The reading board, library grid, study quiz, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, Paradigm Shift, Magical Record, Working Composer, and print preview do not overflow at 320 px, 768 px, and 1280 px.
-- Keyboard navigation, the card dialog, study answer focus, Sigil Forge focus movement, Gnosis Timer pause/complete states, Cut-up result focus, Servitor create/delete focus, Paradigm start/complete/discard focus, Magical Record add/delete focus, Working Composer save focus, and reduced-motion preferences behave correctly.
+- The reading board, library grid, study quiz, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, Paradigm Shift, Magical Record, Working Composer, Sources & Context, and print preview do not overflow at 320 px, 768 px, and 1280 px.
+- Keyboard navigation, the card dialog, study answer focus, Sigil Forge focus movement, Gnosis Timer pause/complete states, Cut-up result focus, Servitor create/delete focus, Paradigm start/complete/discard focus, Magical Record add/delete focus, Working Composer save focus, external-link behavior, and reduced-motion preferences behave correctly.
 - The journal persists after a reload and stays in sync when a second tab changes it.
 
 ## Roadmap
@@ -308,5 +316,12 @@ Run `npm run build && npm run preview` before a release, then verify:
 - [Hermetic Library: Chaos](https://hermetic.com/chaos)
 - [Austin Osman Spare](https://en.wikipedia.org/wiki/Austin_Osman_Spare)
 - [Peter J. Carroll](https://en.wikipedia.org/wiki/Peter_J._Carroll)
+- [Sigil (magic)](<https://en.wikipedia.org/wiki/Sigil_(magic)>)
+- [Cut-up technique](https://en.wikipedia.org/wiki/Cut-up_technique)
+- [Egregore](https://en.wikipedia.org/wiki/Egregore)
+- [Illuminates of Thanateros](https://en.wikipedia.org/wiki/Illuminates_of_Thanateros)
+- [Magical record](https://en.wikipedia.org/wiki/Magical_record)
+
+The Chaos Sources & Context page includes the full reference list, safety boundaries, and further reading.
 
 Card meanings and Chaos tool copy are original study summaries informed by these sources, not quotations. Thoth Tarot artwork is by Lady Frieda Harris. This is an independent study project, not affiliated with the Ordo Templi Orientis, the Crowley estate, the Illuminates of Thanateros, or any Tarot publisher.

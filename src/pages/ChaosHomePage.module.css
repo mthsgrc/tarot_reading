@@ -72,25 +72,12 @@
   display: flex;
   gap: var(--space-3);
   align-items: center;
-  justify-content: space-between;
   color: var(--color-muted);
   font-size: 0.68rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-}
-
-.status {
-  padding: 0.24rem 0.55rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-}
-
-.statusReady {
-  color: var(--color-accent-ink);
-  background: var(--color-accent);
-  border-color: transparent;
 }
 
 .toolTitle {
@@ -116,29 +103,21 @@
   line-height: 1.7;
 }
 
-.toolAction,
-.toolPending {
-  margin-top: auto;
+.toolAction {
+  align-self: flex-start;
   padding-top: var(--space-4);
+  margin-top: auto;
+  color: var(--color-accent-bright);
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.toolAction {
-  align-self: flex-start;
-  color: var(--color-accent-bright);
   text-decoration: none;
+  text-transform: uppercase;
 }
 
 .toolAction:hover {
   text-decoration: underline;
   text-underline-offset: 0.28em;
-}
-
-.toolPending {
-  color: var(--color-muted);
 }
 
 .note {

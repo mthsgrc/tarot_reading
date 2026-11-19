@@ -24,52 +24,33 @@ export function ChaosHomePage() {
             Eight tools, one experiment.
           </h2>
           <p className={styles.text}>
-            The Chaos current is arriving in small, tested pieces. Open what is ready;
-            everything else stays listed so you can see the shape of the whole.
+            Eight local tools for one experiment. Each keeps its claims small, works
+            without a network, and holds its records in this browser.
           </p>
         </div>
 
         <ul className={styles.toolGrid}>
-          {CHAOS_TOOLS.map((tool, index) => {
-            const available = tool.status === "available";
-
-            return (
-              <li key={tool.id} className={`panel ${styles.toolCard}`}>
-                <div className={styles.toolMeta}>
-                  <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-                  <span
-                    className={
-                      available ? `${styles.status} ${styles.statusReady}` : styles.status
-                    }
-                  >
-                    {available ? "Available" : "Next"}
-                  </span>
-                </div>
-                <h3 className={styles.toolTitle}>
-                  {available ? (
-                    <Link to={tool.path} className={styles.toolLink}>
-                      {tool.title}
-                    </Link>
-                  ) : (
-                    tool.title
-                  )}
-                </h3>
-                <p className={styles.toolText}>{tool.description}</p>
-                {available ? (
-                  <Link to={tool.path} className={styles.toolAction}>
-                    Open {tool.title} <span aria-hidden="true">→</span>
-                  </Link>
-                ) : (
-                  <p className={styles.toolPending}>In the works</p>
-                )}
-              </li>
-            );
-          })}
+          {CHAOS_TOOLS.map((tool, index) => (
+            <li key={tool.id} className={`panel ${styles.toolCard}`}>
+              <div className={styles.toolMeta}>
+                <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+              </div>
+              <h3 className={styles.toolTitle}>
+                <Link to={tool.path} className={styles.toolLink}>
+                  {tool.title}
+                </Link>
+              </h3>
+              <p className={styles.toolText}>{tool.description}</p>
+              <Link to={tool.path} className={styles.toolAction}>
+                Open {tool.title} <span aria-hidden="true">→</span>
+              </Link>
+            </li>
+          ))}
         </ul>
 
         <p className={styles.note}>
-          Nothing here is uploaded. Records will stay in this browser, and every working
-          is an experiment to review rather than a promise to believe.
+          Nothing here is uploaded. Records stay in this browser, and every working is an
+          experiment to review rather than a promise to believe.
         </p>
       </section>
 
