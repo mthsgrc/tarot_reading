@@ -59,6 +59,7 @@ index.html
                         ├── ReadingPage     (eager, /thelema)
                         ├── ChaosHomePage   (lazy, /chaos)
                         ├── SigilPage       (lazy, /chaos/sigil)
+                        ├── GnosisPage      (lazy, /chaos/gnosis)
                         ├── LibraryPage     (lazy)
                         ├── StudyPage       (lazy)
                         ├── JournalPage     (lazy)
@@ -97,13 +98,14 @@ The main dependency direction is **one-way**: `pages → domain/data/lib/compone
 | `/thelema/tradition` | `TraditionPage` | Lazy    |
 | `/chaos`             | `ChaosHomePage` | Lazy    |
 | `/chaos/sigil`       | `SigilPage`     | Lazy    |
+| `/chaos/gnosis`      | `GnosisPage`    | Lazy    |
 | `*`                  | `NotFoundPage`  | Lazy    |
 
 Legacy routes (`/library`, `/study`, `/journal`, `/tradition`, `/cards/:cardId`) redirect to their canonical `/thelema` paths and preserve search parameters. Old `#/?...` share links are forwarded by `HomePage` to `#/thelema?...`.
 
 The reading page stays in the entry bundle because it is the main Thelema route and every share link opens there. `Layout` wraps pages in a `RouteErrorBoundary` keyed by pathname and a `Suspense` fallback (`src/app/Layout.tsx`). `Layout` derives the active system from the path, swaps brand/navigation/footer content, and sets `data-system` and `data-accent` on `<html>` so global tokens follow the current system. The chosen Chaos accent lives in `Layout` state, so it survives route changes.
 
-The Chaos toolkit index is generated from `src/app/chaosTools.ts`. Each entry carries a title, path, description, and an `available` or `next` status; only routes that actually exist are marked available. `SigilPage` is the first live tool.
+The Chaos toolkit index is generated from `src/app/chaosTools.ts`. Each entry carries a title, path, description, and an `available` or `next` status; only routes that actually exist are marked available. `SigilPage` and `GnosisPage` are the live tools.
 
 ## How the files talk
 
@@ -287,6 +289,19 @@ SigilPage
 
 The domain layer never calls `Math.random()`. The statement is the seed, so the same normalized text always yields the same glyph; the page only owns form state, focus, and the blob download. A statement with fewer than two charge letters is rejected with an alert rather than drawing an arbitrary shape. `SigilGlyph` renders the domain output and owns no sigil rules.
 
+### Gnosis Timer
+
+```text
+GnosisPage
+  → domain/chaos/gnosis.ts     span constants and MM:SS formatting
+  → local phase               idle | running | paused | complete
+  → endAtRef                  absolute deadline, immune to interval drift
+  → setInterval(250ms)        refresh displayed remaining time
+  → <progress>                native elapsed-time semantics
+```
+
+The timer treats the deadline as the source of truth. A background tab may throttle the interval, but the next tick subtracts the real clock and catches up. The page locks the duration while running or paused, moves focus to the completion heading at zero, and keeps the safety copy visible before starting. It does not guide breathwork, play audio, or persist anything.
+
 ## Data model
 
 Core types live in `src/domain/types.ts`:
@@ -335,17 +350,17 @@ The Chaos accent is one of the ids in `src/app/chaosAccent.ts`; `src/styles/chao
 
 Tests are colocated by concern:
 
-| Test area             | Files                                                                                                                                                             |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Static data integrity | `src/data/cards.test.ts`, `src/data/spreads.test.ts`                                                                                                              |
-| Domain logic          | `src/domain/deck.test.ts`, `src/domain/cardLabels.test.ts`, `src/domain/study.test.ts`, `src/domain/chaos/sigil.test.ts`                                          |
-| Reading engine        | `src/domain/reading/reading.test.ts`                                                                                                                              |
-| Share/journal         | `share.test.ts`, `journal.test.ts`                                                                                                                                |
-| Browser adapter       | `src/lib/journalStorage.test.ts`                                                                                                                                  |
-| Components            | `SpreadBoard.test.tsx`, `CardImage.test.tsx`                                                                                                                      |
-| Pages                 | `ReadingPage.test.tsx`, `LibraryPage.test.tsx`, `CardPage.test.tsx`, `JournalPage.test.tsx`, `TraditionPage.test.tsx`, `StudyPage.test.tsx`, `SigilPage.test.tsx` |
-| App/routing           | `App.test.tsx`, `RouteStates.test.tsx`, `chaosAccent.test.ts`                                                                                                     |
-| Accessibility         | `src/app/accessibility.test.tsx` + `src/test/axe.ts` (chooser, Chaos toolkit, Sigil Forge, Thelema pages)                                                         |
+| Test area             | Files                                                                                                                                                                                    |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Static data integrity | `src/data/cards.test.ts`, `src/data/spreads.test.ts`                                                                                                                                     |
+| Domain logic          | `src/domain/deck.test.ts`, `src/domain/cardLabels.test.ts`, `src/domain/study.test.ts`, `src/domain/chaos/sigil.test.ts`, `src/domain/chaos/gnosis.test.ts`                              |
+| Reading engine        | `src/domain/reading/reading.test.ts`                                                                                                                                                     |
+| Share/journal         | `share.test.ts`, `journal.test.ts`                                                                                                                                                       |
+| Browser adapter       | `src/lib/journalStorage.test.ts`                                                                                                                                                         |
+| Components            | `SpreadBoard.test.tsx`, `CardImage.test.tsx`                                                                                                                                             |
+| Pages                 | `ReadingPage.test.tsx`, `LibraryPage.test.tsx`, `CardPage.test.tsx`, `JournalPage.test.tsx`, `TraditionPage.test.tsx`, `StudyPage.test.tsx`, `SigilPage.test.tsx`, `GnosisPage.test.tsx` |
+| App/routing           | `App.test.tsx`, `RouteStates.test.tsx`, `chaosAccent.test.ts`                                                                                                                            |
+| Accessibility         | `src/app/accessibility.test.tsx` + `src/test/axe.ts` (chooser, Chaos toolkit, Sigil Forge, Gnosis Timer, Thelema pages)                                                                  |
 
 The accessibility audit renders real pages with axe under WCAG A/AA tags, but explicitly disables color contrast because jsdom has no paint/layout. Real-browser contrast and layout checks remain a manual step.
 

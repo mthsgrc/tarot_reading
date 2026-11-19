@@ -71,6 +71,19 @@ describe("accessibility audit", () => {
     await expectNoAccessibilityViolations();
   });
 
+  it("keeps the Gnosis Timer free of violations before and during a span", async () => {
+    const user = userEvent.setup();
+    openRoute("#/chaos/gnosis");
+    await screen.findByRole("heading", { level: 1, name: /hold a single point/i });
+
+    await expectNoAccessibilityViolations();
+
+    await user.click(screen.getByRole("button", { name: /^start$/i }));
+    expect(screen.getByText("In progress")).toBeInTheDocument();
+
+    await expectNoAccessibilityViolations();
+  });
+
   it("keeps the setup and a completed reading free of violations", async () => {
     const user = userEvent.setup();
     openRoute("#/thelema");

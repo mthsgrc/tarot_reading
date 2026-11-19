@@ -24,7 +24,7 @@ export const CHAOS_TOOLS: readonly ChaosTool[] = [
     title: "Gnosis Timer",
     path: PATHS.chaosGnosis,
     description: "A silent countdown for focused attention, with pause and reset.",
-    status: "next",
+    status: "available",
   },
   {
     id: "cut-up",

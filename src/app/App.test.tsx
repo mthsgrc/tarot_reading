@@ -181,9 +181,10 @@ describe("App", () => {
     expect(await screen.findByText("Eight tools, one experiment.")).toBeInTheDocument();
     const openSigil = screen.getByRole("link", { name: /open sigil forge/i });
     expect(openSigil).toHaveAttribute("href", "#/chaos/sigil");
-    expect(
-      screen.queryByRole("link", { name: /open gnosis timer/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /open gnosis timer/i })).toHaveAttribute(
+      "href",
+      "#/chaos/gnosis",
+    );
 
     await user.click(openSigil);
 
@@ -192,6 +193,21 @@ describe("App", () => {
     ).toBeInTheDocument();
     expect(window.location.hash).toBe("#/chaos/sigil");
     expect(document.title).toBe("Sigil Forge · Two Currents");
+  });
+
+  it("loads the Gnosis Timer with its own title", async () => {
+    vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    window.location.hash = "#/chaos/gnosis";
+    render(<App />);
+
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: /hold a single point/i,
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("timer")).toHaveTextContent("05:00");
+    expect(document.title).toBe("Gnosis Timer · Two Currents");
   });
 
   it("themes the Chaos route with one accent and rerolls a new signal", async () => {

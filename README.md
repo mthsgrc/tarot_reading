@@ -45,6 +45,7 @@ Open the local URL printed by Vite.
 | `/thelema/cards/:id` | Thelema · Golden Dawn | Card detail                   |
 | `/chaos`             | Chaos Magic           | Chaos toolkit shell and index |
 | `/chaos/sigil`       | Chaos Magic           | Sigil Forge                   |
+| `/chaos/gnosis`      | Chaos Magic           | Gnosis Timer                  |
 
 Old paths such as `#/library`, `#/journal`, and `#/cards/:id` redirect to their `/thelema` equivalents. Old `#/?...` share links are forwarded from the chooser to `#/thelema?...`, so links already in circulation keep working.
 
@@ -161,6 +162,12 @@ The toolkit route is the shell for the Chaos system. The home index lists all ei
 
 A statement needs at least two surviving consonants. The page explains the reduction, shows the charge letters, moves focus to the result heading, and can download a standalone SVG. The SVG is generated locally from a blob with a white background and only the charge letters in its metadata, so the private statement is not embedded in the file. Reset returns focus to the statement field, and print styles reduce the result to ink on white. A sigil is framed as a creative focus object, not a prediction.
 
+### Gnosis Timer
+
+`/chaos/gnosis` is a silent attention timer, not a guided induction. Choose 3, 5, 10, or 20 minutes, then start, pause, resume, or reset. The deadline is stored as a timestamp, so a throttled background tab does not stretch the span; the interval only refreshes the display. The span is locked while the timer runs or is paused, and the native `<progress>` element shows elapsed time.
+
+When the countdown reaches zero, focus moves to a compact completion heading and the page suggests stopping and noting what happened. The safety copy is visible before starting: breathe normally, do not hold your breath or hyperventilate, and stop if you feel dizzy, panicked, or unwell. No sound is played, nothing is saved, and leaving the page discards the timer.
+
 ## Card artwork
 
 The original scans are in `images/` and were optimized with ImageMagick into native `278×408` AVIF and WebP files:
@@ -208,9 +215,10 @@ The suite covers:
 - Study quiz scoring, wrong-answer feedback, skip behavior, focus movement, and card links
 - Canonical `/thelema` routes, home chooser links, old route redirects, and old share-link forwarding
 - Chaos accent selection, reroll behavior, and a stylesheet-backed AAA contrast check for every accent
-- Sigil statement normalization, consonant reduction, deterministic geometry, mirrored paths, and escaped SVG export
+- Sigil statement normalization, consonant reduction, deterministic geometry, mirrored paths, and statement-free SVG export
 - Sigil Forge validation, normalized repeatability, result focus, reset focus, download status, and toolkit navigation
-- axe audits of the chooser, Chaos toolkit, Sigil Forge, setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
+- Gnosis clock formatting, span changes, run/pause/resume, completion focus, reset, and duration locking
+- axe audits of the chooser, Chaos toolkit, Sigil Forge, Gnosis Timer, setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
 - Lazy route loading, the route loading state, and stale-chunk error recovery
 - The complete reading flow, shared-link loading, journal saves, interpretation section, copy and print behavior, larger spread selection, library search/filters, card detail pages, and tradition page
 
@@ -239,8 +247,8 @@ npm run verify
 Run `npm run build && npm run preview` before a release, then verify:
 
 - Text and focus indicators meet WCAG AA contrast.
-- The reading board, library grid, study quiz, Sigil Forge, and print preview do not overflow at 320 px, 768 px, and 1280 px.
-- Keyboard navigation, the card dialog, study answer focus, Sigil Forge focus movement, and reduced-motion preferences behave correctly.
+- The reading board, library grid, study quiz, Sigil Forge, Gnosis Timer, and print preview do not overflow at 320 px, 768 px, and 1280 px.
+- Keyboard navigation, the card dialog, study answer focus, Sigil Forge focus movement, Gnosis Timer pause/complete states, and reduced-motion preferences behave correctly.
 - The journal persists after a reload and stays in sync when a second tab changes it.
 
 ## Roadmap
