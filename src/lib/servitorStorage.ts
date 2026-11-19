@@ -10,6 +10,7 @@ import {
   type Servitor,
   type ServitorDraft,
 } from "../domain/chaos/servitor";
+import { createId } from "./createId";
 
 export const SERVITOR_STORAGE_KEY = "thoth-tarot:chaos-servitors:v1";
 
@@ -18,17 +19,6 @@ export type SaveServitorResult =
   | { status: "invalid" }
   | { status: "full" }
   | { status: "error" };
-
-let fallbackCounter = 0;
-
-function createServitorId(): string {
-  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-    return crypto.randomUUID();
-  }
-
-  fallbackCounter += 1;
-  return `servitor-${Date.now().toString(36)}-${fallbackCounter.toString(36)}`;
-}
 
 export function loadServitors(): Servitor[] {
   try {
@@ -57,7 +47,7 @@ export function createStoredServitor(
     return { status: "full" };
   }
 
-  const servitor = createServitor(draft, createServitorId(), now);
+  const servitor = createServitor(draft, createId("servitor"), now);
   if (!servitor) {
     return { status: "invalid" };
   }

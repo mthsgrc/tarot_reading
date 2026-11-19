@@ -125,6 +125,26 @@ describe("accessibility audit", () => {
     await expectNoAccessibilityViolations();
   });
 
+  it("keeps the Paradigm Shift free of violations before and after starting", async () => {
+    const user = userEvent.setup();
+    openRoute("#/chaos/paradigms");
+    await screen.findByRole("heading", {
+      level: 1,
+      name: /try a belief on for size/i,
+    });
+
+    await expectNoAccessibilityViolations();
+
+    await user.type(
+      screen.getByRole("textbox", { name: /temporary belief/i }),
+      "I can be wrong and still be safe.",
+    );
+    await user.click(screen.getByRole("button", { name: /start experiment/i }));
+    await screen.findByRole("heading", { level: 2, name: /i can be wrong/i });
+
+    await expectNoAccessibilityViolations();
+  });
+
   it("keeps the setup and a completed reading free of violations", async () => {
     const user = userEvent.setup();
     openRoute("#/thelema");

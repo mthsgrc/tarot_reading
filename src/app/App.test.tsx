@@ -193,6 +193,10 @@ describe("App", () => {
       "href",
       "#/chaos/servitors",
     );
+    expect(screen.getByRole("link", { name: /open paradigm shift/i })).toHaveAttribute(
+      "href",
+      "#/chaos/paradigms",
+    );
 
     await user.click(openSigil);
 
@@ -248,6 +252,21 @@ describe("App", () => {
       screen.getByRole("heading", { name: /no servitors yet/i }),
     ).toBeInTheDocument();
     expect(document.title).toBe("Servitor Workshop · Two Currents");
+  });
+
+  it("loads the Paradigm Shift with its own title", async () => {
+    vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    window.location.hash = "#/chaos/paradigms";
+    render(<App />);
+
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: /try a belief on for size/i,
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /nothing open/i })).toBeInTheDocument();
+    expect(document.title).toBe("Paradigm Shift · Two Currents");
   });
 
   it("themes the Chaos route with one accent and rerolls a new signal", async () => {

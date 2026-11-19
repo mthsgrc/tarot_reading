@@ -45,7 +45,7 @@ export const CHAOS_TOOLS: readonly ChaosTool[] = [
     title: "Paradigm Shift",
     path: PATHS.chaosParadigms,
     description: "Try a temporary belief and record what changes.",
-    status: "next",
+    status: "available",
   },
   {
     id: "record",

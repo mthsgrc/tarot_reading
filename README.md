@@ -48,6 +48,7 @@ Open the local URL printed by Vite.
 | `/chaos/gnosis`      | Chaos Magic           | Gnosis Timer                  |
 | `/chaos/cut-up`      | Chaos Magic           | Cut-up Oracle                 |
 | `/chaos/servitors`   | Chaos Magic           | Servitor Workshop             |
+| `/chaos/paradigms`   | Chaos Magic           | Paradigm Shift                |
 
 Old paths such as `#/library`, `#/journal`, and `#/cards/:id` redirect to their `/thelema` equivalents. Old `#/?...` share links are forwarded from the chooser to `#/thelema?...`, so links already in circulation keep working.
 
@@ -182,6 +183,12 @@ When the countdown reaches zero, focus moves to a compact completion heading and
 
 Records are validated twice: in `src/domain/chaos/servitor.ts` before creation and when reading stored data. The browser adapter in `src/lib/servitorStorage.ts` owns `localStorage`, caps the file at 50 records, keeps records newest-first, and reports storage failures without clearing the form. A storage event refreshes the list when another tab changes it. The page moves focus to a new record, to the next record after a deletion, or to the empty heading when the last record goes. Treat a servitor as a creative fiction you can revise, not an external authority.
 
+### Paradigm Shift
+
+`/chaos/paradigms` runs one temporary-belief experiment at a time. Choose a starting point or write your own belief, pick one hour, one day, or one week, and start. The open experiment shows its belief, start, end, and whether it is ready to reflect. A complete experiment asks for a reflection and then moves into a local history of up to 30 records. An open experiment can be discarded after confirmation.
+
+`src/domain/chaos/paradigm.ts` computes end timestamps, validates records, and allows only one open experiment. The storage adapter keeps the current file versioned and local, and a storage event refreshes another tab. The page updates the “ready to reflect” copy while open, but completion is always available; the tool does not enforce a deadline. The safety copy asks you to keep the belief provisional and kind, and not to use it to override evidence about health, money, safety, or consent.
+
 ## Card artwork
 
 The original scans are in `images/` and were optimized with ImageMagick into native `278×408` AVIF and WebP files:
@@ -235,7 +242,8 @@ The suite covers:
 - Cut-up normalization, line and sentence splitting, deterministic shuffles, previous-order movement, and fragment preservation
 - Cut-up validation, repeated cuts, mode switching, result focus, clearing on edit, reset focus, and toolkit navigation
 - Servitor draft validation, review dates, create/retire/restore/delete flows, storage failures, the 50-record cap, and cross-tab refresh
-- axe audits of the chooser, Chaos toolkit, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
+- Paradigm duration math, readiness, belief/reflection validation, one-open-experiment enforcement, start/complete/discard flows, storage failures, and cross-tab refresh
+- axe audits of the chooser, Chaos toolkit, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, Paradigm Shift, setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
 - Lazy route loading, the route loading state, and stale-chunk error recovery
 - The complete reading flow, shared-link loading, journal saves, interpretation section, copy and print behavior, larger spread selection, library search/filters, card detail pages, and tradition page
 
@@ -264,8 +272,8 @@ npm run verify
 Run `npm run build && npm run preview` before a release, then verify:
 
 - Text and focus indicators meet WCAG AA contrast.
-- The reading board, library grid, study quiz, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, and print preview do not overflow at 320 px, 768 px, and 1280 px.
-- Keyboard navigation, the card dialog, study answer focus, Sigil Forge focus movement, Gnosis Timer pause/complete states, Cut-up result focus, Servitor create/delete focus, and reduced-motion preferences behave correctly.
+- The reading board, library grid, study quiz, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, Paradigm Shift, and print preview do not overflow at 320 px, 768 px, and 1280 px.
+- Keyboard navigation, the card dialog, study answer focus, Sigil Forge focus movement, Gnosis Timer pause/complete states, Cut-up result focus, Servitor create/delete focus, Paradigm start/complete/discard focus, and reduced-motion preferences behave correctly.
 - The journal persists after a reload and stays in sync when a second tab changes it.
 
 ## Roadmap

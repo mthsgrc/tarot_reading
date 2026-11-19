@@ -54,6 +54,7 @@ const ROUTE_TITLES: Record<string, string> = {
   [PATHS.chaosGnosis]: `Gnosis Timer · ${UMBRELLA_NAME}`,
   [PATHS.chaosCutUp]: `Cut-up Oracle · ${UMBRELLA_NAME}`,
   [PATHS.chaosServitors]: `Servitor Workshop · ${UMBRELLA_NAME}`,
+  [PATHS.chaosParadigms]: `Paradigm Shift · ${UMBRELLA_NAME}`,
   // Legacy routes redirect immediately, but a matching title avoids a flash.
   "/library": `Card Library · ${SITE_NAME}`,
   "/study": `Study · ${SITE_NAME}`,
