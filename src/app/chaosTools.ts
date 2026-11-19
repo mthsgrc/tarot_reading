@@ -31,7 +31,7 @@ export const CHAOS_TOOLS: readonly ChaosTool[] = [
     title: "Cut-up Oracle",
     path: PATHS.chaosCutUp,
     description: "Shuffle your own words into a new reading.",
-    status: "next",
+    status: "available",
   },
   {
     id: "servitors",

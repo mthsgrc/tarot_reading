@@ -3,6 +3,8 @@
  * The same statement always produces the same glyph; nothing is random at
  * render time. `Math.random` is not used here.
  */
+import { hashString, mulberry32 } from "./random";
+
 export const SIGIL_STATEMENT_MAX = 180;
 export const SIGIL_MIN_LETTERS = 2;
 
@@ -44,30 +46,6 @@ export function sigilLetters(statement: string): string {
   }
 
   return letters;
-}
-
-/** FNV-1a keeps the geometry stable without a library or a stored seed. */
-function hashString(value: string): number {
-  let hash = 2166136261;
-
-  for (let index = 0; index < value.length; index += 1) {
-    hash ^= value.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-
-  return hash >>> 0;
-}
-
-function mulberry32(seed: number): () => number {
-  let state = seed;
-
-  return () => {
-    state |= 0;
-    state = (state + 0x6d2b79f5) | 0;
-    let value = Math.imul(state ^ (state >>> 15), 1 | state);
-    value = (value + Math.imul(value ^ (value >>> 7), 61 | value)) ^ value;
-    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
-  };
 }
 
 function round(value: number): number {

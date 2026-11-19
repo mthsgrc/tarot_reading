@@ -185,6 +185,10 @@ describe("App", () => {
       "href",
       "#/chaos/gnosis",
     );
+    expect(screen.getByRole("link", { name: /open cut-up oracle/i })).toHaveAttribute(
+      "href",
+      "#/chaos/cut-up",
+    );
 
     await user.click(openSigil);
 
@@ -208,6 +212,21 @@ describe("App", () => {
     ).toBeInTheDocument();
     expect(screen.getByRole("timer")).toHaveTextContent("05:00");
     expect(document.title).toBe("Gnosis Timer · Two Currents");
+  });
+
+  it("loads the Cut-up Oracle with its own title", async () => {
+    vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    window.location.hash = "#/chaos/cut-up";
+    render(<App />);
+
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: /break the sentence open/i,
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("radio", { name: "Lines" })).toBeChecked();
+    expect(document.title).toBe("Cut-up Oracle · Two Currents");
   });
 
   it("themes the Chaos route with one accent and rerolls a new signal", async () => {

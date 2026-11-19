@@ -46,6 +46,7 @@ Open the local URL printed by Vite.
 | `/chaos`             | Chaos Magic           | Chaos toolkit shell and index |
 | `/chaos/sigil`       | Chaos Magic           | Sigil Forge                   |
 | `/chaos/gnosis`      | Chaos Magic           | Gnosis Timer                  |
+| `/chaos/cut-up`      | Chaos Magic           | Cut-up Oracle                 |
 
 Old paths such as `#/library`, `#/journal`, and `#/cards/:id` redirect to their `/thelema` equivalents. Old `#/?...` share links are forwarded from the chooser to `#/thelema?...`, so links already in circulation keep working.
 
@@ -168,6 +169,12 @@ A statement needs at least two surviving consonants. The page explains the reduc
 
 When the countdown reaches zero, focus moves to a compact completion heading and the page suggests stopping and noting what happened. The safety copy is visible before starting: breathe normally, do not hold your breath or hyperventilate, and stop if you feel dizzy, panicked, or unwell. No sound is played, nothing is saved, and leaving the page discards the timer.
 
+### Cut-up Oracle
+
+`/chaos/cut-up` rearranges your own lines or sentences. Lines mode treats each non-empty line as one fragment; sentences mode splits on `.`, `!`, `?`, and line breaks. Abbreviations can split like any other full stop, which is part of the collage rather than a grammar checker.
+
+`src/domain/chaos/cutup.ts` normalizes the text, builds at least two fragments, and shuffles them with the shared FNV-1a and `mulberry32` helpers. The same text, mode, and cut number always produce the same order. The first cut is guaranteed to move when two fragments could otherwise return unchanged, and **Cut again** passes the previous order so it always changes. Editing the text or mode clears the old result. The output is an ordered list with a focused heading, and nothing is uploaded or saved.
+
 ## Card artwork
 
 The original scans are in `images/` and were optimized with ImageMagick into native `278×408` AVIF and WebP files:
@@ -218,7 +225,9 @@ The suite covers:
 - Sigil statement normalization, consonant reduction, deterministic geometry, mirrored paths, and statement-free SVG export
 - Sigil Forge validation, normalized repeatability, result focus, reset focus, download status, and toolkit navigation
 - Gnosis clock formatting, span changes, run/pause/resume, completion focus, reset, and duration locking
-- axe audits of the chooser, Chaos toolkit, Sigil Forge, Gnosis Timer, setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
+- Cut-up normalization, line and sentence splitting, deterministic shuffles, previous-order movement, and fragment preservation
+- Cut-up validation, repeated cuts, mode switching, result focus, clearing on edit, reset focus, and toolkit navigation
+- axe audits of the chooser, Chaos toolkit, Sigil Forge, Gnosis Timer, Cut-up Oracle, setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
 - Lazy route loading, the route loading state, and stale-chunk error recovery
 - The complete reading flow, shared-link loading, journal saves, interpretation section, copy and print behavior, larger spread selection, library search/filters, card detail pages, and tradition page
 
@@ -247,8 +256,8 @@ npm run verify
 Run `npm run build && npm run preview` before a release, then verify:
 
 - Text and focus indicators meet WCAG AA contrast.
-- The reading board, library grid, study quiz, Sigil Forge, Gnosis Timer, and print preview do not overflow at 320 px, 768 px, and 1280 px.
-- Keyboard navigation, the card dialog, study answer focus, Sigil Forge focus movement, Gnosis Timer pause/complete states, and reduced-motion preferences behave correctly.
+- The reading board, library grid, study quiz, Sigil Forge, Gnosis Timer, Cut-up Oracle, and print preview do not overflow at 320 px, 768 px, and 1280 px.
+- Keyboard navigation, the card dialog, study answer focus, Sigil Forge focus movement, Gnosis Timer pause/complete states, Cut-up result focus, and reduced-motion preferences behave correctly.
 - The journal persists after a reload and stays in sync when a second tab changes it.
 
 ## Roadmap

@@ -84,6 +84,26 @@ describe("accessibility audit", () => {
     await expectNoAccessibilityViolations();
   });
 
+  it("keeps the Cut-up Oracle free of violations before and after cutting", async () => {
+    const user = userEvent.setup();
+    openRoute("#/chaos/cut-up");
+    await screen.findByRole("heading", {
+      level: 1,
+      name: /break the sentence open/i,
+    });
+
+    await expectNoAccessibilityViolations();
+
+    await user.type(
+      screen.getByRole("textbox", { name: /text to cut/i }),
+      "First line\nSecond line",
+    );
+    await user.click(screen.getByRole("button", { name: /cut the text/i }));
+    await screen.findByRole("heading", { level: 2, name: /^the cut$/i });
+
+    await expectNoAccessibilityViolations();
+  });
+
   it("keeps the setup and a completed reading free of violations", async () => {
     const user = userEvent.setup();
     openRoute("#/thelema");
