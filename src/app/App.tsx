@@ -1,12 +1,26 @@
 import { lazy, useEffect } from "react";
-import { HashRouter, Route, Routes, useLocation } from "react-router-dom";
+import {
+  HashRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useParams,
+} from "react-router-dom";
+import { HomePage } from "../pages/HomePage";
 import { ReadingPage } from "../pages/ReadingPage";
 import { Layout } from "./Layout";
+import { cardPath, PATHS } from "./paths";
 
-// The reading page stays eager: it is the index route and every share link
-// opens here, so it should not wait on a second chunk.
+// The reading page stays eager: it is the main route and every share link
+// opens there, so it should not wait on a second chunk.
 const CardPage = lazy(() =>
   import("../pages/CardPage").then((module) => ({ default: module.CardPage })),
+);
+const ChaosHomePage = lazy(() =>
+  import("../pages/ChaosHomePage").then((module) => ({
+    default: module.ChaosHomePage,
+  })),
 );
 const JournalPage = lazy(() =>
   import("../pages/JournalPage").then((module) => ({
@@ -34,6 +48,28 @@ const TraditionPage = lazy(() =>
   })),
 );
 
+function LegacyRedirect({ to }: { to: string }) {
+  const { search, hash } = useLocation();
+
+  return <Navigate to={{ pathname: to, search, hash }} replace />;
+}
+
+function LegacyCardRedirect() {
+  const { cardId } = useParams();
+  const { search, hash } = useLocation();
+
+  return (
+    <Navigate
+      to={{
+        pathname: cardId ? cardPath(cardId) : PATHS.library,
+        search,
+        hash,
+      }}
+      replace
+    />
+  );
+}
+
 function ScrollToTop() {
   const { pathname } = useLocation();
 
@@ -50,12 +86,24 @@ export function App() {
       <ScrollToTop />
       <Routes>
         <Route element={<Layout />}>
-          <Route index element={<ReadingPage />} />
-          <Route path="library" element={<LibraryPage />} />
-          <Route path="journal" element={<JournalPage />} />
-          <Route path="study" element={<StudyPage />} />
-          <Route path="cards/:cardId" element={<CardPage />} />
-          <Route path="tradition" element={<TraditionPage />} />
+          <Route index element={<HomePage />} />
+
+          <Route path="thelema" element={<ReadingPage />} />
+          <Route path="thelema/library" element={<LibraryPage />} />
+          <Route path="thelema/journal" element={<JournalPage />} />
+          <Route path="thelema/study" element={<StudyPage />} />
+          <Route path="thelema/cards/:cardId" element={<CardPage />} />
+          <Route path="thelema/tradition" element={<TraditionPage />} />
+
+          <Route path="chaos" element={<ChaosHomePage />} />
+
+          {/* Old links keep working after the move under /thelema. */}
+          <Route path="library" element={<LegacyRedirect to={PATHS.library} />} />
+          <Route path="journal" element={<LegacyRedirect to={PATHS.journal} />} />
+          <Route path="study" element={<LegacyRedirect to={PATHS.study} />} />
+          <Route path="tradition" element={<LegacyRedirect to={PATHS.tradition} />} />
+          <Route path="cards/:cardId" element={<LegacyCardRedirect />} />
+
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

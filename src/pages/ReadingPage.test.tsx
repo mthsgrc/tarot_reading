@@ -19,7 +19,7 @@ function ShareLinkButton({ to }: { to: string }) {
   );
 }
 
-function renderReadingPage(initialEntry = "/reading") {
+function renderReadingPage(initialEntry = "/thelema") {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
       <ReadingPage />
@@ -143,7 +143,7 @@ describe("ReadingPage", () => {
       q: "What should I notice?",
     });
 
-    renderReadingPage(`/?${params.toString()}`);
+    renderReadingPage(`/thelema?${params.toString()}`);
 
     expect(screen.getByText("Shared reading")).toBeInTheDocument();
     expect(screen.getByText("3 of 3 cards revealed.")).toBeInTheDocument();
@@ -165,9 +165,9 @@ describe("ReadingPage", () => {
     });
 
     render(
-      <MemoryRouter initialEntries={["/reading"]}>
+      <MemoryRouter initialEntries={["/thelema"]}>
         <ReadingPage />
-        <ShareLinkButton to={`/?${params.toString()}`} />
+        <ShareLinkButton to={`/thelema?${params.toString()}`} />
       </MemoryRouter>,
     );
 
@@ -191,9 +191,9 @@ describe("ReadingPage", () => {
     });
 
     render(
-      <MemoryRouter initialEntries={[`/?${params.toString()}`]}>
+      <MemoryRouter initialEntries={[`/thelema?${params.toString()}`]}>
         <ReadingPage />
-        <Link to="/">Home</Link>
+        <Link to="/thelema">Home</Link>
         <LocationProbe />
       </MemoryRouter>,
     );
@@ -228,7 +228,7 @@ describe("ReadingPage", () => {
     expect(writeText).toHaveBeenCalledTimes(1);
 
     const copied = writeText.mock.calls[0]?.[0] as string;
-    expect(copied).toContain("#/?");
+    expect(copied).toContain("#/thelema?");
 
     const shared = new URLSearchParams(copied.slice(copied.indexOf("?") + 1));
     expect(shared.get("v")).toBe("1");
@@ -257,7 +257,7 @@ describe("ReadingPage", () => {
       q: "What should I notice?",
     });
 
-    renderReadingPage(`/?${params.toString()}`);
+    renderReadingPage(`/thelema?${params.toString()}`);
     await user.click(
       screen.getByRole("button", { name: /^copy link without question$/i }),
     );
@@ -308,7 +308,7 @@ describe("ReadingPage", () => {
       q: "What should I notice?",
     });
 
-    renderReadingPage(`/?${params.toString()}`);
+    renderReadingPage(`/thelema?${params.toString()}`);
     await user.click(screen.getByRole("button", { name: /print reading/i }));
 
     expect(print).toHaveBeenCalledTimes(1);
@@ -325,7 +325,7 @@ describe("ReadingPage", () => {
       depth: "brief",
     });
 
-    renderReadingPage(`/?${params.toString()}`);
+    renderReadingPage(`/thelema?${params.toString()}`);
     await user.click(screen.getByRole("button", { name: /save to journal/i }));
 
     expect(screen.getByText("Reading saved to your journal.")).toBeInTheDocument();
@@ -349,7 +349,7 @@ describe("ReadingPage", () => {
       depth: "brief",
     });
 
-    renderReadingPage(`/?${params.toString()}`);
+    renderReadingPage(`/thelema?${params.toString()}`);
 
     expect(screen.getByText(/brief depth/i)).toBeInTheDocument();
     expect(screen.getAllByText(/will and work/i).length).toBeGreaterThan(0);
@@ -370,7 +370,7 @@ describe("ReadingPage", () => {
       q: "What should I notice?",
     });
 
-    renderReadingPage(`/?${params.toString()}&j=1`);
+    renderReadingPage(`/thelema?${params.toString()}&j=1`);
 
     expect(screen.getByText("Saved reading")).toBeInTheDocument();
   });
@@ -384,7 +384,7 @@ describe("ReadingPage", () => {
       q: "What should I notice?",
     });
 
-    renderReadingPage(`/?${params.toString()}`);
+    renderReadingPage(`/thelema?${params.toString()}`);
     vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
       throw new Error("Quota exceeded");
     });
@@ -403,7 +403,7 @@ describe("ReadingPage", () => {
       q: "What should I notice?",
     });
 
-    renderReadingPage(`/?${params.toString()}`);
+    renderReadingPage(`/thelema?${params.toString()}`);
     expect(screen.getByTestId("location").textContent).not.toBe("");
 
     await user.click(screen.getByRole("button", { name: /new reading/i }));
@@ -415,7 +415,7 @@ describe("ReadingPage", () => {
   });
 
   it("explains an unreadable shared link", () => {
-    renderReadingPage("/?v=1&spread=unknown&cards=major-00-fool.u");
+    renderReadingPage("/thelema?v=1&spread=unknown&cards=major-00-fool.u");
 
     expect(screen.getByText(/could not be read/i)).toBeInTheDocument();
     expect(

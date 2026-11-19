@@ -35,7 +35,7 @@ describe("route states", () => {
     expect(
       screen.getByRole("heading", { name: /this page did not load/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /return to the reading/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /return home/i })).toHaveAttribute(
       "href",
       "/",
     );

@@ -36,7 +36,7 @@ function paramsFor(question = "What should I notice?") {
 
 function renderJournalPage() {
   return render(
-    <MemoryRouter initialEntries={["/journal"]}>
+    <MemoryRouter initialEntries={["/thelema/journal"]}>
       <JournalPage />
     </MemoryRouter>,
   );
@@ -60,7 +60,7 @@ describe("JournalPage", () => {
     expect(screen.getByText(/nothing kept yet/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /draw a reading/i })).toHaveAttribute(
       "href",
-      "/",
+      "/thelema",
     );
   });
 

@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Architecture, technology, and data flow of the Thoth Tarot application."
+      content="Architecture, technology, and data flow of the Two Currents tarot and Chaos Magic application."
     />
-    <title>Thoth Tarot — Project Architecture</title>
+    <title>Two Currents — Project Architecture</title>
     <style>
       :root {
         color-scheme: light;
@@ -516,7 +516,7 @@
       <aside class="sidebar">
         <div class="brand">
           <span class="brand-mark" aria-hidden="true">Θ</span>
-          <p class="brand-name">Thoth Tarot</p>
+          <p class="brand-name">Two Currents</p>
           <p class="brand-sub">Architecture notes</p>
         </div>
 
@@ -541,7 +541,7 @@
       <main class="main">
         <header class="hero">
           <p class="eyebrow">Project map</p>
-          <h1>Architecture of the Thoth Tarot app</h1>
+          <h1>Architecture of the Two Currents app</h1>
           <p class="lede">
             A practical guide to the technology, layers, data flow, and communication
             paths in this repository.
@@ -550,7 +550,7 @@
             <span class="pill">Client-only SPA</span>
             <span class="pill">React 19 + TypeScript</span>
             <span class="pill">Deterministic engine</span>
-            <span class="pill">Snapshot: 2026-11-18</span>
+            <span class="pill">Snapshot: 2026-11-19</span>
           </div>
         </header>
 
@@ -564,8 +564,8 @@
             <span>Six spreads, upright and shadow orientations.</span>
           </div>
           <div class="quick-card">
-            <strong>150 tests</strong>
-            <span>Across 20 files, plus typecheck, lint, and build.</span>
+            <strong>161 tests</strong>
+            <span>Across 21 files, plus typecheck, lint, and build.</span>
           </div>
           <div class="quick-card">
             <strong>Local only</strong>
@@ -650,10 +650,12 @@
           <div class="flow">
             <span class="flow-title">Application tree</span>
             index.html └── src/main.tsx ├── global CSS └── app/App.tsx └── HashRouter ├──
-            ScrollToTop └── Routes └── app/Layout.tsx ├── header / navigation / footer ├──
-            RouteErrorBoundary + Suspense └── &lt;Outlet /&gt; ├── ReadingPage (eager) ├──
-            LibraryPage (lazy) ├── StudyPage (lazy) ├── JournalPage (lazy) ├── CardPage
-            (lazy) ├── TraditionPage (lazy) └── NotFoundPage (lazy)
+            ScrollToTop └── Routes └── app/Layout.tsx (system-aware shell + accent) ├──
+            header / navigation / footer ├── RouteErrorBoundary + Suspense └── &lt;Outlet
+            /&gt; ├── HomePage (eager chooser) ├── ReadingPage (eager, /thelema) ├──
+            ChaosHomePage (lazy, /chaos) ├── LibraryPage (lazy) ├── StudyPage (lazy) ├──
+            JournalPage (lazy) ├── CardPage (lazy) ├── TraditionPage (lazy) └──
+            NotFoundPage (lazy)
           </div>
 
           <h3>Layer responsibilities</h3>
@@ -670,7 +672,7 @@
               <tbody>
                 <tr>
                   <td><code>src/app</code></td>
-                  <td>Shell, router, layout, route loading and error states</td>
+                  <td>Shell, router, layout, accent picker, route states</td>
                   <td>pages, components, router</td>
                   <td><code>main.tsx</code></td>
                 </tr>
@@ -706,7 +708,7 @@
                 </tr>
                 <tr>
                   <td><code>src/styles</code></td>
-                  <td>Tokens, global base styles, print overrides</td>
+                  <td>Tokens, base styles, Chaos theme, print overrides</td>
                   <td>fonts</td>
                   <td><code>main.tsx</code></td>
                 </tr>
@@ -742,32 +744,42 @@
               <tbody>
                 <tr>
                   <td><code>/</code></td>
+                  <td><code>HomePage</code></td>
+                  <td>Eager</td>
+                </tr>
+                <tr>
+                  <td><code>/thelema</code></td>
                   <td><code>ReadingPage</code></td>
                   <td>Eager</td>
                 </tr>
                 <tr>
-                  <td><code>/library</code></td>
+                  <td><code>/thelema/library</code></td>
                   <td><code>LibraryPage</code></td>
                   <td>Lazy</td>
                 </tr>
                 <tr>
-                  <td><code>/study</code></td>
+                  <td><code>/thelema/study</code></td>
                   <td><code>StudyPage</code></td>
                   <td>Lazy</td>
                 </tr>
                 <tr>
-                  <td><code>/journal</code></td>
+                  <td><code>/thelema/journal</code></td>
                   <td><code>JournalPage</code></td>
                   <td>Lazy</td>
                 </tr>
                 <tr>
-                  <td><code>/cards/:cardId</code></td>
+                  <td><code>/thelema/cards/:id</code></td>
                   <td><code>CardPage</code></td>
                   <td>Lazy</td>
                 </tr>
                 <tr>
-                  <td><code>/tradition</code></td>
+                  <td><code>/thelema/tradition</code></td>
                   <td><code>TraditionPage</code></td>
+                  <td>Lazy</td>
+                </tr>
+                <tr>
+                  <td><code>/chaos</code></td>
+                  <td><code>ChaosHomePage</code></td>
                   <td>Lazy</td>
                 </tr>
                 <tr>
@@ -779,10 +791,20 @@
             </table>
           </div>
           <p>
-            The reading page stays in the entry bundle because it is the index route and
-            every share link opens there. <code>Layout</code> wraps pages in a
-            <code>RouteErrorBoundary</code> keyed by pathname and a <code>Suspense</code>
-            fallback (<code>src/app/Layout.tsx:52</code>).
+            Legacy routes (<code>/library</code>, <code>/study</code>,
+            <code>/journal</code>, <code>/tradition</code>, <code>/cards/:cardId</code>)
+            redirect to their canonical <code>/thelema</code> paths and preserve search
+            parameters. Old <code>#/?...</code> share links are forwarded by
+            <code>HomePage</code> to <code>#/thelema?...</code>.
+          </p>
+          <p>
+            The reading page stays in the entry bundle because it is the main Thelema
+            route and every share link opens there. <code>Layout</code> wraps pages in a
+            <code>RouteErrorBoundary</code> keyed by pathname and a
+            <code>Suspense</code> fallback. It derives the active system from the path,
+            swaps brand/navigation/footer content, and sets <code>data-system</code> and
+            <code>data-accent</code> on <code>&lt;html&gt;</code>. The Chaos accent lives
+            in <code>Layout</code> state, so it survives route changes.
           </p>
         </section>
 
@@ -792,9 +814,10 @@
           <h3>Application startup</h3>
           <div class="flow">
             <span class="flow-title">Boot sequence</span>
-            index.html → src/main.tsx → imports styles/tokens.css, base.css, print.css →
-            renders &lt;App /&gt; → App creates HashRouter and route table → Layout
-            renders navigation and &lt;Outlet /&gt; → selected page renders
+            index.html → src/main.tsx → imports styles/tokens.css, base.css, chaos.css,
+            print.css → renders &lt;App /&gt; → App creates HashRouter and route table →
+            Layout renders the system-aware shell and &lt;Outlet /&gt; → selected page
+            renders
           </div>
           <p>
             <code>ScrollToTop</code> listens to router location changes and scrolls on
@@ -968,8 +991,9 @@
           <div class="flow">
             <span class="flow-title">Deck browsing</span>
             LibraryPage → ALL_CARDS → module-level CARD_SEARCH_WORDS index → local
-            search/arcana/suit/element filters → links to /cards/:cardId → CardPage →
-            useParams → getCardById → CardDetail → previous/next card pager from ALL_CARDS
+            search/arcana/suit/element filters → links to /thelema/cards/:cardId →
+            CardPage → useParams → getCardById → CardDetail → previous/next card pager
+            from ALL_CARDS
           </div>
           <p>
             The search index is precomputed once at module load, so typing does not
@@ -1068,14 +1092,19 @@
           <h2>Styling</h2>
           <ul>
             <li>
-              <code>src/styles/tokens.css</code> — colors, fonts, spacing, radii, shadows.
+              <code>src/styles/tokens.css</code> — colors, semantic accent tokens, fonts,
+              spacing, radii, shadows.
             </li>
             <li>
               <code>src/styles/base.css</code> — reset, typography, buttons, panels,
               focus, skip link, visually-hidden utilities.
             </li>
             <li>
-              <code>src/styles/print.css</code> — flips the dark theme to ink-on-paper,
+              <code>src/styles/chaos.css</code> — black-and-white Chaos palette,
+              <code>data-accent</code> colour map, and system-scoped body/type overrides.
+            </li>
+            <li>
+              <code>src/styles/print.css</code> — flips both dark themes to ink-on-paper,
               hides navigation and dialogs, and controls page breaks.
             </li>
             <li>
@@ -1084,6 +1113,25 @@
             </li>
           </ul>
           <p>There is no CSS-in-JS runtime and no utility framework.</p>
+          <h3>Two-system theme</h3>
+          <p>
+            <code>Layout</code> chooses a system from the pathname
+            (<code>src/app/paths.ts</code>) and writes
+            <code>data-system="home|thelema|chaos"</code> plus
+            <code>data-accent="..."</code> to <code>&lt;html&gt;</code>. Shared components
+            consume semantic tokens such as <code>--color-accent</code>,
+            <code>--line</code>, and <code>--color-surface</code>, so the same buttons and
+            panels work in both systems.
+          </p>
+          <p>
+            The Chaos accent is one of the ids in
+            <code>src/app/chaosAccent.ts</code>; <code>src/styles/chaos.css</code> maps
+            each id to RGB channels and derives soft, focus, and glow values. The picker
+            uses <code>Math.random()</code> once when <code>Layout</code> mounts, and
+            <strong>New signal</strong> calls it again while excluding the current colour.
+            A test reads <code>chaos.css?raw</code> and enforces AAA contrast for every
+            accent against the black shell.
+          </p>
         </section>
 
         <section id="testing">
@@ -1141,13 +1189,16 @@
                 </tr>
                 <tr>
                   <td>App and routing</td>
-                  <td><code>App.test.tsx</code>, <code>RouteStates.test.tsx</code></td>
+                  <td>
+                    <code>App.test.tsx</code>, <code>RouteStates.test.tsx</code>,
+                    <code>chaosAccent.test.ts</code>
+                  </td>
                 </tr>
                 <tr>
                   <td>Accessibility</td>
                   <td>
                     <code>src/app/accessibility.test.tsx</code> +
-                    <code>src/test/axe.ts</code>
+                    <code>src/test/axe.ts</code> (chooser, Chaos shell, Thelema pages)
                   </td>
                 </tr>
               </tbody>
@@ -1217,8 +1268,9 @@
               </li>
               <li>
                 <code>HashRouter</code> keeps GitHub Pages deployment simple, but URLs
-                live after <code>#</code>, which is less SEO-friendly and requires the
-                <code>#/?...</code> share format.
+                live after <code>#</code>, which is less SEO-friendly. New share links use
+                <code>#/thelema?...</code>; the old <code>#/?...</code> form survives only
+                as a redirect.
               </li>
               <li>
                 Color contrast and visual layout still need real-browser verification; the
@@ -1230,7 +1282,7 @@
 
         <footer class="footer">
           <p>
-            Thoth Tarot architecture notes. Open this file directly in a browser, or keep
+            Two Currents architecture notes. Open this file directly in a browser, or keep
             <code>ARCHITECTURE.md</code> as the source-friendly version.
           </p>
         </footer>

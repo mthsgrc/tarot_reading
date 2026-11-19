@@ -42,7 +42,37 @@
     scroll-behavior: auto;
   }
 
-  body {
+  /* Chaos theme selectors are more specific than :root, so reset them here. */
+  html[data-system="chaos"] {
+    color-scheme: light;
+
+    --color-surface: #ffffff;
+    --color-surface-strong: #ffffff;
+    --color-parchment: #1a1a1a;
+    --color-parchment-soft: #2e2e2e;
+    --color-muted: #555555;
+    --color-accent: #1a1a1a;
+    --color-accent-bright: #1a1a1a;
+    --color-accent-ink: #ffffff;
+    --color-accent-soft: transparent;
+    --color-accent-faint: transparent;
+    --color-accent-focus: transparent;
+    --color-accent-glow: transparent;
+    --color-accent-underline: transparent;
+    --color-gold: #6d5410;
+    --color-gold-bright: #6d5410;
+    --color-gold-dim: #7a5f12;
+    --color-crimson: #7a1f2c;
+    --color-crimson-bright: #8a1f2f;
+    --color-verdigris: #245c53;
+    --color-verdigris-bright: #245c53;
+    --line: #c9c9c9;
+    --line-strong: #9a9a9a;
+    --line-cool: #dddddd;
+  }
+
+  body,
+  html[data-system="chaos"] body {
     color: var(--color-parchment);
     background: #ffffff;
     -webkit-print-color-adjust: exact;

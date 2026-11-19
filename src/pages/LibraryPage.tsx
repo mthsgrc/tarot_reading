@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { cardPath } from "../app/paths";
 import { CardImage } from "../components/CardImage";
 import { ALL_CARDS } from "../data/cards";
 import { cardTypeLabel } from "../domain/cardLabels";
@@ -217,7 +218,7 @@ export function LibraryPage() {
         <ul className={styles.grid}>
           {filteredCards.map((card) => (
             <li key={card.id}>
-              <Link to={`/cards/${card.id}`} className={styles.cardLink}>
+              <Link to={cardPath(card.id)} className={styles.cardLink}>
                 <CardImage card={card} decorative />
                 <span className={styles.cardType}>{cardTypeLabel(card)}</span>
                 <span className={styles.cardName}>{card.name}</span>

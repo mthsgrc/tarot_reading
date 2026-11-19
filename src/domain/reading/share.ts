@@ -78,8 +78,9 @@ export function buildShareParams(input: ReadingShareInput): URLSearchParams {
 
 export function buildShareUrl(href: string, input: ReadingShareInput): string {
   const url = new URL(href);
-  // The reading page is the index route, so the share link targets `#/?…`.
-  url.hash = `#/?${buildShareParams(input).toString()}`;
+  // Shared readings live under the Thelema current. Old `#/?…` links still
+  // redirect from the chooser, but every new link uses the canonical route.
+  url.hash = `#/thelema?${buildShareParams(input).toString()}`;
   return url.toString();
 }
 

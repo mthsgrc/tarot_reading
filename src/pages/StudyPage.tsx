@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { cardPath } from "../app/paths";
 import { cardTypeLabel } from "../domain/cardLabels";
 import { createStudyQuestion } from "../domain/study";
 import styles from "./StudyPage.module.css";
@@ -134,7 +135,7 @@ export function StudyPage() {
           )}
 
           {answered && (
-            <Link to={`/cards/${question.card.id}`} className="button button--ghost">
+            <Link to={cardPath(question.card.id)} className="button button--ghost">
               Read the card
             </Link>
           )}

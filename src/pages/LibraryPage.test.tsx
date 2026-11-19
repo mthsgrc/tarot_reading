@@ -19,11 +19,11 @@ describe("LibraryPage", () => {
     expect(screen.getByText("78 cards")).toBeInTheDocument();
     expect(screen.getByText("The Fool").closest("a")).toHaveAttribute(
       "href",
-      "/cards/major-00-fool",
+      "/thelema/cards/major-00-fool",
     );
     expect(screen.getByText("Princess of Disks").closest("a")).toHaveAttribute(
       "href",
-      "/cards/disks-princess",
+      "/thelema/cards/disks-princess",
     );
   });
 
@@ -47,7 +47,7 @@ describe("LibraryPage", () => {
     expect(await screen.findByText("1 card")).toBeInTheDocument();
     expect(screen.getByText("Ace of Cups").closest("a")).toHaveAttribute(
       "href",
-      "/cards/cups-ace",
+      "/thelema/cards/cups-ace",
     );
     expect(screen.queryByText("The Fool")).not.toBeInTheDocument();
   });

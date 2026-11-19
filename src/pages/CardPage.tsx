@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router-dom";
+import { cardPath, PATHS } from "../app/paths";
 import { CardDetail } from "../components/CardDetail";
 import { ALL_CARDS } from "../data/cards";
 import { getCardById } from "../domain/deck";
@@ -18,7 +19,7 @@ export function CardPage() {
             The address may be mistyped, or the card may belong to a different Tarot
             tradition. Browse the complete Thoth deck to find the entry you want.
           </p>
-          <Link className="button button--primary" to="/library">
+          <Link className="button button--primary" to={PATHS.library}>
             Browse the 78 cards
           </Link>
         </section>
@@ -33,7 +34,7 @@ export function CardPage() {
   return (
     <div className={`container ${styles.page}`}>
       <div className={styles.topBar}>
-        <Link to="/library" className={styles.backLink}>
+        <Link to={PATHS.library} className={styles.backLink}>
           <span aria-hidden="true">←</span> Card library
         </Link>
         <p className={styles.deckPosition}>
@@ -46,12 +47,12 @@ export function CardPage() {
       </div>
 
       <nav className={styles.pager} aria-label="Browse adjacent cards">
-        <Link to={`/cards/${previous.id}`} className={styles.pagerLink}>
+        <Link to={cardPath(previous.id)} className={styles.pagerLink}>
           <span className={styles.pagerLabel}>← Previous</span>
           <strong>{previous.name}</strong>
         </Link>
         <Link
-          to={`/cards/${next.id}`}
+          to={cardPath(next.id)}
           className={`${styles.pagerLink} ${styles.pagerNext}`}
         >
           <span className={styles.pagerLabel}>Next →</span>

@@ -7,7 +7,7 @@ function renderCardPage(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
-        <Route path="/cards/:cardId" element={<CardPage />} />
+        <Route path="/thelema/cards/:cardId" element={<CardPage />} />
       </Routes>
     </MemoryRouter>,
   );
@@ -15,7 +15,7 @@ function renderCardPage(path: string) {
 
 describe("CardPage", () => {
   it("renders a major card with its correspondences", () => {
-    renderCardPage("/cards/major-00-fool");
+    renderCardPage("/thelema/cards/major-00-fool");
 
     expect(
       screen.getByRole("heading", { level: 1, name: "The Fool" }),
@@ -34,7 +34,7 @@ describe("CardPage", () => {
   });
 
   it("renders a minor card with its Sephira and decan", () => {
-    renderCardPage("/cards/wands-two");
+    renderCardPage("/thelema/cards/wands-two");
 
     expect(
       screen.getByRole("heading", { level: 1, name: "Two of Wands" }),
@@ -45,7 +45,7 @@ describe("CardPage", () => {
   });
 
   it("renders a court card with its sub-element", () => {
-    renderCardPage("/cards/cups-queen");
+    renderCardPage("/thelema/cards/cups-queen");
 
     expect(
       screen.getByRole("heading", { level: 1, name: "Queen of Cups" }),
@@ -55,7 +55,7 @@ describe("CardPage", () => {
   });
 
   it("handles an unknown card id", () => {
-    renderCardPage("/cards/not-a-card");
+    renderCardPage("/thelema/cards/not-a-card");
 
     expect(
       screen.getByRole("heading", { level: 1, name: /not in the deck/i }),

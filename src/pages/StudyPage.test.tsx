@@ -97,7 +97,7 @@ describe("StudyPage", () => {
     expect(screen.getByRole("button", { name: /next question/i })).toHaveFocus();
     expect(screen.getByRole("link", { name: /read the card/i })).toHaveAttribute(
       "href",
-      "/cards/major-00-fool",
+      "/thelema/cards/major-00-fool",
     );
   });
 

@@ -24,7 +24,7 @@ function triadShare() {
     shadow: true,
   });
 
-  return `/?${params.toString()}`;
+  return `/thelema?${params.toString()}`;
 }
 
 function openRoute(hash: string) {
@@ -34,13 +34,29 @@ function openRoute(hash: string) {
 
 afterEach(() => {
   window.location.hash = "";
+  delete document.documentElement.dataset.system;
+  delete document.documentElement.dataset.accent;
   vi.restoreAllMocks();
 });
 
 describe("accessibility audit", () => {
+  it("keeps the current chooser free of violations", async () => {
+    openRoute("#/");
+    await screen.findByRole("heading", { name: /choose a system/i });
+
+    await expectNoAccessibilityViolations();
+  });
+
+  it("keeps the Chaos shell free of violations", async () => {
+    openRoute("#/chaos");
+    await screen.findByRole("heading", { name: /belief is a tool/i });
+
+    await expectNoAccessibilityViolations();
+  });
+
   it("keeps the setup and a completed reading free of violations", async () => {
     const user = userEvent.setup();
-    openRoute("#/");
+    openRoute("#/thelema");
 
     await expectNoAccessibilityViolations();
 
@@ -64,7 +80,7 @@ describe("accessibility audit", () => {
 
   it("keeps the library and a card entry free of violations", async () => {
     const user = userEvent.setup();
-    const library = openRoute("#/library");
+    const library = openRoute("#/thelema/library");
     await screen.findByRole("heading", { name: /seventy-eight doors/i });
 
     // Narrow the grid so the audit focuses on page structure, not 78 repetitions.
@@ -74,13 +90,13 @@ describe("accessibility audit", () => {
     await expectNoAccessibilityViolations();
     library.unmount();
 
-    openRoute("#/cards/major-00-fool");
+    openRoute("#/thelema/cards/major-00-fool");
     await screen.findByRole("heading", { level: 1, name: /the fool/i });
     await expectNoAccessibilityViolations();
   }, 20_000);
 
   it("keeps the tradition page free of violations", async () => {
-    openRoute("#/tradition");
+    openRoute("#/thelema/tradition");
     await screen.findByRole("heading", { level: 1 });
 
     await expectNoAccessibilityViolations();
@@ -101,7 +117,7 @@ describe("accessibility audit", () => {
       }),
     );
 
-    openRoute("#/journal");
+    openRoute("#/thelema/journal");
     await screen.findByText("1 saved reading");
 
     await expectNoAccessibilityViolations();
@@ -109,7 +125,7 @@ describe("accessibility audit", () => {
 
   it("keeps the study quiz free of violations before and after answering", async () => {
     const user = userEvent.setup();
-    openRoute("#/study");
+    openRoute("#/thelema/study");
     await screen.findByRole("heading", {
       level: 1,
       name: /train the correspondences/i,
@@ -126,7 +142,7 @@ describe("accessibility audit", () => {
 
   it("keeps the not-found page free of violations", async () => {
     openRoute("#/nowhere");
-    await screen.findByRole("heading", { name: /no card is laid here/i });
+    await screen.findByRole("heading", { name: /no path opens here/i });
 
     await expectNoAccessibilityViolations();
   });

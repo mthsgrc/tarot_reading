@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { PATHS, thelemaReadingPath } from "../app/paths";
 import { DEPTH_LABELS, LENS_LABELS } from "../domain/reading/language";
 import { readSharedReading } from "../domain/reading/share";
 import {
@@ -120,7 +121,7 @@ export function JournalPage() {
             Draw a reading, reveal every card, then choose “Save to journal” in the
             synthesis panel. Your saved readings will collect here.
           </p>
-          <Link to="/" className="button button--primary">
+          <Link to={PATHS.thelema} className="button button--primary">
             Draw a reading
           </Link>
         </section>
@@ -218,7 +219,7 @@ export function JournalPage() {
                   <div className={styles.actions}>
                     <Link
                       className="button button--small"
-                      to={`/?${entry.params}&j=1`}
+                      to={thelemaReadingPath(`${entry.params}&j=1`)}
                       data-journal-open
                     >
                       Open reading

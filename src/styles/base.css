@@ -95,8 +95,8 @@ button {
 }
 
 a {
-  color: var(--color-gold-bright);
-  text-decoration-color: rgba(232, 199, 102, 0.4);
+  color: var(--color-accent-bright);
+  text-decoration-color: var(--color-accent-underline);
   text-underline-offset: 0.2em;
 }
 
@@ -105,12 +105,12 @@ a:hover {
 }
 
 ::selection {
-  color: var(--color-void);
-  background: var(--color-gold-bright);
+  color: var(--color-accent-ink);
+  background: var(--color-accent-bright);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-gold-bright);
+  outline: 2px solid var(--color-accent-bright);
   outline-offset: 3px;
 }
 
@@ -125,8 +125,8 @@ a:hover {
   left: 0.75rem;
   z-index: 100;
   padding: 0.75rem 1rem;
-  color: var(--color-void);
-  background: var(--color-gold-bright);
+  color: var(--color-accent-ink);
+  background: var(--color-accent-bright);
   border-radius: var(--radius-sm);
   transform: translateY(-150%);
   transition: transform 160ms ease;
@@ -137,7 +137,7 @@ a:hover {
 }
 
 .eyebrow {
-  color: var(--color-gold);
+  color: var(--color-accent);
   font-size: 0.72rem;
   font-weight: 650;
   letter-spacing: 0.24em;
@@ -212,8 +212,8 @@ a:hover {
 }
 
 .button:hover:not(:disabled) {
-  background: rgba(201, 162, 39, 0.12);
-  border-color: var(--color-gold);
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
   transform: translateY(-1px);
 }
 
@@ -223,16 +223,17 @@ a:hover {
 }
 
 .button--primary {
-  color: #151006;
-  background: linear-gradient(135deg, var(--color-gold-bright), var(--color-gold));
+  color: var(--color-accent-ink);
+  background: linear-gradient(135deg, var(--color-accent-bright), var(--color-accent));
   border-color: transparent;
-  box-shadow: 0 12px 32px rgba(201, 162, 39, 0.2);
+  box-shadow: 0 12px 32px var(--color-accent-glow);
 }
 
 .button--primary:hover:not(:disabled) {
-  color: #0c0902;
-  background: linear-gradient(135deg, #f2d98a, var(--color-gold-bright));
+  color: var(--color-accent-ink);
+  background: linear-gradient(135deg, var(--color-accent-bright), var(--color-accent));
   border-color: transparent;
+  filter: brightness(1.08);
 }
 
 .button--ghost {
@@ -270,14 +271,14 @@ a:hover {
 
 .text-input::placeholder,
 .text-area::placeholder {
-  color: #6e6b67;
+  color: var(--color-placeholder);
 }
 
 .text-input:focus,
 .text-area:focus {
-  border-color: var(--color-gold);
+  border-color: var(--color-accent);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.14);
+  box-shadow: 0 0 0 3px var(--color-accent-focus);
 }
 
 .text-area {
@@ -296,7 +297,7 @@ a:hover {
   width: 1.1rem;
   height: 1.1rem;
   margin-top: 0.25rem;
-  accent-color: var(--color-gold);
+  accent-color: var(--color-accent);
 }
 
 .checkbox span {

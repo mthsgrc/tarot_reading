@@ -1,8 +1,13 @@
-# Thoth Tarot
+# Two Currents
 
-A Thoth Tarot reading app built around Thelema, the Golden Dawn, and the Tree of Life. It includes all 78 cards, six spreads, upright and shadow readings, optimized card artwork, a searchable study library, a correspondence quiz, and a rule-based interpretation engine that reads the draw rather than looking up a fixed answer.
+A client-only tarot and Chaos Magic app. The home route chooses between two systems:
 
-Readings are for reflection, not prediction, and are not a substitute for medical, legal, financial, or relationship advice.
+- **Thelema · Golden Dawn** — the Thoth Tarot deck, six spreads, upright and shadow readings, a study library, a correspondence quiz, a journal, and a deterministic interpretation engine.
+- **Chaos Magic** — a black-and-white workbench for sigils, gnosis, servitors, paradigm experiments, cut-up divination, and a magical record, with one contrast accent chosen at random for each app load.
+
+Both systems stay in the browser. Nothing is uploaded, and there is no account, backend, or runtime network call.
+
+Readings and magical records are for reflection, not prediction, and are not a substitute for medical, legal, financial, or relationship advice.
 
 ## Stack
 
@@ -24,6 +29,23 @@ npm run dev
 ```
 
 Open the local URL printed by Vite.
+
+## Routes and systems
+
+`src/app/paths.ts` is the source of truth for canonical routes.
+
+| Route                | System                | Purpose                       |
+| -------------------- | --------------------- | ----------------------------- |
+| `/`                  | Chooser               | Pick Thelema or Chaos         |
+| `/thelema`           | Thelema · Golden Dawn | Reading table and share links |
+| `/thelema/library`   | Thelema · Golden Dawn | All 78 cards                  |
+| `/thelema/study`     | Thelema · Golden Dawn | Correspondence quiz           |
+| `/thelema/journal`   | Thelema · Golden Dawn | Saved readings                |
+| `/thelema/tradition` | Thelema · Golden Dawn | Thelema and Golden Dawn notes |
+| `/thelema/cards/:id` | Thelema · Golden Dawn | Card detail                   |
+| `/chaos`             | Chaos Magic           | Chaos toolkit shell and index |
+
+Old paths such as `#/library`, `#/journal`, and `#/cards/:id` redirect to their `/thelema` equivalents. Old `#/?...` share links are forwarded from the chooser to `#/thelema?...`, so links already in circulation keep working.
 
 ## Scripts
 
@@ -65,13 +87,13 @@ The **Thelemic correction** is applied: the Emperor is attributed to Tzaddi and 
 
 ```text
 src/
-├── app/          # Router, layout, navigation
-├── components/   # Card views, spreads, dialog, Tree diagram, interpretation
+├── app/          # Router, system-aware layout, accent picker, canonical paths
+├── components/   # Card views, spreads, dialog, Tree diagram, Chaos star
 ├── data/         # 78 cards, six spread definitions, shared tradition notes
 ├── domain/       # Types, Tree constants, draw engine, reading engine, labels
 ├── lib/          # Browser storage adapters
-├── pages/        # Reading, journal, library, study, card detail, tradition, 404
-├── styles/       # Design tokens, global base and print styles
+├── pages/        # Chooser, Thelema pages, Chaos shell, 404
+├── styles/       # Tokens, global base, Chaos theme, print styles
 └── test/         # Vitest setup and the axe helper
 scripts/
 └── optimize-images.mjs
@@ -116,13 +138,21 @@ The same draw always produces the same reading, including phrase variants. No ba
 
 ### Journal
 
-**Save to journal** keeps a fully revealed reading in `localStorage` on that device, including its lens and depth. The `/journal` page lists the 50 most recent saves with their question, cards, lens, depth, and date; each entry reopens the exact draw through the same versioned link format, and entries can be deleted individually or cleared together after confirmation. Nothing is uploaded, no account is involved, and clearing browser storage clears the journal. Stored entries are re-validated when read, so corrupt or hand-edited data is ignored rather than rendered.
+**Save to journal** keeps a fully revealed reading in `localStorage` on that device, including its lens and depth. The `/thelema/journal` page lists the 50 most recent saves with their question, cards, lens, depth, and date; each entry reopens the exact draw through the same versioned link format, and entries can be deleted individually or cleared together after confirmation. Nothing is uploaded, no account is involved, and clearing browser storage clears the journal. Stored entries are re-validated when read, so corrupt or hand-edited data is ignored rather than rendered.
 
 ### Study mode
 
-The `/study` page drills correspondences with a four-choice quiz. Each question draws a card and asks one of six topics: element for any card; Hebrew letter, Tree path, or Golden Dawn title for majors; Sephira for minors; elemental nature for court cards. Answers are scored in memory only, and each result shows a short explanation plus a link to the full card entry. Leaving the page resets the score.
+The `/thelema/study` page drills correspondences with a four-choice quiz. Each question draws a card and asks one of six topics: element for any card; Hebrew letter, Tree path, or Golden Dawn title for majors; Sephira for minors; elemental nature for court cards. Answers are scored in memory only, and each result shows a short explanation plus a link to the full card entry. Leaving the page resets the score.
 
 `src/domain/study.ts` builds each question from the static deck with four unique options. It accepts an injected `RandomSource`, so tests use `seededRandom` while the page uses `Math.random`. No persistence, backend, or LLM is involved.
+
+## Chaos Magic
+
+The `/chaos` route uses a deliberately different shell: black and white, sans-serif headings, and one contrast colour chosen when the app loads. The accent is applied through `data-accent`; `src/styles/chaos.css` maps every choice to a colour that keeps AAA contrast with the black shell. **New signal** in the Chaos header rerolls the accent without changing route, and the choice survives navigation during that visit.
+
+`src/app/chaosAccent.ts` owns the accent ids and the injected-random picker. The CSS owns the colours, and a test reads the stylesheet back to verify every accent stays contrast-safe. The palette is intentionally small so the shell still reads as black and white rather than a theme park.
+
+The toolkit route is the shell for the Chaos system. Sigils, gnosis, servitors, paradigm shifting, cut-up divination, workings, and the magical record are being added as small, tested tools rather than one large launch. Nothing will leave the browser.
 
 ## Card artwork
 
@@ -145,7 +175,7 @@ One-time repository setting: **Settings → Pages → Build and deployment → S
 
 `public/architecture.html` is copied into `dist/` by Vite, so the styled architecture guide is published at `/architecture.html` alongside the app.
 
-The reading page ships in the entry bundle because it is the index route and every share link opens there. Library, study, journal, card, tradition, and 404 routes are lazy-loaded into separate chunks. Suspense keeps the header and navigation visible while a chunk loads, and a route error boundary offers a reload if a previously cached page requests a chunk that a deployment has replaced.
+The reading page ships in the entry bundle because it is the main Thelema route and every share link opens there. Library, study, journal, card, tradition, and 404 routes are lazy-loaded into separate chunks. Suspense keeps the header and navigation visible while a chunk loads, and a route error boundary offers a reload if a previously cached page requests a chunk that a deployment has replaced.
 
 ```bash
 npm run build
@@ -169,7 +199,9 @@ The suite covers:
 - Journal validation, deduplication, the 50-entry cap, storage failures, and delete/clear flows
 - Study question topics, four unique options, correct answers, full topic coverage, and seeded determinism
 - Study quiz scoring, wrong-answer feedback, skip behavior, focus movement, and card links
-- axe audits of the setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
+- Canonical `/thelema` routes, home chooser links, old route redirects, and old share-link forwarding
+- Chaos accent selection, reroll behavior, and a stylesheet-backed AAA contrast check for every accent
+- axe audits of the chooser, Chaos shell, setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
 - Lazy route loading, the route loading state, and stale-chunk error recovery
 - The complete reading flow, shared-link loading, journal saves, interpretation section, copy and print behavior, larger spread selection, library search/filters, card detail pages, and tradition page
 
@@ -214,5 +246,9 @@ Run `npm run build && npm run preview` before a release, then verify:
 - [The Book of Thoth](https://hermetic.com/crowley/book-of-thoth/)
 - [Liber AL vel Legis](https://hermetic.com/crowley/liber-al-vel-legis/)
 - [The Golden Dawn documents](https://hermetic.com/golden-dawn/)
+- [Chaos magic](https://en.wikipedia.org/wiki/Chaos_magic)
+- [Hermetic Library: Chaos](https://hermetic.com/chaos)
+- [Austin Osman Spare](https://en.wikipedia.org/wiki/Austin_Osman_Spare)
+- [Peter J. Carroll](https://en.wikipedia.org/wiki/Peter_J._Carroll)
 
-Card meanings are original study summaries informed by these sources and the Golden Dawn correspondences, not quotations. Thoth Tarot artwork is by Lady Frieda Harris. This is an independent study project, not affiliated with the Ordo Templi Orientis, the Crowley estate, or any Tarot publisher.
+Card meanings and Chaos tool copy are original study summaries informed by these sources, not quotations. Thoth Tarot artwork is by Lady Frieda Harris. This is an independent study project, not affiliated with the Ordo Templi Orientis, the Crowley estate, the Illuminates of Thanateros, or any Tarot publisher.

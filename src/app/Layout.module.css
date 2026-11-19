@@ -8,9 +8,13 @@
   position: sticky;
   top: 0;
   z-index: 20;
-  background: rgba(6, 8, 13, 0.78);
+  background: var(--header-bg);
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(18px);
+}
+
+.chaos .header {
+  border-bottom-color: var(--line-strong);
 }
 
 .headerInner {
@@ -29,11 +33,24 @@
   text-decoration: none;
 }
 
+.brandMarks {
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
 .brandMark {
   width: 2.1rem;
   height: 2.1rem;
+  color: var(--color-accent);
+  filter: drop-shadow(0 0 10px var(--accent-glow));
+}
+
+.thelemaMark {
   color: var(--color-gold);
-  filter: drop-shadow(0 0 10px rgba(201, 162, 39, 0.28));
+}
+
+.chaosMark {
+  color: var(--chaos-accent);
 }
 
 .brandText {
@@ -49,6 +66,12 @@
   text-transform: uppercase;
 }
 
+.chaos .brandName,
+.home .brandName {
+  font-weight: 750;
+  letter-spacing: 0.12em;
+}
+
 .brandSub {
   margin-top: 0.35rem;
   color: var(--color-muted);
@@ -56,6 +79,46 @@
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.signalButton {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.45rem 0.8rem;
+  color: var(--color-parchment-soft);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease;
+}
+
+.signalButton:hover {
+  color: var(--color-accent-bright);
+  background: var(--color-accent-faint);
+  border-color: var(--color-accent);
+}
+
+.signalSwatch {
+  width: 0.65rem;
+  height: 0.65rem;
+  background: var(--chaos-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--chaos-accent-glow);
 }
 
 .nav {
@@ -79,13 +142,20 @@
 }
 
 .navLink:hover {
-  color: var(--color-gold-bright);
-  background: rgba(201, 162, 39, 0.08);
+  color: var(--color-accent-bright);
+  background: var(--color-accent-faint);
 }
 
 .navLinkActive {
-  color: var(--color-gold-bright);
-  background: rgba(201, 162, 39, 0.1);
+  color: var(--color-accent-bright);
+  background: var(--color-accent-soft);
+}
+
+.chaos .navLink {
+  font-size: 0.76rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .main {
@@ -96,7 +166,7 @@
   margin-top: var(--space-7);
   padding: var(--space-6) 0 var(--space-5);
   border-top: 1px solid var(--line);
-  background: rgba(3, 5, 9, 0.4);
+  background: var(--footer-bg);
 }
 
 .footerInner {
@@ -112,9 +182,15 @@
   line-height: 1.7;
 }
 
+.chaos .law {
+  font-family: var(--font-body);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
 .attribution {
   margin-top: var(--space-2);
-  color: var(--color-gold);
+  color: var(--color-accent);
   font-size: 0.75rem;
   letter-spacing: 0.13em;
   text-transform: uppercase;
@@ -135,11 +211,16 @@
   line-height: 1.7;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 860px) {
   .headerInner {
     flex-direction: column;
     gap: 0.35rem;
     padding-block: 0.75rem;
+  }
+
+  .headerActions {
+    flex-direction: column-reverse;
+    gap: 0.4rem;
   }
 
   .brandSub {
@@ -153,6 +234,10 @@
   .navLink {
     padding: 0.35rem 0.6rem;
     font-size: 0.76rem;
+  }
+
+  .signalButton {
+    padding: 0.3rem 0.7rem;
   }
 }
 

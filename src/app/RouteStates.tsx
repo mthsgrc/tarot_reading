@@ -1,6 +1,7 @@
 import { Component } from "react";
 import type { ErrorInfo, ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { PATHS } from "./paths";
 import styles from "./RouteStates.module.css";
 
 export function RouteFallback() {
@@ -24,7 +25,7 @@ function RouteErrorState({ onReload }: { onReload: () => void }) {
         </h1>
         <p className={styles.errorText}>
           A newer version may be available, or the connection dropped. Reload to fetch the
-          current files, or return to the reading.
+          current files, or return to the chooser.
         </p>
         <div className={styles.errorActions}>
           <button
@@ -35,8 +36,8 @@ function RouteErrorState({ onReload }: { onReload: () => void }) {
           >
             Reload the app
           </button>
-          <Link to="/" className="button">
-            Return to the reading
+          <Link to={PATHS.home} className="button">
+            Return home
           </Link>
         </div>
       </section>

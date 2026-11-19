@@ -2,9 +2,9 @@
 
 > A styled, standalone browser version is available at [public/architecture.html](public/architecture.html) and is published with the app at [/architecture.html](https://mthsgrc.github.io/tarot_reading/architecture.html).
 
-A practical map of the Thoth Tarot application: technology, layers, data flow, and how the files communicate.
+A practical map of the Two Currents application: the Thoth Tarot system, the Chaos Magic shell, technology, layers, data flow, and how the files communicate.
 
-> Snapshot of the repository as of 2026-11-18. Current verification: **150 tests across 20 files**, plus typecheck, lint, formatting, and production build.
+> Snapshot of the repository as of 2026-11-19. Current verification: **161 tests across 21 files**, plus typecheck, lint, formatting, and production build.
 
 ## Contents
 
@@ -22,7 +22,7 @@ A practical map of the Thoth Tarot application: technology, layers, data flow, a
 
 ## Snapshot
 
-A client-only **React SPA** for Thoth Tarot readings. There is no backend, database, authentication, LLM, or runtime API. The deck, spreads, and interpretation rules are static data plus deterministic TypeScript logic; saved readings and shareable links are encoded locally.
+A client-only **React SPA** with two systems: Thelema/Golden Dawn Thoth Tarot and Chaos Magic. There is no backend, database, authentication, LLM, or runtime API. The deck, spreads, and interpretation rules are static data plus deterministic TypeScript logic; saved readings and shareable links are encoded locally. Chaos adds a separate shell, accent system, and toolkit route without changing the reading engine.
 
 ## Tech stack
 
@@ -51,11 +51,13 @@ index.html
         └── HashRouter
             ├── ScrollToTop
             └── Routes
-                └── app/Layout.tsx
+                └── app/Layout.tsx (system-aware shell + accent)
                     ├── header / navigation / footer
                     ├── RouteErrorBoundary + Suspense
                     └── <Outlet />
-                        ├── ReadingPage     (eager)
+                        ├── HomePage        (eager chooser)
+                        ├── ReadingPage     (eager, /thelema)
+                        ├── ChaosHomePage   (lazy, /chaos)
                         ├── LibraryPage     (lazy)
                         ├── StudyPage       (lazy)
                         ├── JournalPage     (lazy)
@@ -68,13 +70,13 @@ index.html
 
 | Directory        | Responsibility                                           | Depends on                      | Consumed by                |
 | ---------------- | -------------------------------------------------------- | ------------------------------- | -------------------------- |
-| `src/app`        | Shell, router, layout, route loading/error states        | pages, components, router       | `main.tsx`                 |
+| `src/app`        | Shell, router, layout, accent picker, route states       | pages, components, router       | `main.tsx`                 |
 | `src/pages`      | Route-level state and feature orchestration              | domain, data, lib, components   | `app/App.tsx`              |
 | `src/components` | Reusable presentation and interaction                    | domain types, occasionally data | pages and other components |
 | `src/domain`     | Types, deck logic, Tree constants, interpretation engine | data, other domain modules      | pages, components, lib     |
 | `src/data`       | 78 cards, six spreads, tradition notes                   | domain types                    | domain, pages, components  |
 | `src/lib`        | Browser storage adapter                                  | domain journal/share logic      | pages                      |
-| `src/styles`     | Tokens, global base styles, print overrides              | fonts                           | `main.tsx`                 |
+| `src/styles`     | Tokens, base styles, Chaos theme, print overrides        | fonts                           | `main.tsx`                 |
 | `src/test`       | Vitest setup and axe helper                              | Testing Library, axe            | tests                      |
 
 The main dependency direction is **one-way**: `pages → domain/data/lib/components`. Components do not import pages, and domain modules do not import React.
@@ -83,17 +85,21 @@ The main dependency direction is **one-way**: `pages → domain/data/lib/compone
 
 `src/app/App.tsx` defines:
 
-| Route            | Page            | Loading |
-| ---------------- | --------------- | ------- |
-| `/`              | `ReadingPage`   | Eager   |
-| `/library`       | `LibraryPage`   | Lazy    |
-| `/study`         | `StudyPage`     | Lazy    |
-| `/journal`       | `JournalPage`   | Lazy    |
-| `/cards/:cardId` | `CardPage`      | Lazy    |
-| `/tradition`     | `TraditionPage` | Lazy    |
-| `*`              | `NotFoundPage`  | Lazy    |
+| Route                | Page            | Loading |
+| -------------------- | --------------- | ------- |
+| `/`                  | `HomePage`      | Eager   |
+| `/thelema`           | `ReadingPage`   | Eager   |
+| `/thelema/library`   | `LibraryPage`   | Lazy    |
+| `/thelema/study`     | `StudyPage`     | Lazy    |
+| `/thelema/journal`   | `JournalPage`   | Lazy    |
+| `/thelema/cards/:id` | `CardPage`      | Lazy    |
+| `/thelema/tradition` | `TraditionPage` | Lazy    |
+| `/chaos`             | `ChaosHomePage` | Lazy    |
+| `*`                  | `NotFoundPage`  | Lazy    |
 
-The reading page stays in the entry bundle because it is the index route and every share link opens there. `Layout` wraps pages in a `RouteErrorBoundary` keyed by pathname and a `Suspense` fallback (`src/app/Layout.tsx:52`).
+Legacy routes (`/library`, `/study`, `/journal`, `/tradition`, `/cards/:cardId`) redirect to their canonical `/thelema` paths and preserve search parameters. Old `#/?...` share links are forwarded by `HomePage` to `#/thelema?...`.
+
+The reading page stays in the entry bundle because it is the main Thelema route and every share link opens there. `Layout` wraps pages in a `RouteErrorBoundary` keyed by pathname and a `Suspense` fallback (`src/app/Layout.tsx`). `Layout` derives the active system from the path, swaps brand/navigation/footer content, and sets `data-system` and `data-accent` on `<html>` so global tokens follow the current system. The chosen Chaos accent lives in `Layout` state, so it survives route changes.
 
 ## How the files talk
 
@@ -227,7 +233,7 @@ LibraryPage
   → ALL_CARDS
   → module-level CARD_SEARCH_WORDS index
   → local search/arcana/suit/element filters
-  → links to /cards/:cardId
+  → links to /thelema/cards/:cardId
       → CardPage
           → useParams
           → getCardById
@@ -246,7 +252,7 @@ StudyPage
       → one topic for the card kind
       → four shuffled, unique options and an explanation
   → local question, selected answer, and in-session score
-  → links to /cards/:cardId after answering
+  → links to /thelema/cards/:cardId after answering
 ```
 
 `createStudyQuestion` accepts an injected `RandomSource`: the page uses `Math.random`, and tests use `seededRandom` to prove determinism and full topic coverage. There is no saved score or URL state, so leaving the page resets the quiz.
@@ -292,12 +298,19 @@ Original artwork lives in `images/` and is not formatted by Prettier. `scripts/o
 
 ## Styling
 
-- `src/styles/tokens.css` — colors, fonts, spacing, radii, shadows.
+- `src/styles/tokens.css` — colors, semantic accent tokens, fonts, spacing, radii, shadows.
 - `src/styles/base.css` — reset, typography, buttons, panels, focus, skip link, visually-hidden utilities.
-- `src/styles/print.css` — flips the dark theme to ink-on-paper, hides navigation and dialogs, and controls page breaks.
+- `src/styles/chaos.css` — black-and-white Chaos palette, `data-accent` colour map, and system-scoped body/type overrides.
+- `src/styles/print.css` — flips both dark themes to ink-on-paper, hides navigation and dialogs, and controls page breaks.
 - Each component/page has a colocated `.module.css` for scoped layout and print rules.
 
 There is no CSS-in-JS runtime and no utility framework.
+
+### Two-system theme
+
+`Layout` chooses a system from the pathname (`src/app/paths.ts`) and writes `data-system="home|thelema|chaos"` plus `data-accent="..."` to `<html>`. Shared components consume semantic tokens such as `--color-accent`, `--line`, and `--color-surface`, so the same buttons and panels work in both systems.
+
+The Chaos accent is one of the ids in `src/app/chaosAccent.ts`; `src/styles/chaos.css` maps each id to RGB channels and derives soft, focus, and glow values. The picker uses `Math.random()` once when `Layout` mounts, and **New signal** calls it again while excluding the current colour. A test reads `chaos.css?raw` and enforces AAA contrast for every accent against the black shell.
 
 ## Testing and CI
 
@@ -312,8 +325,8 @@ Tests are colocated by concern:
 | Browser adapter       | `src/lib/journalStorage.test.ts`                                                                                                            |
 | Components            | `SpreadBoard.test.tsx`, `CardImage.test.tsx`                                                                                                |
 | Pages                 | `ReadingPage.test.tsx`, `LibraryPage.test.tsx`, `CardPage.test.tsx`, `JournalPage.test.tsx`, `TraditionPage.test.tsx`, `StudyPage.test.tsx` |
-| App/routing           | `App.test.tsx`, `RouteStates.test.tsx`                                                                                                      |
-| Accessibility         | `src/app/accessibility.test.tsx` + `src/test/axe.ts`                                                                                        |
+| App/routing           | `App.test.tsx`, `RouteStates.test.tsx`, `chaosAccent.test.ts`                                                                               |
+| Accessibility         | `src/app/accessibility.test.tsx` + `src/test/axe.ts` (chooser, Chaos shell, Thelema pages)                                                  |
 
 The accessibility audit renders real pages with axe under WCAG A/AA tags, but explicitly disables color contrast because jsdom has no paint/layout. Real-browser contrast and layout checks remain a manual step.
 
@@ -334,5 +347,5 @@ CI (`.github/workflows/ci.yml`) runs `npm run verify` on push to `master` and pu
 - `ReadingPage` is still the largest orchestration point (~650 lines), owning setup, reading, URL sync, clipboard, journal, and dialog state. The planned M8 split into `ReadingSetup`, `ReadingResult`, and a reducer/hook has not been done.
 - The reading engine has spread-specific branches in `relations.ts`, `notices.ts`, and `synthesis.ts`, all keyed by position IDs. This is readable but means adding a spread requires coordinated updates in several modules.
 - `domain/deck.ts` imports `ALL_CARDS` directly, even though `drawCards` also accepts an injected deck. Domain modules therefore depend on static data rather than being fully content-agnostic.
-- `HashRouter` keeps GitHub Pages deployment simple, but URLs live after `#`, which is less SEO-friendly and requires the `#/?...` share format.
+- `HashRouter` keeps GitHub Pages deployment simple, but URLs live after `#`, which is less SEO-friendly. New share links use `#/thelema?...`; the old `#/?...` form survives only as a redirect.
 - Color contrast and visual layout still need real-browser verification; the jsdom axe pass cannot judge them.

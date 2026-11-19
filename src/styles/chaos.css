@@ -1,0 +1,123 @@
+/*
+ * Chaos theme.
+ *
+ * The UI stays black, white, and grey. A single accent is chosen when the app
+ * loads and then applied through `data-accent`. Every accent is bright enough
+ * for black text at AAA contrast, so it can be used for both links and fills.
+ */
+:root {
+  --chaos-accent-rgb: 184 242 74;
+  --chaos-accent: rgb(var(--chaos-accent-rgb));
+  --chaos-accent-soft: rgb(var(--chaos-accent-rgb) / 0.14);
+  --chaos-accent-faint: rgb(var(--chaos-accent-rgb) / 0.08);
+  --chaos-accent-focus: rgb(var(--chaos-accent-rgb) / 0.2);
+  --chaos-accent-glow: rgb(var(--chaos-accent-rgb) / 0.3);
+  --chaos-accent-ink: #050505;
+}
+
+[data-accent="acid"] {
+  --chaos-accent-rgb: 184 242 74;
+}
+
+[data-accent="signal"] {
+  --chaos-accent-rgb: 255 138 61;
+}
+
+[data-accent="ion"] {
+  --chaos-accent-rgb: 90 215 255;
+}
+
+[data-accent="magenta"] {
+  --chaos-accent-rgb: 255 106 213;
+}
+
+[data-accent="sulfur"] {
+  --chaos-accent-rgb: 255 228 92;
+}
+
+[data-accent="ultraviolet"] {
+  --chaos-accent-rgb: 167 139 250;
+}
+
+[data-accent="ember"] {
+  --chaos-accent-rgb: 255 107 107;
+}
+
+[data-accent="mint"] {
+  --chaos-accent-rgb: 110 242 181;
+}
+
+html[data-system="chaos"] {
+  color-scheme: dark;
+
+  --color-void: #000000;
+  --color-night: #050505;
+  --color-surface: rgb(10 10 10 / 0.86);
+  --color-surface-strong: rgb(16 16 16 / 0.96);
+  --color-parchment: #f5f5f5;
+  --color-parchment-soft: #c9c9c9;
+  --color-muted: #9a9a9a;
+  --color-placeholder: #9a9a9a;
+
+  /* Any component still asking for gold receives the signal instead. */
+  --color-gold: var(--chaos-accent);
+  --color-gold-bright: var(--chaos-accent);
+  --color-gold-dim: var(--chaos-accent);
+  --color-crimson: #d94a5a;
+  --color-crimson-bright: #ff8a95;
+  --color-verdigris: #8f8f8f;
+  --color-verdigris-bright: #d0d0d0;
+
+  --color-accent: var(--chaos-accent);
+  --color-accent-bright: var(--chaos-accent);
+  --color-accent-ink: var(--chaos-accent-ink);
+  --color-accent-soft: var(--chaos-accent-soft);
+  --color-accent-faint: var(--chaos-accent-faint);
+  --color-accent-focus: var(--chaos-accent-focus);
+  --color-accent-glow: var(--chaos-accent-glow);
+  --color-accent-underline: var(--chaos-accent-soft);
+  --accent-glow: var(--chaos-accent-glow);
+
+  --line: rgb(255 255 255 / 0.18);
+  --line-strong: rgb(255 255 255 / 0.46);
+  --line-cool: rgb(255 255 255 / 0.16);
+  --shadow-card: 0 26px 60px rgb(0 0 0 / 0.72);
+  --shadow-glow: 0 0 44px rgb(var(--chaos-accent-rgb) / 0.14);
+  --header-bg: rgb(0 0 0 / 0.78);
+  --footer-bg: rgb(0 0 0 / 0.5);
+  --font-display: var(--font-body);
+}
+
+html[data-system="chaos"] body {
+  background:
+    radial-gradient(
+      ellipse at 50% -20%,
+      rgb(var(--chaos-accent-rgb) / 0.12),
+      transparent 55%
+    ),
+    radial-gradient(ellipse at 100% 110%, rgb(255 255 255 / 0.05), transparent 50%),
+    linear-gradient(180deg, #090909 0%, #050505 45%, #000000 100%);
+}
+
+html[data-system="chaos"] h1,
+html[data-system="chaos"] h2,
+html[data-system="chaos"] h3,
+html[data-system="chaos"] h4 {
+  font-weight: 750;
+  letter-spacing: -0.025em;
+}
+
+html[data-system="chaos"] .display-title {
+  letter-spacing: -0.045em;
+}
+
+html[data-system="chaos"] ::selection {
+  color: var(--chaos-accent-ink);
+  background: var(--chaos-accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-system="chaos"] body {
+    background-attachment: fixed;
+  }
+}
