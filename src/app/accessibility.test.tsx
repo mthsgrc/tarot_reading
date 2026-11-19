@@ -104,6 +104,27 @@ describe("accessibility audit", () => {
     await expectNoAccessibilityViolations();
   });
 
+  it("keeps the Servitor Workshop free of violations before and after a record", async () => {
+    const user = userEvent.setup();
+    openRoute("#/chaos/servitors");
+    await screen.findByRole("heading", {
+      level: 1,
+      name: /give an intention a name/i,
+    });
+
+    await expectNoAccessibilityViolations();
+
+    await user.type(screen.getByRole("textbox", { name: /^name$/i }), "The Doorkeeper");
+    await user.type(
+      screen.getByRole("textbox", { name: /^task$/i }),
+      "I notice the next small step and take it.",
+    );
+    await user.click(screen.getByRole("button", { name: /create servitor/i }));
+    await screen.findByRole("heading", { level: 3, name: "The Doorkeeper" });
+
+    await expectNoAccessibilityViolations();
+  });
+
   it("keeps the setup and a completed reading free of violations", async () => {
     const user = userEvent.setup();
     openRoute("#/thelema");

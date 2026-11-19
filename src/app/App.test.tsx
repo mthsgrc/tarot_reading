@@ -189,6 +189,10 @@ describe("App", () => {
       "href",
       "#/chaos/cut-up",
     );
+    expect(screen.getByRole("link", { name: /open servitor workshop/i })).toHaveAttribute(
+      "href",
+      "#/chaos/servitors",
+    );
 
     await user.click(openSigil);
 
@@ -227,6 +231,23 @@ describe("App", () => {
     ).toBeInTheDocument();
     expect(screen.getByRole("radio", { name: "Lines" })).toBeChecked();
     expect(document.title).toBe("Cut-up Oracle · Two Currents");
+  });
+
+  it("loads the Servitor Workshop with its own title", async () => {
+    vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    window.location.hash = "#/chaos/servitors";
+    render(<App />);
+
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: /give an intention a name/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /no servitors yet/i }),
+    ).toBeInTheDocument();
+    expect(document.title).toBe("Servitor Workshop · Two Currents");
   });
 
   it("themes the Chaos route with one accent and rerolls a new signal", async () => {

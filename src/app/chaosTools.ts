@@ -38,7 +38,7 @@ export const CHAOS_TOOLS: readonly ChaosTool[] = [
     title: "Servitor Workshop",
     path: PATHS.chaosServitors,
     description: "Give a task a name, a form, and a review date — then retire it.",
-    status: "next",
+    status: "available",
   },
   {
     id: "paradigms",
