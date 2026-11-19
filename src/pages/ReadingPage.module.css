@@ -481,8 +481,9 @@
 
 @media (max-width: 720px) {
   .heroMark {
-    top: -6%;
-    right: -12%;
+    top: -4%;
+    right: 0;
+    width: clamp(150px, 48vw, 220px);
     opacity: 0.08;
   }
 

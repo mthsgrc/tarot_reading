@@ -29,6 +29,8 @@ const THELEMA_NAV: NavItem[] = [
   { to: PATHS.study, label: "Study" },
   { to: PATHS.journal, label: "Journal" },
   { to: PATHS.tradition, label: "The Tradition" },
+  { to: PATHS.chaos, label: "Chaos" },
+  { to: PATHS.home, label: "Systems", end: true },
 ];
 
 const CHAOS_NAV: NavItem[] = [

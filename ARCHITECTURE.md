@@ -115,7 +115,7 @@ The main dependency direction is **one-way**: `pages → domain/data/lib/compone
 
 Legacy routes (`/library`, `/study`, `/journal`, `/tradition`, `/cards/:cardId`) redirect to their canonical `/thelema` paths and preserve search parameters. Old `#/?...` share links are forwarded by `HomePage` to `#/thelema?...`.
 
-The reading page stays in the entry bundle because it is the main Thelema route and every share link opens there. `Layout` wraps pages in a `RouteErrorBoundary` keyed by pathname and a `Suspense` fallback (`src/app/Layout.tsx`). `Layout` derives the active system from the path, swaps brand/navigation/footer content, and sets `data-system` and `data-accent` on `<html>` so global tokens follow the current system. The chosen Chaos accent lives in `Layout` state, so it survives route changes.
+The reading page stays in the entry bundle because it is the main Thelema route and every share link opens there. `Layout` wraps pages in a `RouteErrorBoundary` keyed by pathname and a `Suspense` fallback (`src/app/Layout.tsx`). `Layout` derives the active system from the path, swaps brand/navigation/footer content, and sets `data-system` and `data-accent` on `<html>` so global tokens follow the current system. The chosen Chaos accent lives in `Layout` state, so it survives route changes. Both system navs link to the other current and back to the chooser, so neither shell traps the reader.
 
 The Chaos toolkit index is generated from `src/app/chaosTools.ts`. Each entry carries a title, path, and description. The home grid and the Sources page both read the same list. `SigilPage`, `GnosisPage`, `CutUpPage`, `ServitorsPage`, `ParadigmPage`, `RecordPage`, `WorkingPage`, and `SourcesPage` cover the eight tools.
 

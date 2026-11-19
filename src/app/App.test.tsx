@@ -36,6 +36,32 @@ describe("App", () => {
     expect(document.documentElement.dataset.system).toBe("home");
   });
 
+  it("offers the Chaos current and the chooser from the Thelema workspace", async () => {
+    const user = userEvent.setup();
+    vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    window.location.hash = "#/thelema";
+    render(<App />);
+
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: /the cards are a mirror/i,
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Chaos" })).toHaveAttribute(
+      "href",
+      "#/chaos",
+    );
+    expect(screen.getByRole("link", { name: "Systems" })).toHaveAttribute("href", "#/");
+
+    await user.click(screen.getByRole("link", { name: "Chaos" }));
+
+    expect(
+      await screen.findByRole("heading", { level: 1, name: /belief is a tool/i }),
+    ).toBeInTheDocument();
+    expect(window.location.hash).toBe("#/chaos");
+  });
+
   it("renders a generated share link on the reading page", () => {
     vi.spyOn(window, "scrollTo").mockImplementation(() => {});
 
