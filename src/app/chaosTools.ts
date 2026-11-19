@@ -59,7 +59,7 @@ export const CHAOS_TOOLS: readonly ChaosTool[] = [
     title: "Working Composer",
     path: PATHS.chaosWorking,
     description: "Build a working with an intention, action, closing, and reflection.",
-    status: "next",
+    status: "available",
   },
   {
     id: "sources",

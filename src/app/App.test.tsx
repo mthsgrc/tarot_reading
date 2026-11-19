@@ -201,6 +201,10 @@ describe("App", () => {
       "href",
       "#/chaos/record",
     );
+    expect(screen.getByRole("link", { name: /open working composer/i })).toHaveAttribute(
+      "href",
+      "#/chaos/working",
+    );
 
     await user.click(openSigil);
 
@@ -288,6 +292,23 @@ describe("App", () => {
       screen.getByRole("heading", { name: /nothing recorded yet/i }),
     ).toBeInTheDocument();
     expect(document.title).toBe("Magical Record · Two Currents");
+  });
+
+  it("loads the Working Composer with its own title", async () => {
+    vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    window.location.hash = "#/chaos/working";
+    render(<App />);
+
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: /compose a working/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 3, name: /nothing composed yet/i }),
+    ).toBeInTheDocument();
+    expect(document.title).toBe("Working Composer · Two Currents");
   });
 
   it("themes the Chaos route with one accent and rerolls a new signal", async () => {

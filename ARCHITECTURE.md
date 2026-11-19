@@ -64,6 +64,7 @@ index.html
                         ├── ServitorsPage   (lazy, /chaos/servitors)
                         ├── ParadigmPage    (lazy, /chaos/paradigms)
                         ├── RecordPage      (lazy, /chaos/record)
+                        ├── WorkingPage     (lazy, /chaos/working)
                         ├── LibraryPage     (lazy)
                         ├── StudyPage       (lazy)
                         ├── JournalPage     (lazy)
@@ -107,13 +108,14 @@ The main dependency direction is **one-way**: `pages → domain/data/lib/compone
 | `/chaos/servitors`   | `ServitorsPage` | Lazy    |
 | `/chaos/paradigms`   | `ParadigmPage`  | Lazy    |
 | `/chaos/record`      | `RecordPage`    | Lazy    |
+| `/chaos/working`     | `WorkingPage`   | Lazy    |
 | `*`                  | `NotFoundPage`  | Lazy    |
 
 Legacy routes (`/library`, `/study`, `/journal`, `/tradition`, `/cards/:cardId`) redirect to their canonical `/thelema` paths and preserve search parameters. Old `#/?...` share links are forwarded by `HomePage` to `#/thelema?...`.
 
 The reading page stays in the entry bundle because it is the main Thelema route and every share link opens there. `Layout` wraps pages in a `RouteErrorBoundary` keyed by pathname and a `Suspense` fallback (`src/app/Layout.tsx`). `Layout` derives the active system from the path, swaps brand/navigation/footer content, and sets `data-system` and `data-accent` on `<html>` so global tokens follow the current system. The chosen Chaos accent lives in `Layout` state, so it survives route changes.
 
-The Chaos toolkit index is generated from `src/app/chaosTools.ts`. Each entry carries a title, path, description, and an `available` or `next` status; only routes that actually exist are marked available. `SigilPage`, `GnosisPage`, `CutUpPage`, `ServitorsPage`, `ParadigmPage`, and `RecordPage` are the live tools.
+The Chaos toolkit index is generated from `src/app/chaosTools.ts`. Each entry carries a title, path, description, and an `available` or `next` status; only routes that actually exist are marked available. `SigilPage`, `GnosisPage`, `CutUpPage`, `ServitorsPage`, `ParadigmPage`, `RecordPage`, and `WorkingPage` are the live tools.
 
 ## How the files talk
 
@@ -362,7 +364,20 @@ RecordPage
   → log                        kind filter, sorted entries, delete confirmation
 ```
 
-`recordStorage` is deliberately reusable: the Working Composer will call `addStoredRecord` with a `working` draft instead of inventing a second format. Entries sort by working date and then by creation time, while the stored file keeps insertion order. Parsing re-validates every field, filters duplicates, and keeps only the first 100 entries. Focus moves to the new entry after a save, to the next visible entry after a delete, to the filter-empty heading when a filter has no matches, and to the empty heading when the log is empty.
+`recordStorage` is deliberately reusable: the Working Composer calls `addStoredRecord` with a `working` draft instead of inventing a second format. Entries sort by working date and then by creation time, while the stored file keeps insertion order. Parsing re-validates every field, filters duplicates, and keeps only the first 100 entries. Focus moves to the new entry after a save, to the next visible entry after a delete, to the filter-empty heading when a filter has no matches, and to the empty heading when the log is empty.
+
+### Working Composer
+
+```text
+WorkingPage
+  → domain/chaos/working.ts     draft validation, labelled plain text
+  → workingToRecordDraft         kind = "working"
+  → lib/recordStorage.ts         addStoredRecord
+  → preview panel                live title, date, sequence, reflection
+  → saved state                  focus the confirmation, disable repeat saves
+```
+
+The composer's length limits are chosen so the longest possible practice text still fits inside one record entry. Saving writes the full sequence to `localStorage` and keeps the composed text on screen; editing any field clears the saved state and re-enables the button. The working is a plan, not guided instruction: the copy asks for a form the user can stop safely and a closing that returns to ordinary attention.
 
 ## Data model
 
@@ -412,17 +427,17 @@ The Chaos accent is one of the ids in `src/app/chaosAccent.ts`; `src/styles/chao
 
 Tests are colocated by concern:
 
-| Test area             | Files                                                                                                                                                                                                                                                                                                                                         |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Static data integrity | `src/data/cards.test.ts`, `src/data/spreads.test.ts`                                                                                                                                                                                                                                                                                          |
-| Domain logic          | `src/domain/deck.test.ts`, `src/domain/cardLabels.test.ts`, `src/domain/study.test.ts`, `src/domain/chaos/sigil.test.ts`, `src/domain/chaos/gnosis.test.ts`, `src/domain/chaos/cutup.test.ts`, `src/domain/chaos/random.test.ts`, `src/domain/chaos/servitor.test.ts`, `src/domain/chaos/paradigm.test.ts`, `src/domain/chaos/record.test.ts` |
-| Reading engine        | `src/domain/reading/reading.test.ts`                                                                                                                                                                                                                                                                                                          |
-| Share/journal         | `share.test.ts`, `journal.test.ts`                                                                                                                                                                                                                                                                                                            |
-| Browser adapter       | `src/lib/journalStorage.test.ts`, `src/lib/servitorStorage.test.ts`, `src/lib/paradigmStorage.test.ts`, `src/lib/recordStorage.test.ts`                                                                                                                                                                                                       |
-| Components            | `SpreadBoard.test.tsx`, `CardImage.test.tsx`                                                                                                                                                                                                                                                                                                  |
-| Pages                 | `ReadingPage.test.tsx`, `LibraryPage.test.tsx`, `CardPage.test.tsx`, `JournalPage.test.tsx`, `TraditionPage.test.tsx`, `StudyPage.test.tsx`, `SigilPage.test.tsx`, `GnosisPage.test.tsx`, `CutUpPage.test.tsx`, `ServitorsPage.test.tsx`, `ParadigmPage.test.tsx`, `RecordPage.test.tsx`                                                      |
-| App/routing           | `App.test.tsx`, `RouteStates.test.tsx`, `chaosAccent.test.ts`                                                                                                                                                                                                                                                                                 |
-| Accessibility         | `src/app/accessibility.test.tsx` + `src/test/axe.ts` (chooser, Chaos toolkit, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, Paradigm Shift, Magical Record, Thelema pages)                                                                                                                                                     |
+| Test area             | Files                                                                                                                                                                                                                                                                                                                                                                             |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Static data integrity | `src/data/cards.test.ts`, `src/data/spreads.test.ts`                                                                                                                                                                                                                                                                                                                              |
+| Domain logic          | `src/domain/deck.test.ts`, `src/domain/cardLabels.test.ts`, `src/domain/study.test.ts`, `src/domain/chaos/sigil.test.ts`, `src/domain/chaos/gnosis.test.ts`, `src/domain/chaos/cutup.test.ts`, `src/domain/chaos/random.test.ts`, `src/domain/chaos/servitor.test.ts`, `src/domain/chaos/paradigm.test.ts`, `src/domain/chaos/record.test.ts`, `src/domain/chaos/working.test.ts` |
+| Reading engine        | `src/domain/reading/reading.test.ts`                                                                                                                                                                                                                                                                                                                                              |
+| Share/journal         | `share.test.ts`, `journal.test.ts`                                                                                                                                                                                                                                                                                                                                                |
+| Browser adapter       | `src/lib/journalStorage.test.ts`, `src/lib/servitorStorage.test.ts`, `src/lib/paradigmStorage.test.ts`, `src/lib/recordStorage.test.ts`                                                                                                                                                                                                                                           |
+| Components            | `SpreadBoard.test.tsx`, `CardImage.test.tsx`                                                                                                                                                                                                                                                                                                                                      |
+| Pages                 | `ReadingPage.test.tsx`, `LibraryPage.test.tsx`, `CardPage.test.tsx`, `JournalPage.test.tsx`, `TraditionPage.test.tsx`, `StudyPage.test.tsx`, `SigilPage.test.tsx`, `GnosisPage.test.tsx`, `CutUpPage.test.tsx`, `ServitorsPage.test.tsx`, `ParadigmPage.test.tsx`, `RecordPage.test.tsx`, `WorkingPage.test.tsx`                                                                  |
+| App/routing           | `App.test.tsx`, `RouteStates.test.tsx`, `chaosAccent.test.ts`                                                                                                                                                                                                                                                                                                                     |
+| Accessibility         | `src/app/accessibility.test.tsx` + `src/test/axe.ts` (chooser, Chaos toolkit, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, Paradigm Shift, Magical Record, Working Composer, Thelema pages)                                                                                                                                                                       |
 
 The accessibility audit renders real pages with axe under WCAG A/AA tags, but explicitly disables color contrast because jsdom has no paint/layout. Real-browser contrast and layout checks remain a manual step.
 

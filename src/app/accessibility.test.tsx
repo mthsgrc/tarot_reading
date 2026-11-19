@@ -172,6 +172,41 @@ describe("accessibility audit", () => {
     await expectNoAccessibilityViolations();
   });
 
+  it("keeps the Working Composer free of violations before and after saving", async () => {
+    const user = userEvent.setup();
+    openRoute("#/chaos/working");
+    await screen.findByRole("heading", {
+      level: 1,
+      name: /compose a working/i,
+    });
+
+    await expectNoAccessibilityViolations();
+
+    await user.type(
+      screen.getByRole("textbox", { name: /^title$/i }),
+      "A working for the next step",
+    );
+    await user.type(
+      screen.getByRole("textbox", { name: /^intention$/i }),
+      "I want to notice the next useful step.",
+    );
+    await user.type(
+      screen.getByRole("textbox", { name: /^action$/i }),
+      "Sit still for five minutes and return to the phrase.",
+    );
+    await user.type(
+      screen.getByRole("textbox", { name: /^closing$/i }),
+      "Stand up, drink water, and write one sentence.",
+    );
+    await user.click(screen.getByRole("button", { name: /save to magical record/i }));
+    await screen.findByRole("heading", {
+      level: 3,
+      name: /in the magical record/i,
+    });
+
+    await expectNoAccessibilityViolations();
+  });
+
   it("keeps the setup and a completed reading free of violations", async () => {
     const user = userEvent.setup();
     openRoute("#/thelema");

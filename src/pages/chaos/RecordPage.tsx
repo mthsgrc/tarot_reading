@@ -238,7 +238,7 @@ export function RecordPage() {
         <p className="lede">
           The magical record turns experiments into something you can revisit. Write what
           you did and what changed without deciding in advance what it means. This is the
-          shared local log the Working Composer will use.
+          shared local log the Working Composer uses.
         </p>
       </header>
 

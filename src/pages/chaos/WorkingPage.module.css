@@ -1,0 +1,251 @@
+.page {
+  padding-top: clamp(2rem, 5vw, 4rem);
+  padding-bottom: var(--space-7);
+}
+
+.hero {
+  max-width: 860px;
+  padding-bottom: var(--space-6);
+}
+
+.backLink {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.backLink:hover {
+  color: var(--color-accent-bright);
+}
+
+.title {
+  margin-top: 0.75rem;
+}
+
+.hero .lede {
+  margin-top: 1.2rem;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+  align-items: start;
+}
+
+.formPanel,
+.previewPanel {
+  padding: clamp(1.5rem, 3.5vw, 2.5rem);
+}
+
+.panelTitle {
+  margin-bottom: var(--space-4);
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.field {
+  min-width: 0;
+  margin-top: var(--space-4);
+}
+
+.formGrid .field {
+  margin-top: 0;
+}
+
+.shortInput {
+  min-height: 5.5rem;
+}
+
+.actionInput {
+  min-height: 8rem;
+}
+
+.fieldHint {
+  margin-top: 0.35rem;
+  color: var(--color-muted);
+  font-size: 0.74rem;
+  line-height: 1.6;
+}
+
+.optional {
+  color: var(--color-muted);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+}
+
+.fieldError {
+  margin-top: 0.35rem;
+  color: var(--color-crimson-bright);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: var(--space-5);
+}
+
+.error {
+  padding: 0.8rem 0.9rem;
+  margin-top: var(--space-3);
+  color: var(--color-crimson-bright);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  background: rgb(255 255 255 / 0.04);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.previewPanel {
+  position: sticky;
+  top: 6.5rem;
+  background:
+    radial-gradient(circle at 72% 6%, var(--color-accent-faint), transparent 42%),
+    var(--color-surface);
+}
+
+.previewTitle {
+  margin-top: 0.4rem;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+}
+
+.saved {
+  padding: var(--space-3) var(--space-4);
+  margin-top: var(--space-4);
+  background: var(--color-accent-faint);
+  border-left: 2px solid var(--color-accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.savedTitle {
+  width: fit-content;
+  margin-top: 0.25rem;
+  font-size: clamp(1.3rem, 2.2vw, 1.65rem);
+}
+
+.savedTitle:focus {
+  outline: none;
+}
+
+.savedTitle:focus-visible {
+  outline: 2px solid var(--color-accent-bright);
+  outline-offset: 4px;
+}
+
+.savedText {
+  max-width: 44ch;
+  margin-top: var(--space-2);
+  color: var(--color-parchment-soft);
+  font-size: 0.84rem;
+  line-height: 1.7;
+}
+
+.saved :global(.button) {
+  margin-top: var(--space-3);
+}
+
+.previewBelief {
+  max-width: 24ch;
+  margin-top: var(--space-4);
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+  line-height: 1.4;
+}
+
+.previewDate {
+  margin-top: var(--space-2);
+  color: var(--color-muted);
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.previewList {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.previewList dt {
+  color: var(--color-muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.previewList dd {
+  margin: 0.2rem 0 0;
+  color: var(--color-parchment-soft);
+  font-size: 0.86rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.empty {
+  max-width: 44ch;
+  margin-top: var(--space-4);
+}
+
+.emptyTitle {
+  font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+}
+
+.emptyText {
+  margin-top: var(--space-2);
+  color: var(--color-parchment-soft);
+  line-height: 1.7;
+}
+
+.note {
+  max-width: 76ch;
+  margin-top: var(--space-5);
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  line-height: 1.7;
+}
+
+@media (max-width: 900px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .previewPanel {
+    position: static;
+  }
+}
+
+@media (max-width: 560px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions :global(.button) {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backLink {
+    transition: none;
+  }
+}

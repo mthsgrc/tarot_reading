@@ -50,6 +50,7 @@ Open the local URL printed by Vite.
 | `/chaos/servitors`   | Chaos Magic           | Servitor Workshop             |
 | `/chaos/paradigms`   | Chaos Magic           | Paradigm Shift                |
 | `/chaos/record`      | Chaos Magic           | Magical Record                |
+| `/chaos/working`     | Chaos Magic           | Working Composer              |
 
 Old paths such as `#/library`, `#/journal`, and `#/cards/:id` redirect to their `/thelema` equivalents. Old `#/?...` share links are forwarded from the chooser to `#/thelema?...`, so links already in circulation keep working.
 
@@ -194,7 +195,13 @@ Records are validated twice: in `src/domain/chaos/servitor.ts` before creation a
 
 `/chaos/record` is the shared local log. An entry has a title, a kind, a working date, what you did, and an optional note about what changed. The kinds cover notes, sigils, gnosis, cut-ups, servitors, paradigms, and workings, so the page doubles as a general diary. Filters narrow the list by kind, entries sort by working date and then by when they were written, and deleting an entry requires an inline confirmation. The file holds up to 100 entries.
 
-`src/domain/chaos/record.ts` validates both drafts and parsed files. `src/lib/recordStorage.ts` exposes `addStoredRecord` for other tools as well as the page, which is how the Working Composer will append to the same log. Records are stored newest-first, and a storage event refreshes another tab. The record is reflective, not proof of causation, and nothing is uploaded. It is not a replacement for medical, legal, financial, or relationship advice.
+`src/domain/chaos/record.ts` validates both drafts and parsed files. `src/lib/recordStorage.ts` exposes `addStoredRecord` for other tools as well as the page, which is how the Working Composer appends to the same log. Records are stored newest-first, and a storage event refreshes another tab. The record is reflective, not proof of causation, and nothing is uploaded. It is not a replacement for medical, legal, financial, or relationship advice.
+
+### Working Composer
+
+`/chaos/working` writes a structured working into the shared Magical Record. A working has a title, date, intention, optional preparation, action, closing, and optional reflection. The right panel previews the sequence as you write. Saving calls the same `addStoredRecord` adapter as the record page, with the kind set to `working`; the intention, preparation, action, and closing become labelled plain text in the record. The composer stays on screen after a save and disables the save button until you change something, so the same text does not create duplicate entries.
+
+The composer does not teach a ritual. The safety copy asks you to avoid breath-holding, hyperventilation, sleep deprivation, fasting, pain, or anything that could harm you or someone else, and to stop whenever you choose. The closing field asks how you will end and return to ordinary attention, not for a prescribed banishing.
 
 ## Card artwork
 
@@ -251,7 +258,8 @@ The suite covers:
 - Servitor draft validation, review dates, create/retire/restore/delete flows, storage failures, the 50-record cap, and cross-tab refresh
 - Paradigm duration math, readiness, belief/reflection validation, one-open-experiment enforcement, start/complete/discard flows, storage failures, and cross-tab refresh
 - Magical Record validation, kind filters, diary ordering, add/delete focus, storage failures, the 100-entry cap, and cross-tab refresh
-- axe audits of the chooser, Chaos toolkit, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, Paradigm Shift, Magical Record, setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
+- Working Composer validation, live preview, save-to-record conversion, saved-state clearing, clear, storage failures, and record-full handling
+- axe audits of the chooser, Chaos toolkit, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, Paradigm Shift, Magical Record, Working Composer, setup, completed reading, card dialog, library, card page, study quiz, tradition page, journal, and 404 under the WCAG A/AA tags
 - Lazy route loading, the route loading state, and stale-chunk error recovery
 - The complete reading flow, shared-link loading, journal saves, interpretation section, copy and print behavior, larger spread selection, library search/filters, card detail pages, and tradition page
 
@@ -280,8 +288,8 @@ npm run verify
 Run `npm run build && npm run preview` before a release, then verify:
 
 - Text and focus indicators meet WCAG AA contrast.
-- The reading board, library grid, study quiz, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, Paradigm Shift, Magical Record, and print preview do not overflow at 320 px, 768 px, and 1280 px.
-- Keyboard navigation, the card dialog, study answer focus, Sigil Forge focus movement, Gnosis Timer pause/complete states, Cut-up result focus, Servitor create/delete focus, Paradigm start/complete/discard focus, Magical Record add/delete focus, and reduced-motion preferences behave correctly.
+- The reading board, library grid, study quiz, Sigil Forge, Gnosis Timer, Cut-up Oracle, Servitor Workshop, Paradigm Shift, Magical Record, Working Composer, and print preview do not overflow at 320 px, 768 px, and 1280 px.
+- Keyboard navigation, the card dialog, study answer focus, Sigil Forge focus movement, Gnosis Timer pause/complete states, Cut-up result focus, Servitor create/delete focus, Paradigm start/complete/discard focus, Magical Record add/delete focus, Working Composer save focus, and reduced-motion preferences behave correctly.
 - The journal persists after a reload and stays in sync when a second tab changes it.
 
 ## Roadmap
