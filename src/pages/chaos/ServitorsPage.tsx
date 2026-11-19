@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { PATHS } from "../../app/paths";
+import { localDateString } from "../../domain/chaos/date";
 import {
   SERVITOR_MAX_RECORDS,
   SERVITOR_NAME_MAX,
@@ -36,13 +37,6 @@ const FIELD_ORDER = ["name", "task", "form", "reviewOn"] as const;
 
 type PendingFocus = { kind: "servitor"; id: string } | { kind: "empty" } | null;
 
-function todayValue(date = new Date()): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
 function formatTimestamp(value: string): string {
   return DATE_FORMAT.format(new Date(value));
 }
@@ -64,7 +58,7 @@ export function ServitorsPage() {
   const taskRef = useRef<HTMLTextAreaElement>(null);
   const formRef = useRef<HTMLInputElement>(null);
   const reviewRef = useRef<HTMLInputElement>(null);
-  const today = todayValue();
+  const today = localDateString();
   const atCapacity = servitors.length >= SERVITOR_MAX_RECORDS;
 
   useEffect(() => {

@@ -37,6 +37,11 @@ const ParadigmPage = lazy(() =>
     default: module.ParadigmPage,
   })),
 );
+const RecordPage = lazy(() =>
+  import("../pages/chaos/RecordPage").then((module) => ({
+    default: module.RecordPage,
+  })),
+);
 const GnosisPage = lazy(() =>
   import("../pages/chaos/GnosisPage").then((module) => ({
     default: module.GnosisPage,
@@ -126,6 +131,7 @@ export function App() {
           <Route path="chaos/cut-up" element={<CutUpPage />} />
           <Route path="chaos/servitors" element={<ServitorsPage />} />
           <Route path="chaos/paradigms" element={<ParadigmPage />} />
+          <Route path="chaos/record" element={<RecordPage />} />
 
           {/* Old links keep working after the move under /thelema. */}
           <Route path="library" element={<LegacyRedirect to={PATHS.library} />} />

@@ -2,6 +2,8 @@
  * A servitor record is a named intention kept as a creative focus object.
  * Records are local to the browser; this module owns validation and shape only.
  */
+import { isValidDateInput } from "./date";
+
 export const SERVITOR_FILE_VERSION = 1;
 export const SERVITOR_MAX_RECORDS = 50;
 export const SERVITOR_NAME_MAX = 60;
@@ -51,20 +53,7 @@ export function normalizeServitorDraft(draft: ServitorDraft): ServitorDraft {
   };
 }
 
-export function isValidReviewDate(value: string): boolean {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return false;
-  }
-
-  const [year, month, day] = value.split("-").map(Number);
-  const date = new Date(Date.UTC(year!, month! - 1, day!));
-
-  return (
-    date.getUTCFullYear() === year &&
-    date.getUTCMonth() === month! - 1 &&
-    date.getUTCDate() === day
-  );
-}
+export const isValidReviewDate = isValidDateInput;
 
 function isValidTimestamp(value: string): boolean {
   return value.length <= 40 && !Number.isNaN(Date.parse(value));

@@ -52,7 +52,7 @@ export const CHAOS_TOOLS: readonly ChaosTool[] = [
     title: "Magical Record",
     path: PATHS.chaosRecord,
     description: "Keep experiments, results, and reflections in this browser.",
-    status: "next",
+    status: "available",
   },
   {
     id: "working",

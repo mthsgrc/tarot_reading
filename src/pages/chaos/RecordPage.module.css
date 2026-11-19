@@ -1,0 +1,356 @@
+.page {
+  padding-top: clamp(2rem, 5vw, 4rem);
+  padding-bottom: var(--space-7);
+}
+
+.hero {
+  max-width: 860px;
+  padding-bottom: var(--space-6);
+}
+
+.backLink {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.backLink:hover {
+  color: var(--color-accent-bright);
+}
+
+.title {
+  margin-top: 0.75rem;
+}
+
+.hero .lede {
+  margin-top: 1.2rem;
+}
+
+.formPanel,
+.logPanel {
+  padding: clamp(1.5rem, 3.5vw, 2.5rem);
+}
+
+.panelTitle {
+  margin-bottom: var(--space-4);
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.field {
+  min-width: 0;
+}
+
+.select {
+  width: 100%;
+  min-height: 2.9rem;
+  padding: 0.8rem 1rem;
+  color: var(--color-parchment);
+  background: rgba(4, 6, 11, 0.55);
+  border: 1px solid var(--line-cool);
+  border-radius: var(--radius-md);
+}
+
+.select:focus {
+  border-color: var(--color-accent);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-accent-focus);
+}
+
+.textAreas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.textArea {
+  min-height: 11rem;
+}
+
+.fieldHint {
+  margin-top: 0.35rem;
+  color: var(--color-muted);
+  font-size: 0.74rem;
+  line-height: 1.6;
+}
+
+.optional {
+  color: var(--color-muted);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+}
+
+.fieldError {
+  margin-top: 0.35rem;
+  color: var(--color-crimson-bright);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: var(--space-4);
+}
+
+.capacity {
+  margin-top: var(--space-2);
+  color: var(--color-muted);
+  font-size: 0.76rem;
+  line-height: 1.6;
+}
+
+.logPanel {
+  margin-top: var(--space-4);
+  background:
+    radial-gradient(circle at 88% 2%, var(--color-accent-faint), transparent 34%),
+    var(--color-surface);
+}
+
+.logHead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: end;
+  justify-content: space-between;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.logTitle {
+  margin-top: 0.35rem;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+}
+
+.count {
+  margin-top: 0.35rem;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.filterArea {
+  min-width: 11rem;
+}
+
+.filterArea .select {
+  min-height: 2.5rem;
+  padding: 0.55rem 0.8rem;
+  margin-top: -0.25rem;
+}
+
+.feedback {
+  min-height: 1.2rem;
+  margin-top: var(--space-3);
+  color: var(--color-accent-bright);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.error {
+  padding: 0.8rem 0.9rem;
+  margin-top: var(--space-2);
+  color: var(--color-crimson-bright);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  background: rgb(255 255 255 / 0.04);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.empty {
+  max-width: 48ch;
+  padding: var(--space-5) 0 var(--space-3);
+}
+
+.emptyTitle {
+  width: fit-content;
+  margin-top: 0.4rem;
+  font-size: clamp(1.3rem, 2.3vw, 1.7rem);
+}
+
+.emptyTitle:focus {
+  outline: none;
+}
+
+.emptyTitle:focus-visible {
+  outline: 2px solid var(--color-accent-bright);
+  outline-offset: 4px;
+}
+
+.emptyText {
+  margin-top: var(--space-2);
+  color: var(--color-parchment-soft);
+  line-height: 1.7;
+}
+
+.empty :global(.button) {
+  margin-top: var(--space-3);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-3);
+  padding: 0;
+  margin: var(--space-4) 0 0;
+  list-style: none;
+}
+
+.entry {
+  padding: var(--space-4);
+  background: rgb(255 255 255 / 0.025);
+  border: 1px solid var(--line-cool);
+  border-radius: var(--radius-md);
+}
+
+.entryHead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.kind {
+  display: inline-block;
+  padding: 0.18rem 0.5rem;
+  color: var(--color-accent-bright);
+  font-size: 0.6rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  background: var(--color-accent-faint);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.entryDate {
+  color: var(--color-muted);
+  font-size: 0.68rem;
+}
+
+.entryTitle {
+  width: fit-content;
+  margin-top: var(--space-2);
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2vw, 1.45rem);
+  line-height: 1.4;
+}
+
+.entryTitle:focus {
+  outline: none;
+}
+
+.entryTitle:focus-visible {
+  outline: 2px solid var(--color-accent-bright);
+  outline-offset: 3px;
+}
+
+.entryBody {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.entryBody dt {
+  color: var(--color-muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.entryBody dd {
+  margin: 0.2rem 0 0;
+  color: var(--color-parchment-soft);
+  font-size: 0.88rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.entryActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: var(--space-3);
+}
+
+.confirm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: center;
+  padding: 0.7rem 0.8rem;
+  margin-top: var(--space-3);
+  color: var(--color-parchment-soft);
+  font-size: 0.76rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.note {
+  max-width: 76ch;
+  margin-top: var(--space-5);
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  line-height: 1.7;
+}
+
+@media (max-width: 760px) {
+  .formGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .titleField {
+    grid-column: 1 / -1;
+  }
+
+  .textAreas {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .logHead {
+    align-items: start;
+  }
+
+  .filterArea {
+    width: 100%;
+  }
+
+  .filterArea .select {
+    width: 100%;
+  }
+
+  .formActions :global(.button) {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backLink {
+    transition: none;
+  }
+}

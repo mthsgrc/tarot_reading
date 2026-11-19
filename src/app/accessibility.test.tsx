@@ -145,6 +145,33 @@ describe("accessibility audit", () => {
     await expectNoAccessibilityViolations();
   });
 
+  it("keeps the Magical Record free of violations before and after adding an entry", async () => {
+    const user = userEvent.setup();
+    openRoute("#/chaos/record");
+    await screen.findByRole("heading", {
+      level: 1,
+      name: /record the working/i,
+    });
+
+    await expectNoAccessibilityViolations();
+
+    await user.type(
+      screen.getByRole("textbox", { name: /^title$/i }),
+      "A sigil for the next step",
+    );
+    await user.type(
+      screen.getByRole("textbox", { name: /what you did/i }),
+      "I drew the sigil and sat with it.",
+    );
+    await user.click(screen.getByRole("button", { name: /add to record/i }));
+    await screen.findByRole("heading", {
+      level: 3,
+      name: "A sigil for the next step",
+    });
+
+    await expectNoAccessibilityViolations();
+  });
+
   it("keeps the setup and a completed reading free of violations", async () => {
     const user = userEvent.setup();
     openRoute("#/thelema");
